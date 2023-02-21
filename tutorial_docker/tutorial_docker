@@ -1,0 +1,292 @@
+# Tips
+※ターミナルを右側に表示
+> terminal
+> 右クリック
+> Move Panel Right
+
+
+# Docker第1回
+https://harusite.net/20230207-docker/
+
+
+# Docker第2回
+https://harusite.net/20230217-docker/
+
+
+# Docker第3回
+https://harusite.net/20230218-docker/
+
+
+
+↓別記事↓
+
+# WEBアプリ作り
+
+## WEBサイトとWEBアプリの違い
+静的サイト
+　WEBサーバーはHTTPリクエストの内容に従って対応するファイルをHTTPレスポンスに含めて返す
+　静的サイトでは、固定のHTML ,CSS ,JavaScriptだけでサイトを実現する
+
+WEBアプリケーション
+　WEBサーバがHTTPリクエストを受け取る
+　リクエストの内容を踏まえて、プログラムを実行留守
+　プログラムがHTMLやJSONを生成して返す
+
+
+## WEBアプリ作成／実装手順
+サーバの準備／HTMLの実装
+Ruby(Sinatra)のHello World
+Nginxのリバースプロキシ設定
+フロントエンド（JS）とバックエンド（Sinatra）の疎通
+タスク一覧の取得処理を実装
+タスクの登録処理を実装
+JSの改善
+MySQLのインストールとテーブルの作成
+SinatraでMySQLとやり取り
+---
+
+##　ハンズオン/サーバの準備／HTMLの実装
+GCEでインスタンスを作成
+　前の手順と一緒
+
+SSHでアクセス
+
+Nginxをインストールし
+　前の手順と一緒
+
+ブラウザからアクセス
+　外部IPから
+
+## HTMLの実装
+
+既存のファイルを確認
+$ ls /var/www/html
+index.nginx-debian.html
+
+既存のファイルを消す
+sudo rm index.nginx-debian.html
+
+index.htmlを作成
+sudo touch index.html
+
+cat index.html
+
+sudo vi index.html
+
+GCEではVSコードなどの手元の環境でコードを書いてアップロードすることも可能
+---
+GCEの外部IPをクリック
+作成したHTMLファイルに応じて画面が表示されたことを確認
+
+
+##　ハンズオン/Ruby(Sinatra)のHello World
+
+install ruby
+sudo apt install ruby
+
+check
+$ ruby -v
+ruby 2.5.1p57 (2018-03-29 revision 63029) [x86_64-linux-gnu]
+
+
+bundlerのインストール
+bundler management rubys library
+sudo apt install ruby-bundler
+
+
+cd home dir
+cd /home/yoshimasa
+
+pwd
+/home/yoshimasa
+---
+
+mkdir myapp
+cd myapp
+
+enable Sinatra
+bundle init
+
+
+check created Gemfile
+ll
+total 12
+drwxrwxr-x 2 yoshimasa yoshimasa 4096 Feb 19 22:59 ./
+drwxr-xr-x 6 yoshimasa yoshimasa 4096 Feb 19 22:58 ../
+-rw-r--r-- 1 yoshimasa yoshimasa  146 Feb 19 22:59 Gemfile
+--
+
+vi Gemfile
+gem "sinatra", "2.2.0"
+
+
+
+oshimasa@instance-1:~/myapp$ vim Gemfile 
+yoshimasa@instance-1:~/myapp$ 
+yoshimasa@instance-1:~/myapp$ 
+yoshimasa@instance-1:~/myapp$ cat Gemfile 
+# frozen_string_literal: true
+
+source "https://rubygems.org"
+
+git_source(:github) {|repo_name| "https://github.com/#{repo_name}" }
+
+# gem "rails"
+gem "sinatra", "2.2.0"
+
+---
+
+bundle install
+
+---
+installed sinatra
+
+
+Hello World at sninatra
+
+vi myapp.rb
+
+
+
+
+---
+require 'sinatra'
+get '/' do
+  'Hello, World'
+end
+
+---
+
+ruby myapp.rb
+
+check ruby on 4576
+---
+ ruby myapp.rb
+[2023-02-19 23:09:23] INFO  WEBrick 1.4.2
+[2023-02-19 23:09:23] INFO  ruby 2.5.1 (2018-03-29) [x86_64-linux-gnu]
+== Sinatra (v2.2.0) has taken the stage on 4567 for development with backup from WEBrick
+[2023-02-19 23:09:23] INFO  WEBrick::HTTPServer#start: pid=3623 port=4567
+
+
+---
+opne anothe SSH window at GRE
+type following code
+curl http://localhost:4567
+
+$ curl http://localhost:4567
+Hello, Worldyoshimasa@instance-1:~$
+
+quit by Ctrl + c
+--
+
+add another code
+open myapp.rb
+
+vi myapp.rb
+
+---
+require 'sinatra'
+get '/' do
+  'Hello, World'
+end
+
+get '/api/hello' do
+  {
+    message: 'Hello World!'
+  }.to_json
+end
+---
+
+curl http://localhost:4567/api/hello
+
+
+ curl http://localhost:4567/api/hello
+{"message":"Hello World!"}yoshimasa@instance-1:~$ 
+---
+
+
+
+### Nginxのリバースプロキシ設定
+
+
+
+
+
+
+
+
+
+
+
+## 
+
+## 
+
+## 
+
+## 
+
+## 
+
+## 
+
+
+
+
+
+
+
+
+
+
+# 概要
+
+## シェルとは
+ユーザーにLinux OSを扱うためのインターフェースを提供
+コマンドやプログラムの実行を行う
+
+## Linuxカーネルとは
+カーネルを通してLinuxはハードウェアにアクセスする
+Linuxカーネルにアクセスするためのプログラム＝Linuxコマンド
+
+## 代表的なシェル
+bash   # (バッシュ)         最も一般的
+csh    # (シーエスエイチ)    Bashよりも古く現在はあまり利用されない
+zsh    # (ゼットエスエイチ)  Macではデフォルトのシェル　Bashの機能も盛り込んだ最新のシェル
+
+
+
+
+
+# 基本的なコマンド
+
+準備
+---
+dockerでCentOSを起動
+> APPランチャーでDockerを起動
+# docker run -it cents
+> プロンプトが変わったら、起動完了
+> VSCodeの場合、Spril Terminalをしておくと、片方はDocker上のCentOS, 片方はMacのターミナルが使えるので便利
+[root@7ac4d0c40686 /]# 
+---
+
+## dateコマンド
+---
+$ date
+Thu Feb 16 08:55:26 UTC 2023
+
+# フォーマット指定
+# %u : 曜日
+$ date '+%Y%m%d %u %H:%M:%S'
+20230216 4 08:56:48
+---
+
+## echo
+
+
+# 
+
+# 
+
+
+# 
