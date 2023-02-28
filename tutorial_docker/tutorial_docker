@@ -1,0 +1,667 @@
+# Tips
+※ターミナルを右側に表示
+> terminal
+> 右クリック
+> Move Panel Right
+
+# Docker第1回
+https://harusite.net/20230207-docker/
+
+
+# Docker第2回
+https://harusite.net/20230217-docker/
+
+
+# Docker第3回
+https://harusite.net/20230218-docker/
+
+# Docker第4回
+https://harusite.net/20230221-docker/
+
+
+
+######
+Dockerの学習を進める注意点
+######
+・一旦環境作らないとダメだね。。。
+・つまみ食いしてもわからない。。。
+・時間はかかるがこの形しかない。
+
+---
+
+１　一旦教材の通りにフルスクラッチで作る
+２　教材に従っって、Docker部分も進める
+３　手順は一旦がちで作る
+４　ブログにアップできそうなところを一旦成果物としてあｐっぷ
+５　その後、他で作った環境で同様に対応してみる
+
+---
+
+# Dockerのインストール
+
+## 作る環境
+開発環境として、MacにDockerをインストール
+3つのコンテナを起動して連携させる
+
+## Dockerのインストール
+公式手順に従ってインストール
+>> 概要説明とセットアップ
+https://docs.docker.jp/get-started/index.html#download-and-install-docker
+
+一般的なアプリのインストールと一緒
+
+## Hello World
+
+
+```
+docker run ubuntu:20.04 echo hello world
+```
+
+## ローカルにあるイメージの一覧
+
+```
+docker images
+```
+# result
+yoshi@y0513 tutorial_docker % docker run ubuntu:20.04 echo hello world
+
+Unable to find image 'ubuntu:20.04' locally
+20.04: Pulling from library/ubuntu
+455c32d33260: Pull complete 
+Digest: sha256:4a45212e9518f35983a976eead0de5eecc555a2f047134e9dd2cfc589076a00d
+Status: Downloaded newer image for ubuntu:20.04
+hello world
+
+
+## Bash を起動
+
+```
+docker run -it ubuntu:20.04 bash
+```
+
+docker run -it ubuntu:20.04 bash
+root@690afb3537ae:/# 
+root@690afb3537ae:/# 
+
+---
+
+## rubyのインストール
+
+root@690afb3537ae:/# apt update
+
+apt install ruby ruby-bundler
+
+以上でrubyのインストールは完了
+一旦EXITする
+
+コンテナの一覧を確認(停止したコンテナも表示)
+docker ps -a
+
+指定したコンテナをイメージにすることができる
+docker commit <CONTAINER ID>
+
+P 手作業での環境構築
+step1 docker run        # ubuntuのイメージをダウンロード　コンテナを起動
+step2 apt install ruby  # Rubyをインストール
+step3 docker commit     # コンテナをイメージ化
+step4 docker run        # Rubyインストール済みのイメージからコンテナを起動
+---
+
+上記のデメリットと代替案
+docker commitコマンドは基本的に使わない方がベター
+上記の手順だと、どのように環境構築したか分からなくなる
+そこで使用するのがDockerFile
+Dockerfileを使えば、イメージの構築手順をコード化（Infrastracture as Code）できる
+
+## Dockerfileによるイメージの作成
+
+## Dockerfile をもとにイメージをビルド
+```
+docker build -t my-ruby:dockerfile .
+```
+
+## 自作したイメージからコンテナを起動
+```
+docker run -it my-ruby:dockerfile bash
+```
+
+
+
+Dockerfile
+---
+FROM ubuntu:20.04
+
+RUN apt update
+RUN apt install -y ruby ruby-bundler
+---
+
+## コンテナのライフサイクル
+イメージ      # Docker HubなどからDLするか、コンテナから作成することが可能
+Dockerfile   # Dockerfileを元にイメージをbuildする
+コンテナ      #　docker run　コマンドで開始できる
+
+## 39
+# ボリュームによるファイルの共有
+
+## Ruby のコードをマウントして Bash を実行
+
+```
+docker run \
+  -v $PWD:/opt/myapp \
+  -w /opt/myapp \
+  -it \
+  my-ruby:dockerfile \
+  bash
+```
+
+## Ruby のコードをマウントして Ruby を実行
+
+```
+docker run \
+  -v $PWD:/opt/myapp \
+  -w /opt/myapp \
+  my-ruby:dockerfile \
+  ruby hello.rb
+```
+
+---
+
+
+
+
+
+
+
+
+
+
+
+
+
+#########################################################################
+以下はWEB APPのハンズオン
+#########################################################################
+
+# 典型的な３層構造のWEB APPを作る
+
+
+## ハンズオンの主な手順
+
+1 サーバの準備／HTMLの実装
+2 Ruby(Sinatra)のHello World
+3 Nginxのリバースプロキシ設定
+4 フロントエンド（JS）とバックエンド（Sinatra）の疎通
+5 タスク一覧の取得処理を実装
+6 タスクの登録処理を実装
+7 JavaScriptの改善
+8 MySQLのインストールとテーブルの作成
+9 SinatraでMySQLとやり取り
+
+
+##　1 ハンズオン/サーバの準備／HTMLの実装
+GCEでインスタンスを作成
+　前の手順と一緒
+
+SSHでアクセス
+
+Nginxをインストールし
+　前の手順と一緒
+
+ブラウザからアクセス
+　外部IPから
+
+### HTMLの実装
+
+既存のファイルを確認
+$ ls /var/www/html
+index.nginx-debian.html
+
+既存のファイルを消す
+sudo rm index.nginx-debian.html
+
+index.htmlを作成
+sudo touch index.html
+
+cat index.html
+
+sudo vi index.html
+
+GCEではVSコードなどの手元の環境でコードを書いてアップロードすることも可能
+---
+GCEの外部IPをクリック
+作成したHTMLファイルに応じて画面が表示されたことを確認
+
+---
+
+
+
+
+##　2 ハンズオン/Ruby(Sinatra)のHello World
+
+### Rubyのインストール
+install ruby
+sudo apt install ruby
+
+check
+$ ruby -v
+ruby 2.5.1p57 (2018-03-29 revision 63029) [x86_64-linux-gnu]
+
+
+bundlerのインストール
+bundler management rubys library
+sudo apt install ruby-bundler
+
+# bundler 
+# rubyのライブラリを管理するツール
+
+# ホームディレクトリ直下に作業用のディレクトリを作成
+cd /home/yoshimasa
+
+
+# ディレクトリが作成されたことを確認
+mkdir myapp
+cd myapp
+pwd
+/home/<user-name>/myapp
+
+
+# sinatraを利用可能にする
+# まず、「bundle init」で初期化する
+bundle init
+
+# 次にGemfileを編集し、ライブラリを書いていく
+
+# Gemfileが存在することを確認
+ll
+total 12
+drwxrwxr-x 2 yoshimasa yoshimasa 4096 Feb 19 22:59 ./
+drwxr-xr-x 6 yoshimasa yoshimasa 4096 Feb 19 22:58 ../
+-rw-r--r-- 1 yoshimasa yoshimasa  146 Feb 19 22:59 Gemfile
+--
+
+vi Gemfile
+gem "sinatra", "2.2.0"
+
+
+
+oshimasa@instance-1:~/myapp$ vim Gemfile 
+yoshimasa@instance-1:~/myapp$ cat Gemfile 
+# frozen_string_literal: true
+
+source "https://rubygems.org"
+
+git_source(:github) {|repo_name| "https://github.com/#{repo_name}" }
+
+# gem "rails"
+gem "sinatra", "2.2.0"
+
+---
+
+# gem fileに書かれているので、sinatraがインストールされる
+bundle install
+
+---
+installed sinatra
+
+
+### Hello World at sninatra
+sinatoraでHello Worldを表示するための実装をする
+コードはsinatraのHPから取得可能
+>> SINATRA
+https://sinatrarb.com/
+
+
+# myapp.rbを編集していく
+vi myapp.rb
+
+
+---
+require 'sinatra'
+get '/' do
+  'Hello, World'
+end
+---
+
+ruby myapp.rb
+
+# rubyのポートを確認
+check ruby on 4576
+---
+ ruby myapp.rb
+[2023-02-19 23:09:23] INFO  WEBrick 1.4.2
+[2023-02-19 23:09:23] INFO  ruby 2.5.1 (2018-03-29) [x86_64-linux-gnu]
+== Sinatra (v2.2.0) has taken the stage on 4567 for development with backup from WEBrick
+[2023-02-19 23:09:23] INFO  WEBrick::HTTPServer#start: pid=3623 port=4567
+
+
+---
+# GREで別なSSH接続Windowを起動する
+opne another SSH window at GRE
+type following code
+curl http://localhost:4567
+
+$ curl http://localhost:4567
+Hello, Worldyoshimasa@instance-1:~$
+
+quit by Ctrl + c
+--
+
+add another code
+open myapp.rb
+
+vi myapp.rb
+
+---
+require 'sinatra'
+get '/' do
+  'Hello, World'
+end
+
+get '/api/hello' do
+  {
+    message: 'Hello World!'
+  }.to_json
+end
+---
+
+curl http://localhost:4567/api/hello
+
+
+ curl http://localhost:4567/api/hello
+{"message":"Hello World!"}yoshimasa@instance-1:~$ 
+---
+
+以上で、sinatoraでの疎通確認は完了
+
+
+
+
+## 3 Nginxのリバースプロキシ設定
+
+P リバースプロキシとは
+ブラウザからサーバへの通信はnginxが受け取るようになっている
+URLのパスが/api/から始まる場合のみ、処理をSinatraに依頼したい
+このように本当に処理を依頼サーバの手前に挟まるサーバを「リバースプロキシ」を呼ぶ
+
+
+### nginxの設定を見ていく
+やりたいこと
+nginxのパスが/api/であれば、sinatraに転送される設定を入れる
+
+---
+# 以下にnginxの設定ファイルが存在する
+yoshimasa@instance-1:~/myapp$ cd /etc/nginx
+yoshimasa@instance-1:/etc/nginx$ pwd
+/etc/nginx
+
+$ cat nginx.conf 
+---
+
+
+# 設定ファイルを編集することで、一部のアクセスを他のプロセスに受け私が可能
+sudo vi /etc/nginx/sites-enabled/default
+
+# 「location /」の下に以下を記載していく
+location /api/ {
+  proxy_pass http://localhost:4567;
+}
+---
+# 記載されたか確認
+cat /etc/nginx/sites-enabled/defaul
+
+# nginxをリロード
+sudo systemctl reload nginx
+
+---
+
+動作確認
+
+ssh 1 rubyを起動
+yoshimasa@instance-1:~$ cd myapp/
+yoshimasa@instance-1:~/myapp$ ls
+Gemfile  Gemfile.lock  myapp.rb
+yoshimasa@instance-1:~/myapp$ 
+yoshimasa@instance-1:~/myapp$ 
+yoshimasa@instance-1:~/myapp$ ruby myapp.rb
+
+
+ssh2でnginxにアクセスすると、sinatraに処理が転送されたことがわかる
+---
+[2023-02-24 21:59:35] INFO  WEBrick 1.4.2
+[2023-02-24 21:59:35] INFO  ruby 2.5.1 (2018-03-29) [x86_64-linux-gnu]
+== Sinatra (v2.2.0) has taken the stage on 4567 for development with backup from WEBrick
+[2023-02-24 21:59:35] INFO  WEBrick::HTTPServer#start: pid=3415 port=4567
+127.0.0.1 - - [24/Feb/2023:22:01:00 +0000] "GET /api/hello HTTP/1.1" 200 26 0.0056
+127.0.0.1 - - [24/Feb/2023:22:01:00 UTC] "GET /api/hello HTTP/1.0" 200 26
+- -> /api/hello
+---
+
+
+
+ssh 2
+curl http://localhost/api/hello
+
+curl http://localhost/api/hello
+{"message":"Hello World!"}yoshimasa@instance-1:~$ 
+
+---
+
+
+次にブラウザでも確認する
+gce > 外部IP > ブラウザを起動　> http://<external-IP>/api/hello
+
+# 以下が表示される
+{"message":"Hello World!"}
+
+---
+
+リバースプロキシの設定はここまで
+
+---
+
+
+### 4 フロントエンド（JS）とバックエンド（Sinatra）の疎通
+
+
+
+cd /var/www/html
+yoshimasa@instance-1:/var/www/html$ pwd
+/var/www/html
+yoshimasa@instance-1:/var/www/html$ ll
+total 12
+drwxr-xr-x 2 root root 4096 Feb 18 10:00 ./
+drwxr-xr-x 3 root root 4096 Feb 17 23:57 ../
+-rw-r--r-- 1 root root  883 Feb 18 10:00 index.html
+
+---
+cat index.html
+
+このhtmlファイルにJavaScriptを読み込ませる処理を記載していく
+---
+<!DOCTYOE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>タスク管理アプリケーション</title>
+    </head>
+    <body>
+        <h1>タスク管理アプリケーション</h1>
+        <input type="text" />
+        <button>追加</button>
+        <h2>タスク一覧</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>タイトル</th>
+                    <th>作成日時</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>フロントエンドの実装</td>
+                    <td>2023-02-18 00:00:00 +0000</td>
+                </tr>
+                <tr>
+                    <td>サーバーサイドの実装</td>
+                    <td>2023-02-18 00:00:00 +0000</td>
+                </tr>
+            </tbody>
+
+        </table>
+        <script src = "main.js"></script>
+    </body>
+</html>
+---
+
+同じディレクトリに「main.js」を作成
+sudo vim main.js
+
+console.log 'Hello, JavaScript';
+
+
+このコードは、HTMLドキュメント内にJavaScriptコードを埋め込む方法の一つです。
+
+<script>タグは、HTMLドキュメント内にJavaScriptコードを記述するために使用されます。source属性は、JavaScriptコードが保存されているファイルのパスを指定します。
+
+例えば、main.jsという名前のJavaScriptファイルが、HTMLファイルと同じディレクトリにある場合、上記のコードを使用してHTMLドキュメント内にJavaScriptコードを挿入できます。
+
+---
+
+ブラウザ　＞　F12 ＞ console で　Hello, JavaScriptと表示されたことを確認
+
+続いてJavaScriptの実装
+sudo vim main.js
+
+async function main(){
+        console.log ('Hello, JavaScript')
+}       
+
+main()
+---
+
+再度画面をリロード
+「Hello, JavaScript」が表示されることを確認
+
+---
+
+次にmain関数の中でサーバと通信する処理を書く
+
+
+インデックスを書く
+
+---
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8" />
+    <title>タスク管理アプリケーション</title>
+  </head>
+  <body>
+    <h1>タスク管理アプリケーション</h1>
+    <input type="text" />
+    <button>追加</button>
+    <h2>タスク一覧</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>タイトル</th>
+          <th>作成日時</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>フロントエンドの実装</td>
+          <td>2022-06-17 01:23:45</td>
+        </tr>
+        <tr>
+          <td>バックエンドの実装</td>
+          <td>2022-06-17 01:23:45</td>
+        </tr>
+      </tbody>
+    </table>
+    <p id="message"></p>
+    <script src="main.js"></script>
+  </body>
+</html>
+---
+
+
+
+---
+
+再度JavaScriptの実装
+
+---
+
+async function main() {
+  const response = await fetch('/api/hello')
+  console.log(response)
+  const responseBody = await response.json()
+  console.log(responseBody)
+
+  const messageElement = document.getElementById('message')
+  messageElement.innerText = responseBody.message
+}
+
+main()
+
+---
+※sinatraを起動しておかないとエラーする
+
+上記二つのファイルを格納
+ブラウザでHelloと表示されることを確認
+
+---
+フロントエンドとバックエンドの疎通はこれで完了
+
+
+
+## 5 タスク一覧の取得処理を実装
+
+gdc ファイルアップロード
+
+index.html
+/var/www/html
+sudo mv index_(1).html /var/www/html/index.html
+
+
+main.js
+myapp.rb
+/home/yoshimasa/myapp/
+
+sudo mv main.js /home/yoshimasa/myapp/
+
+
+## 6 タスクの登録処理を実装
+gdc ファイルアップロード
+
+index.html
+/var/www/html
+sudo mv index.html /var/www/html/index.html
+
+
+main.js
+myapp.rb
+/home/yoshimasa/myapp/
+
+sudo mv main.js /home/yoshimasa/myapp/
+
+
+
+## 
+
+## 
+
+## 
+
+## 
+
+
+
+
+
+
+
+
+
+
