@@ -1,0 +1,57 @@
+version: '3'
+services:
+
+  #MySQL用コンテナ
+  mysql:
+    container_name: mysql
+    image: mysql:5.7
+    # for m1 mac
+    platform: linux/x86_64
+
+    # 要確認
+    volumes:
+      - ./mysql:/var/lib/mysq
+    ports:
+      - 3306:3306
+    environment:
+      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_DATABASE=test
+      - MYSQL_USER=test
+      - MYSQL_PASSWORD=test
+    build:
+      context: ./
+      dockerfile: Dockerfile
+
+  #phpMyAdmin用コンテナ
+  phpmyadmin:
+    container_name: phpMyAdmin
+    depends_on:
+      - mysql
+    image: phpmyadmin/phpmyadmin
+    environment:
+      PMA_HOST: mysql
+    restart: always
+    ports:
+      - "0:80"
+    build:
+      context: ./
+      dockerfile: Dockerfile
+
+  #php用コンテナ
+  php:
+    container_name: php-apache
+    build: ./php
+
+    # 要確認
+    volumes:
+      - ./html:/var/www/html
+
+    ports:
+    # - 0:8080
+      - 32769:8080
+    depends_on:
+      - mysql
+    build:
+      context: ./
+      dockerfile: Dockerfile
+
