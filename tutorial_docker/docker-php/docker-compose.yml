@@ -48,7 +48,7 @@ services:
 
     ports:
     # - 0:8080
-      - 32769:8080
+      - "0:8080"
     depends_on:
       - mysql
     build:
