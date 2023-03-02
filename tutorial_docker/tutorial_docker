@@ -7,7 +7,6 @@
 # Docker第1回
 https://harusite.net/20230207-docker/
 
-
 # Docker第2回
 https://harusite.net/20230217-docker/
 
@@ -15,8 +14,11 @@ https://harusite.net/20230217-docker/
 # Docker第3回
 https://harusite.net/20230218-docker/
 
+
 # Docker第4回
 https://harusite.net/20230221-docker/
+
+
 
 
 https://youtube.com/watch?v=40jMdZpDPm8&feature=shares
@@ -24,13 +26,19 @@ https://youtube.com/watch?v=40jMdZpDPm8&feature=shares
 
 # Dockerの概要
 
+## Dockerとは
+ul
+コンテナ技術を使用
+コードとライブラリーやパッケージをパッキングすること
+
 
 ## Dockerが注目される、普及している理由
 ・2013年以降右肩上がり
 ・DevOpsのサイクルにはまっている
 ・理由　ユーザーに早く正確にコードを届けることができる
 
-従来
+### 従来
+---
 開発　　開発エンジニア
 ↓
 テスト　インフラエンジニア
@@ -41,35 +49,35 @@ https://youtube.com/watch?v=40jMdZpDPm8&feature=shares
 開発環境では動いていた→本番環境では動かない　ということが起こった
 ---
 
-Dockerが開発する問題
+## Dockerが解決する問題
 
+ul
+---
 開発チーム
-コードとライブラリをパッケージングしてdocker-imageを作成（コンテナ化）
+　コードとライブラリをパッケージングしてdocker-imageを作成（コンテナ化）
 
 運営チーム
-docker-imageをもらって本番環境を構築
+　docker-imageをもらって本番環境を構築
 
-ライブラリーや依存性の問題を防げる
-
+上記によりライブラリーや依存性の問題を防げる
 ---
 
-Docker
 
-コンテナ技術を使って
-コードとライブラリーやパッケージをパッキングすること
-
-まとめ
+## 上記のまとめ
+ul
+Dockerを使用することで以下を実現
 開発環境と運営環境を同一にする（コードと依存性をコンテナ化）
 環境の違いによる不動作を防ぐことができる
 ---
 
-従来の運用との違い
+## 従来の運用との違い
 
-従来
+### 従来
 ファイルやフォルダーをジェンキンスなどのCICDパイプラインを使って
 本番環境にコピーしていた
 
-Dockerの場合
+### Dockerの場合
+ul
 コードとライブラリーをパッケージングしてdocker-imageを作成
 本番環境のサーバーにドッカーイメージをダウンロード
 それを実行するだけでOK
@@ -78,69 +86,82 @@ OS問わず同一の動作をする
 
 ---
 
-従来のOS仮想化とDockerの違い
+### 従来のOS仮想化とDockerの違い
 →すでに学習した通り
 
-イメージとコンテナの違い
-例　ClassとObject
-例　車の設計図　実際の車
-のように
-テンプレート　と　実物　の違い
+## イメージとコンテナの違い
+ul
+---
+例１　ClassとObject
+例２　車の設計図　実際の車
+つまり、テンプレートと実物の違い
 ---
 
-OS仮想化と比べたDockerのメリット
-
+## OS仮想化と比べたDockerのメリット
+ul
 リソースが軽い
+ストレージの使用量が減る
+起動時間が早い
+複数環境で使用可能
+---
+
+Pリソースが軽い
 OSを複数使わないぶん、オーバーヘッド（複数のOSイメージとカーネル）が減る
 プロセッサやメモリの消費が少なくなる
 
-ストレージの使用量が減る
+Pストレージの使用量が減る
 OSイメージの通常サイズが5-10GB docker-imageのサイズは1-2GBになる
 
-起動時間が早い
+P起動時間が早い
 カーネルのロード時間がなくなるので、仮想マシンに比べて起動時間が早くなる
 
-複数環境で使用可能
+P複数環境で使用可能
 Dockerがインストールされている環境ならホストOSに依存せずにアプリが起動する
 ---
 
 
-Dockerのクライアントとサーバーアーキテクチャについて
+## Dockerのクライアントとサーバーアーキテクチャについて
 
-Client
+### Client
+ls
 docker build
 docker pull
 docker run
 
-Server(Docker Daemon)
+### Server(Docker Daemon)
+ls
 Daemon process
 Agent
-
 ---
 
 
 
-Dockerのインストール
-
+## Dockerのインストール
 学習した通り
-
 ---
 
-コンテナでHello Worldしてみる
-Nginxのdocker-imageを取得
+※ 後でハンズオン、修正する
+※ 作成コマンド、利用確認コマンド、削除コマンドを把握
+
+
+## ハンズオン　コンテナでHello Worldしてみる
+
+### Nginxのdocker-imageを取得
+cmd
 $ docker pull nginx
 
-nginxサーバーのコンテナを起動
+### nginxサーバーのコンテナを起動（コンテナを単体で起動）
+
+cmd
 $ docker run -p 80:80 nginx
 
-※イメージ名　nginx
-※イメージからコンテナをrunする
-※80:80 ホスト側：コンテナ側のポートをマッピングしている
-※ホスト側は80が使用中であれば、他の番号をマッピングしてもOK
-※nginx側は80のままでOK
+# イメージ名　nginx
+# イメージからコンテナをrunする
+# 80:80 ホスト側：コンテナ側のポートをマッピングしている
+# ホスト側は80が使用中であれば、他の番号をマッピングしてもOK
+# nginx側は80のままでOK
 
-
-少し改善が必要
+### 複数のコンテナを起動（docker-composeqを利用）
 
 ---
 
@@ -150,28 +171,30 @@ $ docker exec -it CONTAINER_ID bash
 ---
 
 
-Dockerの使われ方
-開発環境
+## Dockerの使われ方
+### 開発環境
 WindowsやMacなどのHost OSの上で使われる
 
-
-本番環境
+### 本番環境
 多くはLinux OS上でデプロイされる
-
 ---
 
 
+
+###########################################################
+# memo
+###########################################################
+
+# DevOpsにおけるDockerの立ち位置
 Level4 EKS GKSなど（クラウドサービス上でKubenetisを稼働する）
 Level3 Kubenetis(クバネティス)
 Level2 Docker
 Level1 Linux
+---
 
 
 
-
-######
-Dockerの学習を進める注意点
-######
+# Dockerの学習を進める注意点
 ・一旦環境作らないとダメだね。。。
 ・つまみ食いしてもわからない。。。
 ・時間はかかるがこの形しかない。
