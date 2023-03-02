@@ -158,11 +158,13 @@ WindowsやMacなどのHost OSの上で使われる
 本番環境
 多くはLinux OS上でデプロイされる
 
+---
 
 
-
-
-
+Level4 EKS GKSなど（クラウドサービス上でKubenetisを稼働する）
+Level3 Kubenetis(クバネティス)
+Level2 Docker
+Level1 Linux
 
 
 
@@ -312,6 +314,59 @@ docker run \
 ```
 
 ---
+
+
+LinuxシェルのSTDINとSTDOUTとは
+ターミナルで見えるシェルはフォアグランドプロセス
+インプット（STDIN）とアウトプット（STDOUT&STDERR）が見える
+
+バックグラウンドプロセス
+インプットもアウトプットも見えない
+バックグラウンドと会話するにはTTYをアタッチする必要がある
+
+p TTY
+Tele Typwriter
+
+Dockerの中にシェルで入る場合のコマンド例
+$ docker exec --interractive --tty
+
+
+
+シェル基本コマンド(DIR)
+ls # list ディレクトリ情報の表示
+cd # change dir ディレクトリの移動
+pwd # print working dir 現在のディレクトリを表示
+mkdir # make dir ディレクトリの作成
+---
+
+シェルの基本コマンド(FILE)
+touch  # ファイルの作成
+echo >>   # ファイルにつけたし
+cat    # concatenate　ファイルのコンテンツを表示
+rm     # remove ファイルを削除
+
+シェルの基本コマンド(PROCESS)
+ps
+&            # process status プロセスの表示
+ sleep 10 &  # プロセスをバックグラウンドで起動
+fg           # foreground プロセスをフォアグラウンドに戻す
+
+シェルの基本コマンド(COMMAND)
+help    # コマンドのヘルプ
+which   # コマンドの保存先を表示
+man     # manual コマンドのマニュアルを表示
+
+シェルの基本コマンド(SEARCH)
+find   # ファイル・ディレクトリを探す
+ $ find / -type d -name nginx
+
+grep
+ $ grep "Hello" test.txt -n
+ $ find / -type d -name nginx | xargs grep -r html
+  # ディレクトリ名を検索
+  # その中のファイルを文字検索
+  
+
 
 
 
