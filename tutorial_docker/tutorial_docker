@@ -4,180 +4,35 @@
 > 右クリック
 > Move Panel Right
 
-# Docker第1回
+# asciiflow
+https://asciiflow.com/
+
+#【第1回】Dockerインストール→Linux(CentOS7)を起動
 https://harusite.net/20230207-docker/
 
-# Docker第2回
+
+#【第2回】Linuxの概要／GCPでUbuntuをインストール
 https://harusite.net/20230217-docker/
 
 
-# Docker第3回
+#【第3回】WEBサーバを構築（Nginx）／ネットワークの概要
 https://harusite.net/20230218-docker/
 
 
-# Docker第4回
+#【第4回】WEBアプリ構築／Dockerでの環境構築準備
 https://harusite.net/20230221-docker/
 
 
+#【Docker第5回】Dockerの概要
+https://harusite.net/20230225-docker/
 
 
-https://youtube.com/watch?v=40jMdZpDPm8&feature=shares
-
-
-# Dockerの概要
-
-## Dockerとは
-ul
-コンテナ技術を使用
-コードとライブラリーやパッケージをパッキングすること
-
-
-## Dockerが注目される、普及している理由
-・2013年以降右肩上がり
-・DevOpsのサイクルにはまっている
-・理由　ユーザーに早く正確にコードを届けることができる
-
-### 従来
----
-開発　　開発エンジニア
-↓
-テスト　インフラエンジニア
-↓
-本番　インフラエンジニア
-
-環境、チームが異なり、
-開発環境では動いていた→本番環境では動かない　ということが起こった
----
-
-## Dockerが解決する問題
-
-ul
----
-開発チーム
-　コードとライブラリをパッケージングしてdocker-imageを作成（コンテナ化）
-
-運営チーム
-　docker-imageをもらって本番環境を構築
-
-上記によりライブラリーや依存性の問題を防げる
----
-
-
-## 上記のまとめ
-ul
-Dockerを使用することで以下を実現
-開発環境と運営環境を同一にする（コードと依存性をコンテナ化）
-環境の違いによる不動作を防ぐことができる
----
-
-## 従来の運用との違い
-
-### 従来
-ファイルやフォルダーをジェンキンスなどのCICDパイプラインを使って
-本番環境にコピーしていた
-
-### Dockerの場合
-ul
-コードとライブラリーをパッケージングしてdocker-imageを作成
-本番環境のサーバーにドッカーイメージをダウンロード
-それを実行するだけでOK
-デプロイ先がコンテナ（コード＋パッケージ）になる
-OS問わず同一の動作をする
-
----
-
-### 従来のOS仮想化とDockerの違い
-→すでに学習した通り
-
-## イメージとコンテナの違い
-ul
----
-例１　ClassとObject
-例２　車の設計図　実際の車
-つまり、テンプレートと実物の違い
----
-
-## OS仮想化と比べたDockerのメリット
-ul
-リソースが軽い
-ストレージの使用量が減る
-起動時間が早い
-複数環境で使用可能
----
-
-Pリソースが軽い
-OSを複数使わないぶん、オーバーヘッド（複数のOSイメージとカーネル）が減る
-プロセッサやメモリの消費が少なくなる
-
-Pストレージの使用量が減る
-OSイメージの通常サイズが5-10GB docker-imageのサイズは1-2GBになる
-
-P起動時間が早い
-カーネルのロード時間がなくなるので、仮想マシンに比べて起動時間が早くなる
-
-P複数環境で使用可能
-Dockerがインストールされている環境ならホストOSに依存せずにアプリが起動する
----
-
-
-## Dockerのクライアントとサーバーアーキテクチャについて
-
-### Client
-ls
-docker build
-docker pull
-docker run
-
-### Server(Docker Daemon)
-ls
-Daemon process
-Agent
----
+#【Docker第6回】ハンズオン／Dockerのインストール・作成・起動・停止
+https://harusite.net/20230303-docker/
 
 
 
-## Dockerのインストール
-学習した通り
----
 
-※ 後でハンズオン、修正する
-※ 作成コマンド、利用確認コマンド、削除コマンドを把握
-
-
-## ハンズオン　コンテナでHello Worldしてみる
-
-### Nginxのdocker-imageを取得
-cmd
-$ docker pull nginx
-
-### nginxサーバーのコンテナを起動（コンテナを単体で起動）
-
-cmd
-$ docker run -p 80:80 nginx
-
-# イメージ名　nginx
-# イメージからコンテナをrunする
-# 80:80 ホスト側：コンテナ側のポートをマッピングしている
-# ホスト側は80が使用中であれば、他の番号をマッピングしてもOK
-# nginx側は80のままでOK
-
-### 複数のコンテナを起動（docker-composeqを利用）
-
----
-
-作業中のコンテナにシェルで入る
-$ docker exec -it CONTAINER_ID bash
-
----
-
-
-## Dockerの使われ方
-### 開発環境
-WindowsやMacなどのHost OSの上で使われる
-
-### 本番環境
-多くはLinux OS上でデプロイされる
----
 
 
 
@@ -209,53 +64,7 @@ Level1 Linux
 
 ---
 
-# Dockerのインストール
 
-## 作る環境
-開発環境として、MacにDockerをインストール
-3つのコンテナを起動して連携させる
-
-## Dockerのインストール
-公式手順に従ってインストール
->> 概要説明とセットアップ
-https://docs.docker.jp/get-started/index.html#download-and-install-docker
-
-一般的なアプリのインストールと一緒
-
-## Hello World
-
-
-```
-docker run ubuntu:20.04 echo hello world
-```
-
-## ローカルにあるイメージの一覧
-
-```
-docker images
-```
-# result
-yoshi@y0513 tutorial_docker % docker run ubuntu:20.04 echo hello world
-
-Unable to find image 'ubuntu:20.04' locally
-20.04: Pulling from library/ubuntu
-455c32d33260: Pull complete 
-Digest: sha256:4a45212e9518f35983a976eead0de5eecc555a2f047134e9dd2cfc589076a00d
-Status: Downloaded newer image for ubuntu:20.04
-hello world
-
-
-## Bash を起動
-
-```
-docker run -it ubuntu:20.04 bash
-```
-
-docker run -it ubuntu:20.04 bash
-root@690afb3537ae:/# 
-root@690afb3537ae:/# 
-
----
 
 ## rubyのインストール
 
