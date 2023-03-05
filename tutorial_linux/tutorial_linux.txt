@@ -6,20 +6,166 @@ https://harusite.net/20230226-linux/
 
 
 
+Linux第2回 ディレクトリの操作
+
+## ディレクトリとは
+ファイルが保存されている場所
+WindowsやMacのフォルダと一緒
+入れ子構造になっている
+一階層上のディレクトリを「親ディレクトリ」、一階層下のディレクトリを「子ディレクトリ」と呼ぶ場合がある
+1番上のディレクトリを「/」(ルートディレクトリ)と呼ぶ
+「/」を頂点とした階層構造になっている
+各ディレクトリ毎に役割がある
+
+CF
+Windowsはドライブから入れ子構造が始まる
+
+## 主なディレクトリの役割
+### /bin
+一般ユーザー、管理ユーザーの両方が使用するコマンドの実行ファイルが格納されている
+特に、Linuxの動作に最低限必要な重要度が高いコマンドが格納されている
+
+### /dev
+デバイスファイル（ハードウェアをファイルとして扱う）を格納
+
+### /home
+ホームディレクトリ（Linuxのユーザー毎に割り当てられる個人ディレクトリ）が配置される
+ユーザーはホームディレクトリ内に自由にファイルやディレクトリを作成可能
+
+### /sbin
+管理ユーザー向けのコマンドの実行ファイルが格納されている
+
+### /tmp
+一時的なファイルやアプリケーションの実行中の結果を保存するのに利用される
+
+
+### /usr
+各種アプリケーション
+上記に付随するデータ
+
+### /var
+変化するデータ
+アプリケーションの動作ログなど
 
 
 
 
+## Linuxにログイン
+
+### DockerでUbuntuにログイン
+---
+# ubuntuのコンテナ起動
+$ docker run -it ubuntu:20.04 bas
+
+# ユーザーを作成
+# adduser conti
+  password conti
+
+# su - conti
+conti@f5d655a116ca:~$ 
+
+# ユーザープロンプトに変更されたことを確認
+$ 
 
 
+## 主なコマンド
+### cd
+change directory
+
+特別な使用方法
+.   # カレントディレクトリ（今いるディレクトリ）
+..  # 親ディレクトリ（一階層上）
+~   # ホームディレクトリ
+/   # ルートディレクトリ
+---
 
 
+### pwd
+print name of working directory
+現在のディレクトリ（カレントディレクトリ）を確認する
+
+cd　と　pwdを試す
+# sample
+# cd
+$ cd
+$ pwd
+/home/conti
+
+# $ cd .
+$ pwd
+/home/conti
+
+# ..
+# １階層上に移動
+cd ..
+$ pwd
+/home
+
+# ~
+# チルダ　ホームディレクトリに移動
+ cd ~
+conti@f5d655a116ca:~$ pwd
+/home/conti
+
+# /
+# ルートディレクトリに移動
+$ cd /
+conti@f5d655a116ca:/$ pwd
+/
 
 
+### ls
+list
+ディレクトリの中身を確認する
 
 
+# sample
 
+$ pwd
+/
+$ ls
+bin   dev  home  media  opt   root  sbin  sys  usr
+boot  etc  lib   mnt    proc  run   srv   tmp  var
+--- 
 
+Pパス名展開
 
+# fから始まる4文字のディレクトリをリストする
+$ pwd
+/bin
+$ ls /bin/f????
+/bin/false  /bin/fgrep  /bin/flock
 
+# 拡張子が.phpのファイルを表示する
+$ pwd 
+/tmp/tmp
+$ ls -l
+total 0
+-rw-rw-r-- 1 conti conti 0 Mar  5 22:41 aaa.html
+-rw-rw-r-- 1 conti conti 0 Mar  5 22:41 aaa.php
+-rw-rw-r-- 1 conti conti 0 Mar  5 22:41 bbb.html
+-rw-rw-r-- 1 conti conti 0 Mar  5 22:41 bbb.php
+-rw-rw-r-- 1 conti conti 0 Mar  5 22:41 ccc.html
+-rw-rw-r-- 1 conti conti 0 Mar  5 22:41 ccc.php
+
+$ ls -l *.html
+-rw-rw-r-- 1 conti conti 0 Mar  5 22:41 aaa.html
+-rw-rw-r-- 1 conti conti 0 Mar  5 22:41 bbb.html
+-rw-rw-r-- 1 conti conti 0 Mar  5 22:41 ccc.html
+
+---
+
+P 主なオプション
+ls -l
+ファイルの詳細情報表示
+
+ls -a
+隠しファイルを含めた全てを表示
+
+ls -f
+ファイル種別を表示
+/    # ディレクトリ
+@    # シンボリックリンク
+*    # 実行可能ファイル
+なし　#通常ファイル
 
