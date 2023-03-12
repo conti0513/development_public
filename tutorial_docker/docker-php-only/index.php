@@ -1,2 +1,4 @@
-echo "Hello, PHP on Docker!";
+<?php
+    phpinfo();
+?>
 
