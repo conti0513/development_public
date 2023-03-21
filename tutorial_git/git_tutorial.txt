@@ -21,13 +21,22 @@ https://harusite.net/20230212-git/
 #【Git第6回】GitHubを利用した開発手順の流れ
 https://harusite.net/20230216-git/
 
+
+##############
+memo
+##############
 この後は
 リベース　１ｈ
 タグ付け　10ｍ
 スタッシュ　１０ｍ
 
 
+## インフラ向けの実践的なGit活用例
+【これだけでOK!】Git 爆速実演【インフラエンジニア】【セキュリティエンジニア】【フリーランス】
+https://www.youtube.com/watch?v=z9pnPJFxZR4&t=659
 
+実践的で分かりやすい
+PR プルリクエスト
 
 
 
