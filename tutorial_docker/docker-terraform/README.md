@@ -4,126 +4,13 @@
 後で記事にする
 
 # 環境構築
-【Terraform第一回】
-https://harusite.net/wp-admin/post.php?post=7460&action=edit
+【Terraform第1回】環境構築
+https://harusite.net/20230328-terraform/
 
 
 # EC2を手動　→ Terraformで起動　→ Nginxを起動　→ 動作確認　→ 環境削除まで
-
-###################################################
-## ec2だけを一旦起動する
-### 手動で起動してみる
-ここに手動手順を記載
-キーペアを記載
-Nginxの起動は自動で実施
-
-
-
-
-
-### 1. tfファイルの作成
-
-main.tf
----
-provider "aws" {
-  region = "ap-northeast-1"
-}
-
-resource "aws_instance" "terraform_ec2" {
-  ami           = "ami-0b828c1c5ac3f13ee"
-  instance_type = "t2.micro"
-  key_name      = "conti-2"
-  vpc_security_group_ids = ["sg-0944e366cf3684556"]
-
-  
-  tags = {
-    Name = "20230328-terraform-test"
-  }
-
-  connection {
-    type        = "ssh"
-    user        = "ubuntu"
-    private_key = file("~/.ssh/keys/conti-2.cer")
-    host        = self.public_ip
-  }
-
-  provisioner "remote-exec" {
-    inline = [
-      "sudo apt-get update",
-      "sudo apt-get install -y nginx",
-      "sudo systemctl start nginx",
-      "sudo systemctl restart nginx"
-    ]
-  }
-}
-
-resource "aws_security_group" "instance" {
-  name_prefix = "2023-terraform-sg"
-  ingress {
-    from_port   = 22
-    to_port     = 22
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-}
-
-output "public_ip" {
-  value = aws_instance.terraform_ec2.public_ip
-}
-
----
-
-表で書く
-
-P recourceについて
-ami 手動で使ったもの
-key_name 手動で使ったもの
-Name 手動で使ったもの
-
-P connection
-private_key  ~/.ssh/keys/conti-2.cer
-
-P AMI IDの確認方法
-手動で作成したAMI IDを確認し、記載すればOK
-改めてubuntuを起動する場合は以下の通り
--> Amazonマネジメントコンソール > EC2 > インスタンス > インスタンスを起動
--> アプリケーションおよび OS イメージ (Amazon マシンイメージ)
--> ubuntuを選択しAMI IDを確認
-
-
-P provisioner
-Nginxを自動起動するコマンドを記載
-
-P resource "aws_security_group"
-
-
-### 2. Terraformの初期化
-
-Terraformを初期化し、AWSプロバイダーと必要なモジュールをダウンロードします。
-
-$ terraform init
-
-
-### 3. 計画の作成
-Terraformによる変更の計画を作成
-terraform planコマンドを使用して、main.tfファイルで指定されたリソースを確認する
-$ terraform plan
-
-### 4. インスタンスの作成
-terraform applyコマンドを使用してEC2インスタンスを作成
-
-$ terraform apply
----
-
-### 5. インスタンスの削除
-
-$ terraform destroy
-
-
-
-
-
-
+【Terraform第2回】EC2をTerraformで起動　→ Nginxを起動　→ 動作確認　→ 環境削除まで
+https://harusite.net/20230328-terraform-2/
 
 
 
@@ -132,10 +19,6 @@ $ terraform destroy
 VPCを作ったり、少し高度なので、もう少しスモールな手順を使って、
 Terraformの基礎的なコマンドを押さえられるようなメニューを作成する
 ---
-
-
-
-
 
 Terraformのtfファイル作成
 Terraformを実行する際に必要なtfファイルを作成していきます。
@@ -459,122 +342,6 @@ terraform show
 
 yoshi@y0513 test-ec2 % terraform show
 The state file is empty. No resources are represented.
-
-
-
-
-
-
-
-
-
-
-#############################################
-以下はちょっとわかりにくい感じ
-
-# テキスト
-# Udemy講座
-https://www.udemy.com/course/terraform-with-aws/learn/lecture/36359552#overview
-
-# 事前準備
-AWSでEC2を起動し、Nginxを起動してブラウジングかくにんをする
-
-## 手順
----
-*AWSに接続
-*デフォルトVPCを作成(あればそのまま使う)
-
-*SGを作成
-　名前　yyyymmdd-terraform-ec2-sg
-　インバウンドルール
-　　ssh ソース　0.0.0.0/0(どこからでも許可)
-　　http ソース　0.0.0.0/0(どこからでも許可)
-　アウトバウンド　そのまま
-
-*最小構成でEC2を起動
-　OS ubuntsu
-　名前　yyyymmdd-terraform-ec2
-　インスタンス　t2micro
-  キーペアは作る　macの ~/.sshに
-   conti-2.cer
-
-  パブリックIP 自動割り当て　有効
-  SG 咲穂作成したものを適用
-  ゆーざーデータ
-  mkdir ~/.ssh/keys
-  chmod 777 ~/.ssh/keys
-  chmod 400 ~/.ssh/keys/conti-2.cer
-  ssh -i ~/.ssh/keys/conti-2.cer ubuntu@54.168.229.223
-
----
-#!/bin/bash
-
-sudo apt update
-sudo apt install -y nginx
----
-
-ブラウザで確認
-
-　ぱぶりっくIP を確認
-
-　ブラウザ
-  http://publicIP/
-
-エラーログかくにん場所
-/var/log/cloud-init-output.log
-
----
-←ここまで確認完了
----
-
-
-
-
-macにteffaformをインストール
-pwd
-/Users/yoshi/Development/development_public/tutorial_docker/docker-terraform
-
-*brew install tfenv
-*tfenv --version
-
-*インストール可能なterraformを確認
-tfenv list-remote
-
-*インストール
-tfenv install 1.4.2
-
-trdnv use 
-tfenv list
-
----
-git-secretsをインストール
-brew install git-secrets
-
-git secrets --register-aws --global
-
-cat ~/.gitconfig 
-[user]
-        name = conti0513
-        email = yoshimasa@sawadesign.jp
-[core]
-        editor = code --wait
-[init]
-        defaultBranch = tutorial
-[secrets]
-        providers = git secrets --aws-provider
-        patterns = (A3T[A-Z0-9]|AKIA|AGPA|AIDA|AROA|AIPA|ANPA|ANVA|ASIA)[A-Z0-9]{16}
-        patterns = (\"|')?(AWS|aws|Aws)?_?(SECRET|secret|Secret)?_?(ACCESS|access|Access)?_?(KEY|key|Key)(\"|')?\\s*(:|=>|=)\\s*(\"|')?[A-Za-z0-9/\\+=]{40}(\"|')?
-        patterns = (\"|')?(AWS|aws|Aws)?_?(ACCOUNT|account|Account)_?(ID|id|Id)?(\"|')?\\s*(:|=>|=)\\s*(\"|')?[0-9]{4}\\-?[0-9]{4}\\-?[0-9]{4}(\"|')?
-        allowed = AKIAIOSFODNN7EXAMPLE
-        allowed = wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY
-
----
-git secrets --install ~/.git-templates/secrets
-git config --global init.templatedir '~/.git-templates/secrets'
-
----
-
-
 
 
 
