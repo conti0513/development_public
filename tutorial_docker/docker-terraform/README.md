@@ -3,288 +3,127 @@
 
 後で記事にする
 
-# Terraform入門
+# 環境構築
+【Terraform第一回】
+https://harusite.net/wp-admin/post.php?post=7460&action=edit
 
-## 参考資料
-【AWS】Infrastructure as Code 談議 2022 ~ #AWSDevLiveShow
-https://youtube.com/live/ed35fEbpyIE?feature=shares
 
-## 入門理由
-・IaCを学習したい
+# EC2を手動　→ Terraformで起動　→ Nginxを起動　→ 動作確認　→ 環境削除まで
 
-### モチベーション
-・手順書からの解放
-・ソフトウェア開発の手法をインフラ開発、運用に適用
-・人手による職人的な構築・運用からコードによるオープンな構築・運用
-・空いたリソースをよりビジネスインパクトがある領域に投下したい
+###################################################
+## ec2だけを一旦起動する
+### 手動で起動してみる
+ここに手動手順を記載
+キーペアを記載
+Nginxの起動は自動で実施
+
+
+
+
+
+### 1. tfファイルの作成
+
+main.tf
 ---
-
-
-## 環境構築
-=========================
-
-### 参考記事
-クラスメソッド
-【初心者向け】MacにTerraform環境を導入してみた
-https://dev.classmethod.jp/articles/beginner-terraform-install-mac/
-
-
-
-
-
-### tfenv設定(ハンズオン)
-
-#### 1. tfenvインストール
----
-$ pwd
-/Users/yoshi/Development/development_public/tutorial_docker/docker-terraform
-
-
-# Homebrewでtfenvをインストール
-$ brew install tfenv
-
-# インストール後に、バージョン確認
-$ tfenv --version
-
-# result
-tfenv 3.0.0
----
-
-
-#### 2. 複数バージョンのTerraformをインストール
-
-# インストール可能なバージョンのリストを確認
-$ tfenv list-remote
-
-# 最新に近い２つのバージョンをインストールしていく
-$ tfenv install 1.4.2
-$ tfenv install 1.4.1
-
-
-# 利用可能なtfenvのバージョンを確認
-$ tfenv list
-* 1.4.2 (set by /opt/homebrew/Cellar/tfenv/3.0.0/version)
-  1.4.1
-
-# 使用するバージョンをセット
-# 今回は最新を使用
-$ tfenv use 1.4.2
-
-# result
-Switching default version to v1.4.2
-Default version (when not overridden by .terraform-version or TFENV_TERRAFORM_VERSION) is now: 1.4.2
----
-
-
-### git-secrets設定(ハンズオン)
-クリデンシャル情報の漏洩を防ぐため設定
-クリデンシャル情報（awsのaccess_ID, access_key）
-
-#### 1. Gitインストール
-# Gitが未インストールであれば、以下のコマンドを実行
-$ brew install git
-
-# インストール後に、バージョン確認
-$ git --version
-
-# result
-$ git version 2.40.0
-
----
-
-
-#### 2. git-secrets設定
-
----
-# git-secretsが未インストールであれば、以下のコマンドを実行
-$ brew install git-secrets
-
-# 全リポジトリにAWS認証情報のパターンを設定
-$ git secrets --register-aws --global
-
-
-
-P 設定ファイルの確認
-・[secrets]:設定ファイル
-・リポジトリ内の機密情報の検出と保護に使用される
-・コミットされたファイル内にこれらのパターンに一致する文字列が含まれている場合に、警告を出す
-・これにより、誤って機密情報がリポジトリに含まれることを防ぎ、セキュリティを強化することができる
-ーーー
-
----
-# 現在のユーザーのGit設定ファイルの内容を確認
-$ cat ~/.gitconfig
-
-# result
-[user]
-        name = conti0513
-        email = example@example.com
-[core]
-        editor = code --wait
-[init]
-        defaultBranch = tutorial
-        templatedir = ~/.git-templates/secrets
-[secrets]
-        providers = git secrets --aws-provider
-        patterns = (A3T[A-Z0-9]|AKIA|AGPA|AIDA|AROA|AIPA|ANPA|ANVA|ASIA)[A-Z0-9]{16}
-        patterns = (\"|')?(AWS|aws|Aws)?_?(SECRET|secret|Secret)?_?(ACCESS|access|Access)?_?(KEY|key|Key)(\"|')?\\s*(:|=>|=)\\s*(\"|')?[A-Za-z0-9/\\+=]{40}(\"|')?
-        patterns = (\"|')?(AWS|aws|Aws)?_?(ACCOUNT|account|Account)_?(ID|id|Id)?(\"|')?\\s*(:|=>|=)\\s*(\"|')?[0-9]{4}\\-?[0-9]{4}\\-?[0-9]{4}(\"|')?
-
-        # EXAMPLE
-        # allowed = AKIAIOSFODNN7EXAMPLE
-        # allowed = wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY
-
----
-
-# 新規リポジトリ作成時に、git-secretsがインストールされるよう設定
-
-$ git secrets --install ~/.git-templates/secrets
-$ git config --global init.templatedir '~/.git-templates/secrets'
----
-
-
-#### 3. 動作確認
-
-P 確認内容
-・AWS認証情報が記載されていた場合に、Gitのコミットを防ぐことができるのかを確認する
-・まずはテスト用のディレクトリを作成し、移動
-
----
-$ mkdir aws-secrets-test
-$ cd aws-secrets-test
-
-
-# Gitの新規リポジトリを作成
-$ git init
-
-#テスト用のAWS認証情報は~/.gitconfigのallowedのサンプルキーを参考にmain.tfを作成する
-
-echo "aws_access_key_id = \"AKIAIOSFODNN8EXAMPLE\"\naws_secret_access_key = \"wJalrXUtnFEMI/K8MDENG/bPxRfiCYEXAMPLEKEY\"" > main.tf
-
-# テスト用の「main.tf」を確認
-$ cat main.tf 
-
-# result
-aws_access_key_id = "AKIAIOSFODNN8EXAMPLE"
-aws_secret_access_key = "wJalrXUtnFEMI/K8MDENG/bPxRfiCYEXAMPLEKEY"
-
-
-# 動作確認
-$ git add main.tf 
-$ git commit -m "secrets test"
-
-# result
-# 問題なく警報が出ることを確認
-main.tf:1:aws_access_key_id = "AKIAIOSFODNN8EXAMPLE"
-[ERROR] Matched one or more prohibited patterns
-:
-:
----
-以上でgit-secretsの設定完了
-
----
-
-
-
-## awsでTerraformを使用する準備
-次に、awsでTerraformを使用する準備をする
-
-【参考】
-https://kacfg.com/terraform-vpc-ec2/#IAM
-
-
-### IAMユーザーのアクセスキーを作成
-
-ーーー
-マネジメントコンソールにログイン
--> IAM画面
--> [ユーザー]
--> [対象のIAMユーザー] をクリック
--> [認証情報] タブ
--> [アクセスキーの作成] をクリック。
-csvを任意の場所に保存
-取扱注意！
-ーーー
-
-
-### AWS CLI インストール
-
-【参考記事】
-https://qiita.com/NorihitoYamamoto/items/badd32785078bc944089
-
-1. AWS CLIのインストール
-・https://awscli.amazonaws.com/AWSCLIV2.pkg からインストーラーのダウンロード
-・インストーラー（pkgファイル）をダブルクリックして実行し、インストール手順に従ってインストールする
-・ターミナルを起動し、$ which awsでawsコマンドが実行できるかを確認する
-
-# AWS CLIインストール後の確認コマンド
-$ which aws
-
-# result
-/usr/local/bin/aws
-
----
-
-2. AWS CLIの構成を実施
-
-事前にAWSマネジメントコンソールで作成した、アクセスキーIDとシークレットアクセスキーを準備する
----
-$ aws configure
-
-aws configure
-AWS Access Key ID [None]: *****************
-AWS Secret Access Key [None]: ******************
-Default region name [None]: ap-northeast-1
-Default output format [None]: 
-
-# 以下のファイルが作成されていることを確認
- ls -la ~/.aws/
-total 16
-drwxr-xr-x   4 yoshi  staff   128 Mar 26 21:58 .
-drwxr-x---+ 40 yoshi  staff  1280 Mar 26 21:57 ..
--rw-------   1 yoshi  staff    34 Mar 26 21:58 config
--rw-------   1 yoshi  staff   116 Mar 26 21:58 credentials
-
-
-# aws configure listを実行
-# AWS CLI 認証情報が設定されたことを確認
-$ aws configure list
- aws configure list
-      Name                    Value             Type    Location
-      ----                    -----             ----    --------
-   profile                <not set>             None    None
-access_key     ****************B26B shared-credentials-file    
-secret_key     ****************UzBR shared-credentials-file    
-    region           ap-northeast-1      config-file    ~/.aws/config
-
----
-3. 動作確認
-・aws iam get-userを実行してみる
-・自分のIAMユーザー情報が出力されれば、AWS CLI 認証情報が正しく設定されている
-
----
-$ aws iam get-user 
-{
-    "User": {
-        "Path": "/",
-        "UserName": "test",
-        "UserId": "************************",
-        "Arn": "arn:aws:iam::nnnnnnnnnnnn:user/test",
-        "CreateDate": "2023-03-09T23:08:32+00:00",
-        "PasswordLastUsed": "2023-03-26T12:49:51+00:00",
-        "Tags": [
-            {
-                "Key": "*********************",
-                "Value": "accesskey_terraform"
-            }
-        ]
-    }
+provider "aws" {
+  region = "ap-northeast-1"
+}
+
+resource "aws_instance" "terraform_ec2" {
+  ami           = "ami-0b828c1c5ac3f13ee"
+  instance_type = "t2.micro"
+  key_name      = "conti-2"
+  vpc_security_group_ids = ["sg-0944e366cf3684556"]
+
+  
+  tags = {
+    Name = "20230328-terraform-test"
+  }
+
+  connection {
+    type        = "ssh"
+    user        = "ubuntu"
+    private_key = file("~/.ssh/keys/conti-2.cer")
+    host        = self.public_ip
+  }
+
+  provisioner "remote-exec" {
+    inline = [
+      "sudo apt-get update",
+      "sudo apt-get install -y nginx",
+      "sudo systemctl start nginx",
+      "sudo systemctl restart nginx"
+    ]
+  }
+}
+
+resource "aws_security_group" "instance" {
+  name_prefix = "2023-terraform-sg"
+  ingress {
+    from_port   = 22
+    to_port     = 22
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+}
+
+output "public_ip" {
+  value = aws_instance.terraform_ec2.public_ip
 }
 
 ---
-以上でTerraform環境導入完了
 
-###################################################
+表で書く
+
+P recourceについて
+ami 手動で使ったもの
+key_name 手動で使ったもの
+Name 手動で使ったもの
+
+P connection
+private_key  ~/.ssh/keys/conti-2.cer
+
+P AMI IDの確認方法
+手動で作成したAMI IDを確認し、記載すればOK
+改めてubuntuを起動する場合は以下の通り
+-> Amazonマネジメントコンソール > EC2 > インスタンス > インスタンスを起動
+-> アプリケーションおよび OS イメージ (Amazon マシンイメージ)
+-> ubuntuを選択しAMI IDを確認
+
+
+P provisioner
+Nginxを自動起動するコマンドを記載
+
+P resource "aws_security_group"
+
+
+### 2. Terraformの初期化
+
+Terraformを初期化し、AWSプロバイダーと必要なモジュールをダウンロードします。
+
+$ terraform init
+
+
+### 3. 計画の作成
+Terraformによる変更の計画を作成
+terraform planコマンドを使用して、main.tfファイルで指定されたリソースを確認する
+$ terraform plan
+
+### 4. インスタンスの作成
+terraform applyコマンドを使用してEC2インスタンスを作成
+
+$ terraform apply
+---
+
+### 5. インスタンスの削除
+
+$ terraform destroy
+
+
+
+
+
+
 
 
 
