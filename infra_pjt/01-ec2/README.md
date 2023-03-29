@@ -4,7 +4,7 @@
 https://harusite.net/20230328-terraform/
 
 
-## 手順
+## tfenvインストール手順（ハンズオン）
 　　1. tfenvインストール
 　　
 　　  # Terraformをインストールするディレクトリに移動
@@ -31,8 +31,8 @@ https://harusite.net/20230328-terraform/
 　　  # 使用するバージョンをセット
 　　  # 今回は最新を使用
 　　  $ tfenv use 1.4.2
-　　
-# git-secrets設定(ハンズオン)
+
+## git-secrets設定(ハンズオン)
 　　
 　　1. Gitインストール
 　　
@@ -78,15 +78,15 @@ https://harusite.net/20230328-terraform/
 　　  $ git commit -m "secrets test"
 　　
 　　 
-　　# AWS CLI インストール
-　　  1. AWS CLIのインストール
+## AWS CLI インストール
+  1. AWS CLIのインストール
 　　  ・https://awscli.amazonaws.com/AWSCLIV2.pkg
 　　
 　　  # AWS CLIインストール後の確認コマンド
 　　  $ which aws
 　　
 　　
-　　  2. AWS CLIの構成を実施
+  2. AWS CLIの構成を実施
 　　
 　　  # 以下のコマンで対話的に設定してく
 　　  $ aws configure
@@ -97,7 +97,9 @@ https://harusite.net/20230328-terraform/
 　　  # AWS CLI 認証情報が設定されたことを確認
 　　  $ aws configure list
 　　
-　　  3. 動作確認
+  3. 動作確認
 　　  # 確認
 　　　$ aws iam get-user
+---
+
 
