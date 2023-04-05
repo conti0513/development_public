@@ -32,22 +32,20 @@ https://harusite.net/20230305-docker-2/
 https://harusite.net/20230305-docker-2/
 
 
+
 ## 起動手順サマリー
+## 開発が進んだらどうするかも考慮する
+・永続化データでデータは保存される
+・新しいパッケージやライブラリを追加する場合は、新たにイメージを作成するのが望ましい。
 
-Dockerデスクトップを起動
+開発手順
+https://harusite.net/20230305-docker-2/#toc14
 
-コマンド
-% cd tutorial_docker/docker-php2
-% docker-compose up -d
 
-確認
-http://localhost:8888/
 
-ログイン情報例
-root
-secret
----
 
+＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝
+ここから下はMySQLの記事に掲載する
 ## サンプルデータのダウンロード　→ インポート方法
 MySQLのサンプルデータセットである「world」は、以下の手順でダウンロードできます。
 
@@ -59,59 +57,3 @@ MySQLの公式サイト（https://dev.mysql.com/doc/index-other.html）にアク
 ダウンロードしたworld.sqlファイルを使用して、MySQLサーバーにサンプルデータをインポートできます。以下のようなコマンドを使用できます。
 
 ---
-
-
-# 開発が進んだらどうするかも考慮する
-
-## ローカルの永続ストレージ
-上記に保管されていれば特に新しいコンテナを作らなくてもOK
-Dockerは永続化ストレージを利用することで、コンテナを停止してもデータが保持される
-そのため、特に新しいコンテナイメージを作る必要はない。
-ただし、新しいパッケージやライブラリを追加する場合など、コンテナイメージを更新する必要がある場合もある
-
-コマンド
-docker stop 0c946400dc5c 17769fe4650b 12290bc283e5 24677637f7e3
-
----
-# コンテナIDの確認
-$ docker ps
-
-# コンテナを停止
-$ docker stop CONTAINER ID 
-
----
-
-
-
-## 現在動いている Docker 環境から新しいコンテナを作成する手順
-
-Docker コンテナの現在の状態を確認
-$ docker ps
-
-現在のコンテナの情報をもとに、Docker イメージを作成
-コンテナの ID や名前を使用して、次のコマンドを実行
-$ docker commit [CONTAINER_ID] [NEW_IMAGE_NAME]
----
-
-
-新しいイメージを使用して新しいコンテナを作成します。
-$ docker run --name [NEW_CONTAINER_NAME] -p [HOST_PORT]:[CONTAINER_PORT] -d [NEW_IMAGE_NAME]
-
-  [NEW_CONTAINER_NAME] は、新しいコンテナの名前を指定
-  [HOST_PORT] は、Docker コンテナを公開するポートを指定
-  [CONTAINER_PORT] は、Docker コンテナで公開されているポートを指定
-
----
-
-
-
-# 構築が完了したら、ブログを更新する
-
-
-
-
-
-
-
-
-
