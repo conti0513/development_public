@@ -1,3 +1,15 @@
+# DIR構成
+development_private
+ ├──.gitignore
+ ├──.git
+ ├──tutorial_blog
+ ├──tutorial_php_michael  
+ ├──webkatsu_infra
+ ├──webkatsu_php
+ ├──README.md
+
+
+
 # 運用方法
 ・mainブランチとissueに応じたfeatureブランチで運用
 
