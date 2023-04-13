@@ -106,9 +106,24 @@ CONTAINER ID   IMAGE     COMMAND   CREATED   STATUS    PORTS     NAMES
 # 作成したディレクトリを削除
 $ cd ../
 $ rm -rf docker-LEMP
+--
+
+# GitHubのお掃除
+# リモートでPR　→　マージ後に実施
+git branch -d <feature-branch-name>
+
+
+
 
 ---
+## 構築手順（手動）
+build_LEMP-env.shを起動
 
+$ bash build_LEMP-env.sh
+
+
+
+==========
 
 #### エラー対応
 ---
