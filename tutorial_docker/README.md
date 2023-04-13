@@ -1,18 +1,18 @@
+# PATH
+~/Development/development_public/tutorial_docker/README.md
+
+# DIR構成
+tutorial_docker
+ ├── README.md
+ ├── docker-html-css
+ ├── docker-php-only
+ ├── docker-php2
+ ├── docker-terraform
+ ├── docker-php-tutorial-sample
+ ├── other DIRs
+
 # Git URL
 https://github.com/conti0513/development_public/tree/main/tutorial_docker
-
-# このディレクトリに環境構築したコンテナファイルを格納していきます。
-tutorial_docker
-├── docker-php      # DIR
-├── docker-php2     # DIR
-├── docker-php-only # DIR PHP & Apache
-├── README.md       # This file. About this DIR.
-
---- docker-terraform
-
-
-up to dated
-up to dated
 
 
 

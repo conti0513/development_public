@@ -26,8 +26,3 @@ RUN docker-php-ext-install pdo_mysql mysqli pdo_pgsql pdo_sqlite
 # PHP-FPMの設定ファイルをコピー
 COPY php.ini /usr/local/etc/php/
 
-# ドキュメントルート用のディレクトリを作成
-RUN mkdir /var/www/html/php_sample
-
-# コンテナ内のドキュメントルートにファイルをコピー
-COPY php_sample/ /var/www/html/php_sample/
