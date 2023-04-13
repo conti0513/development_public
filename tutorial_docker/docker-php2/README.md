@@ -4,8 +4,10 @@
 ## README.mdのパス:
 ~/Development/development_public/tutorial_docker/docker-php2/README.md
 
+
 ## Git URL       :
 https://github.com/conti0513/development_public/tree/main/tutorial_docker
+
 
 
 ## 構築する環境    :
@@ -68,14 +70,6 @@ issue 1-01_docker-php2
 https://harusite.net/20230305-docker-2/
 
 ### 起動手順の概要
-
-#### 起動
----
-# 1. プロジェクト用ディレクトリを作成し、移動する
-mkdir ~/work/docker-LEMP
-cd docker-LEMP
-
-# 2. 必要なファイルとディレクトリを作成する
 
 # 3. docker-compose.ymlを作成する
 touch docker-compose.yml
@@ -183,135 +177,6 @@ MySQLの公式サイト（https://dev.mysql.com/doc/index-other.html）にアク
 
 ---
 
-
-
-やりたいこと。
-
-この環境をいつでも作れるように、スクリプト化する
-
-　・ディレクトリと各種ファイル
-　・アップデートなど
-　・手順にまとめる
-　・ブログにアップする（自分も使い回しできる）
-
-========================================================
-
-
-
-# 構築するDIR構成
-docker-LEMP
-├── docker-compose.yml
-├── nginx
-│   └── nginx.conf
-├── php
-│   ├── Dockerfile
-│   ├── php.ini
-│   └── src
-├── mysql
-│   └── data
-└── www
-    └── html
-        └── index.php
-
-# docker-compose.yml
-version: '3'
-services:
-  nginx:
-    image: nginx:latest
-    ports:
-      - 8080:80
-    volumes:
-      - ./nginx/nginx.conf:/etc/nginx/conf.d/default.conf
-      - ./www/html:/var/www/html
-    depends_on:
-      - php
- 
-  php:
-    build: ./php
-    volumes:
-      - ./www/html:/var/www/html
-    depends_on:
-      - db
- 
-  db:
-    image: mysql:latest
-    ports:
-      - 13306:3306
-    volumes:
-      - ./mysql/data:/var/lib/mysql
-    environment:
-      MYSQL_ROOT_PASSWORD: secret
-    # for m1 mac
-    platform: linux/x86_64
- 
-  phpmyadmin:
-    image: phpmyadmin/phpmyadmin:latest
-    ports:
-      - 8888:80
-    depends_on:
-      - db
-
----
-
-# nginx.conf
-server {
-    listen 80;
-    server_name _;
- 
-    root  /var/www/html;
-    index index.php index.html;
- 
-    access_log /var/log/nginx/access.log;
-    error_log  /var/log/nginx/error.log;
- 
-    location / {
-        try_files $uri $uri/ /index.php$is_args$args;
-    }
- 
-    location ~ \.php$ {
-        fastcgi_pass php:9000;
-        fastcgi_index index.php;    
-        fastcgi_param SCRIPT_FILENAME  $document_root$fastcgi_script_name;
-        include       fastcgi_params;
-    }
-}
----
-
-# php.ini
-date.timezone = "Asia/Tokyo"
----
-
-# index.php
-<?php
-phpinfo();
----
-
-# Dockerfile
-FROM php:7.2-fpm
-COPY php.ini /usr/local/etc/php/
-VOLUME .docker-LEMP/php/src:/var/www/html
----
-
-# 開発ツールをインストール
-RUN apt-get update && \
-apt-get install -y \
-    git \
-    curl \
-    wget \
-    unzip \
-    zip \
-    tar \
-    gzip \
-    bzip2 \
-    nano \
-    vim \
-    tree \
-    telnet \
-    net-tools \
-    iputils-ping \
-    dnsutils \
-    default-mysql-client
----
 
 
 
