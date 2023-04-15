@@ -18,28 +18,31 @@ tutorial_docker
 https://github.com/conti0513/development_public/tree/main/tutorial_docker
 
 ## 手順ブログ記事
-8回　PHPの環境構築／docker-composeで複数コンテナを一括で起動
+8回　PHPの環境構築／docker-composeで複数コンテナを一括で起動(適宜修正)
 https://harusite.net/20230305-docker-2/
 
----
 
 
 # LEMP DIRを作成する
 
 ## LEMP DIRで環境でできること
 ### 前提
-・DockerをローカルPCにインストール済み
-・WORK-DIRを作成する（今回はtutorial_docker）
-・Docker上で以下のことができる
+・DockerをローカルPCにインストールしておく
+・WORK-DIRを作成しておく（今回はtutorial_docker）
 
 ### Docker上でできること
 ・PHP（LEMP環境）で簡単なWEBアプリを開発する
   ※LEMP環境　Linux Nginx MySQL PHP
 
 ・PHPでコンソール上で動くプログラムを開発する
-　（じゃんけんアプリなど）
+　ex) じゃんけんアプリやバッチファイルなど
 
-・myphpadminを使い、GUI上でMySQLの動作確認とSQLの実装ができる
+・myphpadminでMySQLを使った開発をする
+　ex) GUI上でRDBMSの開発が可能
+　※RDBMS
+　リレーショナル・データベース・マネジメント・システム
+　Relational Database Management System
+　関係データベースを管理するためのシステムのこと
 
 ---
 
@@ -75,14 +78,11 @@ docker-LEMP/php/src
 ---
 
 
-
 ### 構築手順
-
 ※開発が進んだ場合はどうなる？
 ・永続化データでデータは保存される
 ・新しいパッケージやライブラリを追加する場合は、新たにイメージを作成するのが望ましい
 
-=======
 
 #### Git HubでISSUEを立てる（任意）
 ・ISSUEを立てる
@@ -139,6 +139,11 @@ dpkg --list | grep nginx
 
 
 # 7.動作確認に問題なければ、開発を実施
+
+・開発中で作成したコード基本的に永続化される
+・念の為のバックアップは以下のシェルを実行すればバックアップされる
+　bkup_src.sh
+
 
 # 8.GitHub上でPRをマージ・関連ブランチを削除・Issueをクローズ
 
@@ -372,7 +377,45 @@ docker-compose.ymlに記載済み
 ---
 
 
+# 参考
+# 開発したデータをローカルの別なDIRにバックアップするシェル
+---
+#!/bin/zsh
 
+# コピー元とコピー先のパスをハードコードで指定する
+## コピー元
+src_dir=~/Development/development_public/tutorial_docker/docker-LEMP/php/src
+
+## コピー先
+dest_dir=~/Development/src/docker-LEMP/php/
+
+# コピー元のファイルが存在しない場合はエラーを表示して終了する
+if [ ! -d "$src_dir" ]; then
+  echo "コピー元のディレクトリが存在しません。"
+  exit 1
+fi
+
+# コピー先のファイルが存在する場合は、更新日時を比較して上書きするかどうかの確認をする
+if [ -d "$dest_dir" ]; then
+  src_mtime=$(stat -f "%Sm" -t "%Y-%m-%d %H:%M:%S" "$src_dir")
+  dest_mtime=$(stat -f "%Sm" -t "%Y-%m-%d %H:%M:%S" "$dest_dir")
+
+  if [ "$src_mtime" != "$dest_mtime" ]; then
+    read -p "コピー先のディレクトリはすでに存在します。上書きしますか？(Y/N): " confirm
+    if [ "$confirm" != "Y" -a "$confirm" != "y" ]; then
+      echo "コピーを中止しました。"
+      exit 1
+    fi
+  fi
+fi
+
+# ディレクトリを再帰的にコピーする
+cp -r "$src_dir" "$dest_dir"
+
+# コピーが成功した場合に、メッセージを表示する
+if [ $? -eq 0 ]; then
+  echo "コピーが完了しました。"
+fi
 
 
 
