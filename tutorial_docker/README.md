@@ -232,12 +232,14 @@ $ git branch
 
 ーーー
 # Docker Compose で作成したすべてのコンテナを停止し、削除
+# ※メンテナンスでホストOSを再起動する場合も、以下の手順でOK
+# ※開発を再開する場合は、
 
 １　docker-compose down
  - Docker Composeで作成されたコンテナ・ネットワーク・ボリュームを削除
 
 ２　docker stop $(docker ps -aq)
- - 現在実行されている全てのコンテナを停止します。
+ - 現在実行されている全てのコンテナを停止します（Docker Composeで管理されていないコンテナを停止・削除する場合に使用）。
 
 ３　docker rm -f $(docker ps -aq)
  - 停止した全てのコンテナを削除します。
@@ -455,4 +457,65 @@ if [ $? -eq 0 ]; then
 fi
 
 
+
+---
+その他のパッケージ
+日本語化
+
+#!/bin/bash
+
+# Install necessary packages
+apt-get update
+apt-get install -y locales
+
+# Generate locale
+locale-gen en_US.UTF-8
+
+# Set locale
+update-locale LANG=en_US.UTF-8 LANGUAGE="en_US:en"
+ーーー
+
+$ chmod +x locale.sh
+$ ./locale.sh
+
+ーーー
+
+SRCのコピー
+#!/bin/zsh
+
+# Hardcode the source and destination paths
+## Source directory
+src_dir=~/Development/development_public/tutorial_docker/docker-LEMP/php/src
+
+## Destination directory
+dest_dir=~/Development/src/docker-LEMP/php/
+
+# If the source directory does not exist, display an error message and exit
+if [ ! -d "$src_dir" ]; then
+  echo "Source directory does not exist."
+  exit 1
+fi
+
+# If the destination directory already exists, compare the modification time to determine whether to overwrite it
+if [ -d "$dest_dir" ]; then
+  src_mtime=$(stat -f "%Sm" -t "%Y-%m-%d %H:%M:%S" "$src_dir")
+  dest_mtime=$(stat -f "%Sm" -t "%Y-%m-%d %H:%M:%S" "$dest_dir")
+
+  if [ "$src_mtime" != "$dest_mtime" ]; then
+    read -p "Destination directory already exists. Overwrite? (Y/N): " confirm
+    if [ "$confirm" != "Y" -a "$confirm" != "y" ]; then
+      echo "Copy aborted."
+      exit 1
+    fi
+  fi
+fi
+
+# Recursively copy the directory
+cp -r "$src_dir" "$dest_dir"
+
+# Display a success message if the copy was successful
+if [ $? -eq 0 ]; then
+  echo "Copy completed."
+fi
+ーーー
 
