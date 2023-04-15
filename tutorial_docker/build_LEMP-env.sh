@@ -1,15 +1,13 @@
 #!/bin/zsh
 
 # create directories
-mkdir docker-LEMP
-cd docker-LEMP
-mkdir nginx php mysql www www/html
+mkdir -p docker-LEMP/{nginx,php/mysql,www/html,php/src}
 
 # create files
 touch docker-compose.yml
-touch nginx/nginx.conf
-touch php/Dockerfile php/php.ini
-touch www/html/index.php
+touch docker-LEMP/nginx/nginx.conf
+touch docker-LEMP/php/Dockerfile docker-LEMP/php/php.ini
+touch docker-LEMP/www/html/index.php
 
 # write docker-compose.yml
 cat <<EOT >> docker-compose.yml
@@ -20,15 +18,16 @@ services:
     ports:
       - 8080:80
     volumes:
-      - ./nginx/nginx.conf:/etc/nginx/conf.d/default.conf
-      - ./www/html:/var/www/html
+      - ./docker-LEMP/nginx/nginx.conf:/etc/nginx/conf.d/default.conf
+      - ./docker-LEMP/www/html:/var/www/html
     depends_on:
       - php
  
   php:
-    build: ./php
+    build: ./docker-LEMP/php
     volumes:
-      - ./www/html:/var/www/html
+      - ./docker-LEMP/www/html:/var/www/html
+      - ./docker-LEMP/php/src:/var/www/src
     depends_on:
       - db
  
@@ -37,7 +36,7 @@ services:
     ports:
       - 13306:3306
     volumes:
-      - ./mysql/data:/var/lib/mysql
+      - ./docker-LEMP/mysql/data:/var/lib/mysql
     environment:
       MYSQL_ROOT_PASSWORD: secret
     # for m1 mac
@@ -52,7 +51,7 @@ services:
 EOT
 
 # write nginx.conf
-cat <<EOT >> nginx/nginx.conf
+cat <<EOT >> docker-LEMP/nginx/nginx.conf
 server {
     listen 80;
     server_name _;
@@ -77,10 +76,11 @@ server {
 EOT
 
 # write Dockerfile
-cat <<EOT >> php/Dockerfile
+cat <<EOT >> docker-LEMP/php/Dockerfile
 FROM php:7.2-fpm
 COPY php.ini /usr/local/etc/php/
-VOLUME .docker-LEMP/php/src:/var/www/html
+VOLUME /var/www/html
+VOLUME /var/www/src
 
 # 開発ツールをインストール
 RUN apt-get update && \\
@@ -104,12 +104,12 @@ apt-get install -y \
 EOT
 
 # write php.ini
-cat <<EOT >> php/php.ini
+cat <<EOT >> docker-LEMP/php/php.ini
 date.timezone = "Asia/Tokyo"
 EOT
 
 # write index.php
-echo "<?php phpinfo(); ?>" > www/html/index.php
+echo "<?php phpinfo(); ?>" > docker-LEMP/www/html/index.php
 
 # build and run containers
 docker-compose up -d
