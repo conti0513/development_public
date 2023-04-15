@@ -6,12 +6,13 @@
 ## DIR構成
 tutorial_docker
  ├── README.md
- ├── docker-html-css
  ├── docker-php-only
  ├── docker-php2
  ├── docker-terraform
- ├── docker-php-tutorial-sample
- ├── docker-LEMP(今回作成するDIR)
+ ├── other DIRs
+ ├── build_LEMP-env.sh # 今回使用する環境構築用シェル
+ ├── docker-LEMP       # 今回作成するDIR
+
 
 ## Git URL
 https://github.com/conti0513/development_public/tree/main/tutorial_docker
@@ -21,6 +22,7 @@ https://github.com/conti0513/development_public/tree/main/tutorial_docker
 https://harusite.net/20230305-docker-2/
 
 ---
+
 
 # LEMP DIRを作成する
 
