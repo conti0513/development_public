@@ -55,19 +55,21 @@ https://harusite.net/20230305-docker-2/
 ・OS         ubuntu
 
 ### docker-LEMP で構築するDIR構成
-docker-LEMP
+docker-LEMP/
 ├── docker-compose.yml
-├── nginx
+├── mysql/
+│   └── data/
+├── nginx/
 │   └── nginx.conf
-├── php
+├── php/
 │   ├── Dockerfile
-│   ├── php.ini
-│   └── src
-├── mysql
-│   └── data
-└── www
-    └── html
+│   ├── mysql/
+│   └── src/
+└── www/
+    └── html/
         └── index.php
+
+
 
 ### ignoreするファイル
 ---
@@ -75,6 +77,7 @@ docker-LEMP/mysql/mysql
 docker-LEMP/mysql/data
 docker-LEMP/mysql/
 docker-LEMP/php/src
+docker-LEMP/php/mysql
 ---
 
 
@@ -97,27 +100,48 @@ git checkout <feature_任意のブランチ名>
 
 #### 起動
 
-・ワークディレクトリで以下のシェルを起動すれば、自動で環境構築可能
-build_LEMP-env.sh
-
 
 ・手動で対応する場合は以下を実施
 ---
 # 1. プロジェクト用ディレクトリを作成し、移動する
-mkdir ~/work/docker-LEMP
-cd docker-LEMP
+
+---
+# 手動
+$ mkdir ~/work/docker-LEMP
+$ cd docker-LEMP
+
+# 自動
+# ワークディレクトリで以下のシェルを起動すれば、自動で環境構築可能
+$ bash build_LEMP-env.sh 
+Creating network "docker-lemp_default" with the default driver
+Creating docker-lemp_db_1 ... done
+Creating docker-lemp_php_1        ... done
+Creating docker-lemp_phpmyadmin_1 ... done
+Creating docker-lemp_nginx_1      ... done
+
+$ ls -la
+drwxr-xr-x   7 yoshi  staff    224 Apr 15 18:10 docker-LEMP
+---
 
 # 2. 必要なファイルとディレクトリを作成する
-
+# 手動　手動で作成
+# 自動　「build_LEMP-env.sh」で作成される
+---
 
 # 3. docker-compose.ymlを作成する
-touch docker-compose.yml
+# 手動　手動で作成
+$ touch docker-compose.yml
+
+# 自動　「build_LEMP-env.sh」で作成される
+---
 
 # 4. Dockerイメージをビルドする
-docker-compose build
+$ cd docker-LEMP 
+$ docker-compose build
 
 # 5. コンテナを起動する
-docker-compose up -d
+$ docker-compose up -d
+---
 
 
 # 6. 動作確認
@@ -129,14 +153,27 @@ curl http://localhost:8888
 
 ID   root
 PASS secret
+---
 
 # インストール後の確認
+
+---
 ex)
-dpkg --list | grep nginx
+# APサーバーのコンテナIDを確認
+$ docker ps
 
+# APサーバーにログイン
+$ docker exec -it <コンテナIDまたは名前> bash
+# dpkg --list | grep nginx
 
+# reslt
+ii  nginx                     1.23.4-1~bullseye              arm64        high performance web server
+ii  nginx-module-geoip        1.23.4-1~bullseye              arm64        nginx GeoIP dynamic modules
+ii  nginx-module-image-filter 1.23.4-1~bullseye              arm64        nginx image filter dynamic module
+ii  nginx-module-njs          1.23.4+0.7.11-1~bullseye       arm64        nginx njs dynamic modules
+ii  nginx-module-xslt         1.23.4-1~bullseye              arm64        nginx xslt dynamic module
 
-
+---
 
 # 7.動作確認に問題なければ、開発を実施
 
