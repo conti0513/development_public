@@ -60,3 +60,47 @@ development_private
 
 
 
+
+テンプレート
+# My Awesome Project
+
+## Overview
+
+My Awesome Project is a project that does something amazing.
+
+## Features
+
+- Feature 1: Does something amazing
+- Feature 2: Does something even more amazing
+- Feature 3: You won't believe what it does
+
+## Installation
+
+To install My Awesome Project, follow these steps:
+
+1. Clone the repository: `git clone https://github.com/username/my-awesome-project.git`
+2. Install the dependencies: `npm install`
+3. Run the project: `npm start`
+
+## Usage
+
+To use My Awesome Project, follow these steps:
+
+1. Open the project in your favorite text editor
+2. Make some changes to the code
+3. Run the project: `npm start`
+
+## Contributing
+
+To contribute to My Awesome Project, follow these steps:
+
+1. Fork the repository
+2. Create a new branch: `git checkout -b my-feature-branch`
+3. Make some changes to the code
+4. Push the branch to your forked repository: `git push origin my-feature-branch`
+5. Create a pull request
+
+## License
+
+My Awesome Project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
+
