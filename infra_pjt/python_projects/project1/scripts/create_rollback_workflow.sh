@@ -1,5 +1,7 @@
 #!/bin/bash
 
+echo "Starting to create rollback workflow for Project1..."
+
 cat <<EOL > /workspaces/development_public/.github/workflows/docker-publish.yml
 name: Build and Push Docker Image
 
@@ -58,4 +60,6 @@ jobs:
           docker tag butainco/project1:previous butainco/project1:latest
           docker push butainco/project1:latest
 EOL
+
+echo "Rollback workflow for Project1 created successfully."
 

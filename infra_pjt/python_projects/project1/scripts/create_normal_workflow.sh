@@ -1,5 +1,7 @@
 #!/bin/bash
 
+echo "Starting to create normal workflow for Project1..."
+
 cat <<EOL > /workspaces/development_public/.github/workflows/docker-publish.yml
 name: Build and Push Docker Image
 
@@ -31,5 +33,8 @@ jobs:
           context: ./infra_pjt/common
           push: true
           tags: butainco/project1:latest
+
 EOL
+
+echo "Normal workflow for Project1 created successfully."
 
