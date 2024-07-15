@@ -1,1 +1,1 @@
-print("Hello, Python has something trouble. Please rollback!!")
+print("Hello, Python works well!!")
