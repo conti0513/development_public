@@ -26,4 +26,5 @@ jobs:
         with:
           context: ./infra_pjt/python_project
           push: true
-          tags: your-dockerhub-username/python-project:latest
+          tags: butainco/python-project:latest
+
