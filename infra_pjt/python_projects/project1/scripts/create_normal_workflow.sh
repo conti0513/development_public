@@ -53,8 +53,8 @@ jobs:
         uses: docker/build-push-action@v2
         with:
           context: ./infra_pjt/python_projects/project1
-          platforms: linux/amd64
           file: ./infra_pjt/common/Dockerfile
+          platforms: linux/amd64
           push: true
           tags: butainco/project1:latest
 EOL
