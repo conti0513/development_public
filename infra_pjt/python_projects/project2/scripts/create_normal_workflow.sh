@@ -2,28 +2,6 @@
 
 echo "Starting to create normal workflow for Project2..."
 
-# 必要なディレクトリとファイルが存在するか確認
-if [ ! -d "/workspaces/development_public/infra_pjt/common" ]; then
-  echo "Error: Directory /workspaces/development_public/infra_pjt/common does not exist."
-  exit 1
-fi
-
-if [ ! -f "/workspaces/development_public/infra_pjt/common/Dockerfile" ]; then
-  echo "Error: File /workspaces/development_public/infra_pjt/common/Dockerfile does not exist."
-  exit 1
-fi
-
-if [ ! -f "/workspaces/development_public/infra_pjt/python_projects/project2/app.py" ]; then
-  echo "Error: File /workspaces/development_public/infra_pjt/python_projects/project2/app.py does not exist."
-  exit 1
-fi
-
-if [ ! -f "/workspaces/development_public/infra_pjt/python_projects/project2/requirements.txt" ]; then
-  echo "Error: File /workspaces/development_public/infra_pjt/python_projects/project2/requirements.txt does not exist."
-  exit 1
-fi
-
-# ワークフローファイルを作成
 cat <<EOL > /workspaces/development_public/.github/workflows/docker-publish.yml
 name: Build and Push Docker Image
 
@@ -49,15 +27,27 @@ jobs:
           username: \${{ secrets.DOCKER_USERNAME }}
           password: \${{ secrets.DOCKER_PASSWORD }}
 
-      - name: Build and push
+      - name: Build and push Project1
+        if: contains(github.event.head_commit.message, 'project1')
+        uses: docker/build-push-action@v2
+        with:
+          context: ./infra_pjt/python_projects/project1
+          file: ./infra_pjt/common/Dockerfile
+          platforms: linux/amd64
+          push: true
+          tags: btainco/project1:latest
+
+      - name: Build and push Project2
+        if: contains(github.event.head_commit.message, 'project2')
         uses: docker/build-push-action@v2
         with:
           context: ./infra_pjt/python_projects/project2
           file: ./infra_pjt/common/Dockerfile
           platforms: linux/amd64
           push: true
-          tags: butainco/project2:latest
+          tags: btainco/project2:latest
 EOL
 
 echo "Normal workflow for Project2 created successfully."
+EOL
 

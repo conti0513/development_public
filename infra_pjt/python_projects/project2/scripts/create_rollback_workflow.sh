@@ -2,45 +2,14 @@
 
 echo "Starting to create rollback workflow for Project2..."
 
-# 必要なディレクトリとファイルが存在するか確認
-if [ ! -d "/workspaces/development_public/infra_pjt/common" ]; then
-  echo "Error: Directory /workspaces/development_public/infra_pjt/common does not exist."
-  exit 1
-fi
-
-if [ ! -f "/workspaces/development_public/infra_pjt/common/Dockerfile" ]; then
-  echo "Error: File /workspaces/development_public/infra_pjt/common/Dockerfile does not exist."
-  exit 1
-fi
-
-if [ ! -f "/workspaces/development_public/infra_pjt/python_projects/project2/app.py" ]; then
-  echo "Error: File /workspaces/development_public/infra_pjt/python_projects/project2/app.py does not exist."
-  exit 1
-fi
-
-if [ ! -f "/workspaces/development_public/infra_pjt/python_projects/project2/requirements.txt" ]; then
-  echo "Error: File /workspaces/development_public/infra_pjt/python_projects/project2/requirements.txt does not exist."
-  exit 1
-fi
-
-# ワークフローファイルを作成
 cat <<EOL > /workspaces/development_public/.github/workflows/docker-publish.yml
-name: Build and Push Docker Image
+name: Rollback Docker Image
 
 on:
-  push:
-    branches:
-      - main
   workflow_dispatch:
-    inputs:
-      rollback:
-        description: 'Trigger rollback'
-        required: true
-        default: 'false'
-        type: boolean
 
 jobs:
-  build-and-push-python:
+  rollback-python:
     runs-on: ubuntu-latest
 
     steps:
@@ -56,34 +25,20 @@ jobs:
           username: \${{ secrets.DOCKER_USERNAME }}
           password: \${{ secrets.DOCKER_PASSWORD }}
 
-      - name: Build and push
-        uses: docker/build-push-action@v2
-        with:
-          context: ./infra_pjt/python_projects/project2
-          file: ./infra_pjt/common/Dockerfile
-          platforms: linux/amd64
-          push: true
-          tags: butainco/project2:latest
-
-  rollback:
-    runs-on: ubuntu-latest
-    if: github.event.inputs.rollback == 'true'
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v2
-
-      - name: Login to Docker Hub
-        uses: docker/login-action@v1
-        with:
-          username: \${{ secrets.DOCKER_USERNAME }}
-          password: \${{ secrets.DOCKER_PASSWORD }}
-
-      - name: Rollback to previous version
+      - name: Rollback Project1
+        if: contains(github.event.head_commit.message, 'project1')
         run: |
-          docker pull butainco/project2:previous
-          docker tag butainco/project2:previous butainco/project2:latest
-          docker push butainco/project2:latest
+          docker pull btainco/project1:previous
+          docker tag btainco/project1:previous btainco/project1:latest
+          docker push btainco/project1:latest
+
+      - name: Rollback Project2
+        if: contains(github.event.head_commit.message, 'project2')
+        run: |
+          docker pull btainco/project2:previous
+          docker tag btainco/project2:previous btainco/project2:latest
+          docker push btainco/project2:latest
 EOL
 
 echo "Rollback workflow for Project2 created successfully."
-
+EOL
