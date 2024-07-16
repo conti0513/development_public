@@ -1,10 +1,17 @@
 #!/bin/bash
 
-read -p "Enter workflow type (normal/rollback): " workflow_type
-read -p "Enter project name: " project_name
+echo "Starting to create a workflow..."
 
+# 対話的にユーザーから入力を受け取る
+read -p "Enter workflow type (normal/rollback): " workflow_type
+read -p "Enter project name (e.g., project1): " project_name
+
+# YAMLファイルのパスを設定
+yaml_file="../.github/workflows/docker-publish-${project_name}.yml"
+
+# YAMLファイルの内容を生成
 if [ "$workflow_type" == "normal" ]; then
-  cat <<EOL > /workspaces/development_public/.github/workflows/docker-publish.yml
+    cat <<EOL > $yaml_file
 name: Build and Push Docker Image
 
 on:
@@ -32,22 +39,21 @@ jobs:
       - name: Build and push
         uses: docker/build-push-action@v2
         with:
-          context: ./infra_pjt/common
+          context: ./infra_pjt/python_projects/${project_name}
+          file: ./infra_pjt/common/Dockerfile
           push: true
-          tags: butainco/\${project_name}:latest
+          tags: your-dockerhub-username/${project_name}:latest
 
 EOL
 elif [ "$workflow_type" == "rollback" ]; then
-  cat <<EOL > /workspaces/development_public/.github/workflows/docker-publish.yml
-name: Build and Push Docker Image
+    cat <<EOL > $yaml_file
+name: Rollback Docker Image
 
 on:
-  push:
-    branches:
-      - main
+  workflow_dispatch:
 
 jobs:
-  build-and-push-python:
+  rollback-python:
     runs-on: ubuntu-latest
 
     steps:
@@ -63,15 +69,17 @@ jobs:
           username: \${{ secrets.DOCKER_USERNAME }}
           password: \${{ secrets.DOCKER_PASSWORD }}
 
-      - name: Build and push
-        uses: docker/build-push-action@v2
-        with:
-          context: ./infra_pjt/common
-          push: true
-          tags: butainco/\${project_name}:rollback
+      - name: Rollback
+        run: |
+          docker pull your-dockerhub-username/${project_name}:previous
+          docker tag your-dockerhub-username/${project_name}:previous your-dockerhub-username/${project_name}:latest
+          docker push your-dockerhub-username/${project_name}:latest
 
 EOL
 else
-  echo "Invalid workflow type. Please enter 'normal' or 'rollback'."
+    echo "Invalid workflow type: $workflow_type"
+    exit 1
 fi
+
+echo "Workflow file created successfully: $yaml_file"
 
