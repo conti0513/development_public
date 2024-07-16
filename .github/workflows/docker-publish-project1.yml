@@ -1,4 +1,4 @@
-name: Build and Push Docker Image for project1
+name: Build and Push Docker Image
 
 on:
   push:
@@ -6,7 +6,7 @@ on:
       - main
 
 jobs:
-  build-and-push-project1:
+  build-and-push-python:
     runs-on: ubuntu-latest
 
     steps:
@@ -29,3 +29,4 @@ jobs:
           file: ./infra_pjt/common/Dockerfile
           push: true
           tags: butainco/project1:latest
+
