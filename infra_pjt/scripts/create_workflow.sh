@@ -6,8 +6,11 @@ echo "Starting to create a workflow..."
 read -p "Enter workflow type (normal/rollback): " workflow_type
 read -p "Enter project name (e.g., project1): " project_name
 
+# 現在のディレクトリを取得
+current_dir=$(pwd)
+
 # YAMLファイルのパスを設定
-yaml_file="../.github/workflows/docker-publish-${project_name}.yml"
+yaml_file="$current_dir/../../.github/workflows/docker-publish-${project_name}.yml"
 
 # YAMLファイルの内容を生成
 if [ "$workflow_type" == "normal" ]; then
