@@ -42,7 +42,7 @@ jobs:
           context: ./infra_pjt/python_projects/${project_name}
           file: ./infra_pjt/common/Dockerfile
           push: true
-          tags: your-dockerhub-username/${project_name}:latest
+          tags: butainco/${project_name}:latest
 
 EOL
 elif [ "$workflow_type" == "rollback" ]; then
@@ -71,9 +71,9 @@ jobs:
 
       - name: Rollback
         run: |
-          docker pull your-dockerhub-username/${project_name}:previous
-          docker tag your-dockerhub-username/${project_name}:previous your-dockerhub-username/${project_name}:latest
-          docker push your-dockerhub-username/${project_name}:latest
+          docker pull butainco/${project_name}:previous
+          docker tag butainco/${project_name}:previous butainco/${project_name}:latest
+          docker push butainco/${project_name}:latest
 
 EOL
 else
