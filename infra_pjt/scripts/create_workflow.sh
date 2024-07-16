@@ -45,6 +45,7 @@ jobs:
           context: ./infra_pjt/python_projects/${project_name}
           file: ./infra_pjt/common/Dockerfile
           push: true
+          platforms: linux/amd64,linux/arm64
           tags: butainco/${project_name}:latest
 
 EOL
