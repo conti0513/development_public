@@ -1,1 +1,1 @@
-print("Hello, Python_Project1_ver01!")
+print("Hello, Python_Project1_ver00!")
