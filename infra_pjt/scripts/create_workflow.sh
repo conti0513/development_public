@@ -7,10 +7,11 @@ read -p "Enter workflow type (normal/rollback): " workflow_type
 read -p "Enter project name (e.g., project1): " project_name
 
 # YAMLファイルのパスを設定
-yaml_file="/workspaces/development_public/.github/workflows/docker-publish-${project_name}.yml"
+yaml_file="/workspaces/development_public/infra_pjt/python_projects/${project_name}/.github/workflows/docker-publish.yml"
 
 # YAMLファイルの内容を生成
 if [ "$workflow_type" == "normal" ]; then
+    mkdir -p "$(dirname "$yaml_file")"
     cat <<EOL > $yaml_file
 name: Build and Push Docker Image for ${project_name}
 
@@ -49,6 +50,7 @@ jobs:
 
 EOL
 elif [ "$workflow_type" == "rollback" ]; then
+    mkdir -p "$(dirname "$yaml_file")"
     cat <<EOL > $yaml_file
 name: Rollback Docker Image for ${project_name}
 
