@@ -12,12 +12,14 @@ yaml_file="/workspaces/development_public/.github/workflows/docker-publish-${pro
 # YAMLファイルの内容を生成
 if [ "$workflow_type" == "normal" ]; then
     cat <<EOL > $yaml_file
-name: Build and Push Docker Image
+name: Build and Push Docker Image for ${project_name}
 
 on:
   push:
     branches:
       - main
+    paths:
+      - 'infra_pjt/python_projects/${project_name}/**'
 
 jobs:
   build-and-push-python:
@@ -39,35 +41,16 @@ jobs:
       - name: Build and push
         uses: docker/build-push-action@v2
         with:
-          context: /workspaces/development_public/infra_pjt/python_projects/${project_name}
-          file: /workspaces/development_public/infra_pjt/common/Dockerfile
+          context: ./infra_pjt/python_projects/${project_name}
+          file: ./infra_pjt/common/Dockerfile
           push: true
           platforms: linux/amd64,linux/arm64
           tags: butainco/${project_name}:latest
 
-  rollback-python:
-    runs-on: ubuntu-latest
-    if: failure()  # この行がロールバックのトリガー条件を定義します
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v2
-
-      - name: Login to Docker Hub
-        uses: docker/login-action@v1
-        with:
-          username: \${{ secrets.DOCKER_USERNAME }}
-          password: \${{ secrets.DOCKER_PASSWORD }}
-
-      - name: Rollback
-        run: |
-          docker pull butainco/${project_name}:previous
-          docker tag butainco/${project_name}:previous butainco/${project_name}:latest
-          docker push butainco/${project_name}:latest
-
 EOL
 elif [ "$workflow_type" == "rollback" ]; then
     cat <<EOL > $yaml_file
-name: Rollback Docker Image
+name: Rollback Docker Image for ${project_name}
 
 on:
   workflow_dispatch:
