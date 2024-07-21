@@ -7,14 +7,10 @@ This repository contains various projects and tutorials related to different tec
 ## Structure
 
 The repository is organized into different directories for each topic. Here's a brief overview of the structure:
-
-- **infra_pjt**: Infrastructure projects, including EC2 and WordPress setups.
-- **operation**: Operation scripts.
-- **tutorial_PowerShell**: PowerShell scripts and tutorials.
-- **tutorial_docker**: Docker-related projects and scripts.
-- **tutorial_php**: PHP tutorials and scripts.
-- **tutorial_python**: Python projects.
-- **tutorial_sh**: Shell scripts and related projects.
+- infra_pjt: Infrastructure projects, including EC2 and WordPress setups.
+- tutorial_PowerShell: PowerShell scripts and tutorials.
+- tutorial_docker: Docker-related projects and scripts.
+- tutorial_php: PHP tutorials and scripts.
 
 ## Submodules
 
