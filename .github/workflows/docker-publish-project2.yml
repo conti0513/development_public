@@ -1,9 +1,11 @@
-name: Build and Push Docker Image
+name: Build and Push Docker Image for project2
 
 on:
   push:
     branches:
       - main
+    paths:
+      - 'infra_pjt/python_projects/project2/**'
 
 jobs:
   build-and-push-python:

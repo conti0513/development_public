@@ -1,14 +1,10 @@
-name: Build and Push Docker Image for project1
+name: Rollback Docker Image for project1
 
 on:
-  push:
-    branches:
-      - main
-    paths:
-      - 'infra_pjt/python_projects/project1/**'
+  workflow_dispatch:
 
 jobs:
-  build-and-push-python:
+  rollback-python:
     runs-on: ubuntu-latest
 
     steps:
@@ -24,12 +20,9 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
-      - name: Build and push
-        uses: docker/build-push-action@v2
-        with:
-          context: ./infra_pjt/python_projects/project1
-          file: ./infra_pjt/common/Dockerfile
-          push: true
-          platforms: linux/amd64,linux/arm64
-          tags: butainco/project1:latest
+      - name: Rollback
+        run: |
+          docker pull butainco/project1:previous
+          docker tag butainco/project1:previous butainco/project1:latest
+          docker push butainco/project1:latest
 
