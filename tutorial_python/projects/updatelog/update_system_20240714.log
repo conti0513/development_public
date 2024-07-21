@@ -1,8 +1,0 @@
-2024-07-14 09:58:35,462 - INFO - Running command: sudo apt-get update -y
-2024-07-14 09:58:39,771 - INFO - Command succeeded: sudo apt-get update -y
-2024-07-14 09:58:39,771 - INFO - Running command: sudo apt-get upgrade -y
-2024-07-14 09:58:59,496 - INFO - Command succeeded: sudo apt-get upgrade -y
-2024-07-14 09:58:59,496 - INFO - Running command: sudo apt-get autoremove -y
-2024-07-14 09:59:01,038 - INFO - Command succeeded: sudo apt-get autoremove -y
-2024-07-14 09:59:01,038 - INFO - Running command: sudo apt-get clean
-2024-07-14 09:59:01,055 - INFO - Command succeeded: sudo apt-get clean
