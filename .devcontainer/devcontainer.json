@@ -1,0 +1,11 @@
+{
+    "name": "AWS CLI Development Environment",
+    "build": {
+        "dockerfile": "/workspaces/development_public/.devcontainer/Dockerfile",
+        "args": {}
+    },
+    "settings": {},
+    "extensions": [],
+    "postCreateCommand": "sudo apt-get update && sudo apt-get install awscli -y",
+    "remoteUser": "root"
+}
