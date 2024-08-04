@@ -16,7 +16,7 @@
 - **CPU使用率**
 - **ハードディスク使用率**
 - **メモリ使用率**
-- **Apacheログの監視**
+- **Apacheログの監視**: エラーログの増加や特定のエラーメッセージの頻発を監視
 
 ## インパクト
 - 手動管理からの解放
@@ -38,9 +38,10 @@ Auto Scaling環境では、新しいインスタンスが起動したり停止�
    aws logs create-log-stream --log-group-name my-log-group --log-stream-name my-log-stream
    ```
 
-3. **データベースのバックアップ**: RDSなどのデータベースサービスを使用し、定期的なバックアップを実施します。
+3. **データベースのバックアップ**: MySQLデータベースを使用し、定期的なバックアップを実施します。
    ```sh
-   aws rds create-db-snapshot --db-snapshot-identifier mydbsnapshot --db-instance-identifier mydbinstance
+   mysqldump -u username -p database_name > backup.sql
+   aws s3 cp backup.sql s3://my-backup-bucket/backup.sql
    ```
 
 4. **Health Checksの設定**: Auto ScalingとELBのヘルスチェックを適切に設定し、障害発生時に速やかに問題のあるインスタンスを取り除くことで、ユーザーへの影響を最小限に抑えます。
@@ -126,5 +127,105 @@ Auto Scaling環境では、新しいインスタンスが起動したり停止�
 - `create_monitoring_dashboard.sh`: CloudWatchダッシュボードの作成
 - `update_scaling_policy.sh`: スケーリングポリシーの更新
 - `cleanup_resources.sh`: リソースのクリーンアップ
+
+## データ保全、ログ保全、モニタリングの集約
+- **データ保全**: MySQLデータベースのバックアップをS3に保存し、定期的なバックアップを実施
+- **ログ保全**: ログデータをS3に保存し、CloudWatch Logsにストリーム
+- **モニタリングの集約**: CloudWatch Agentを使用してメトリクスを収集し、CloudWatchで可視化
+
+## 警報転送
+CloudWatchアラームを設定し、SNSトピックを通じてSlackに警報通知を送信します。以下の手順で実装可能です：
+1. **SNSトピックの作成**:
+   ```sh
+   aws sns create-topic --name my-topic
+   ```
+2. **SlackとSNSの連携**: SlackのIncoming Webhookを使用して、SNSトピックからSlackチャネルに通知を送信します。
+
+```sh
+aws sns subscribe --topic-arn arn:aws:sns:us-east-1:123456789012:my-topic --protocol https --notification-endpoint https://hooks.slack.com/services/T00000000/B00000000/XXXXXXXXXXXXXXXXXXXXXXXX
+```
+
+---
+
+## 設計と実装の貢献について
+### 私が設計した箇所
+- モニタリング
+- 警報転送全般
+- ログの収集
+
+### チームで設計・実装した箇所
+- Auto Scaling
+- データ損失防止施策
+- CloudWatch Agentの設定
+
+
+
+### アーキテクチャ図
+
+```plaintext
+          +-------------------+
+          |     インターネット    |
+          +-------------------+
+                  |
+                  |
+            +------------+
+            |    ELB     |
+            +------------+
+            /            \
+           /              \
++---------------+    +---------------+
+|    EC2 (WEB)  |    |    EC2 (WEB)  |
+| CloudWatch Ag |    | CloudWatch Ag |
++---------------+    +---------------+
+          |                    |
+          |                    |
++---------------+    +---------------+
+|    EC2 (DB)   |    |    EC2 (DB)   |
++---------------+    +---------------+
+
+          モニタリング & ログ管理
+          +-----------------+
+          |   CloudWatch    |
+          +-----------------+
+                  |
+          +-----------------+
+          |   CloudWatch    |
+          |     Agent       |
+          +-----------------+
+```
+
+---
+
+### README
+
+---
+
+## テストケース
+以下は、プロジェクトの主要コンポーネントに対するテストケースの概要です。
+
+### 1. CloudWatchアラームテスト
+- **目的**: 正常にアラームが設定され、メトリクスに基づいて通知が送信されることを確認する。
+- **手順**: 
+  1. CloudWatchダッシュボードにアクセス。
+  2. 設定したアラームの条件をトリガーするための負荷をシミュレート。
+  3. SNSトピックを確認し、Slackに通知が送信されることを確認。
+
+### 2. CloudWatch Agentテスト
+- **目的**: CloudWatch Agentが正しくインストールされ、メトリクスを収集していることを確認する。
+- **手順**:
+  1. EC2インスタンスにログインし、CloudWatch Agentのステータスを確認。
+  2. CloudWatchダッシュボードで収集されたメトリクスを確認。
+
+### 3. Auto Scalingテスト
+- **目的**: Auto Scalingグループが設定されたポリシーに従ってスケールインおよびスケールアウトすることを確認する。
+- **手順**:
+  1. EC2インスタンスの負荷をシミュレートして増加させる。
+  2. Auto Scalingグループが新しいインスタンスを起動することを確認。
+  3. 負荷を減少させ、インスタンスが正常に終了することを確認。
+
+## 注意事項
+- **データ永続化**: セッションスティッキー、ログの集中管理、データベースのバックアップ設定。
+- **ログ収集**: CloudWatch Logs、S3へのストリーミング。
+- **モニタリング**: CloudWatchとCloudWatch Agentの設定。
 
 ---
