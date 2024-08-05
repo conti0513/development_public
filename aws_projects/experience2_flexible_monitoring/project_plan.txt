@@ -1,0 +1,284 @@
+### 環境構築手順: Flexible Monitoring Environment
+
+---
+
+### DAY 0: 学習と準備
+
+**目標:**
+- GitHub ActionsとGitHub Secretsのセキュリティ管理についての理解を深め、実際のプロジェクトでの適用方法を学ぶ。
+
+---
+
+**学習内容:**
+
+#### GitHub Actionsの概要
+- **GitHub Actions**は、リポジトリのイベントに基づいて自動化されたワークフローを実行するためのCI/CDツールです。これにより、コードのビルド、テスト、デプロイが可能です。
+- **ワークフロー**は、YAMLファイルで定義され、リポジトリの `.github/workflows` ディレクトリに保存されます。
+
+#### GitHub Secretsの管理
+- **GitHub Secrets**は、APIキーやパスワードなどの機密情報を安全にリポジトリに保存し、GitHub Actionsのワークフローで使用するための仕組みです。
+- Secretsは暗号化され、ワークフロー内でのみアクセス可能です。これにより、機密情報が誤って公開されるリスクを軽減します。
+
+#### セキュリティ対策
+- **機密情報をコードに含めない**: すべての機密情報はGitHub Secretsや環境変数に保存します。
+- **ワークフローの設定**: ワークフローのトリガーを信頼できるブランチやタグに制限します。
+- **アクセス制御の確認**: リポジトリのアクセス権を定期的に見直し、必要のないユーザーやチームのアクセスを削除します。
+- **リポジトリ設定の見直し**: Settings > Manage access でアクセス制御設定を確認し、適切なアクセス権限を設定します。
+- **ワークフローのレビュー**: 定期的にワークフローのコードを見直し、不必要なSecretsの使用がないか確認します。
+- **セキュリティスキャン**: GitHubのDependabotや他のセキュリティツールを使用して、リポジトリのセキュリティスキャンを実施します。
+
+---
+
+**実践内容:**
+
+#### GitHub Secretsの設定方法
+1. GitHubリポジトリにアクセス。
+2. Settings > Secrets and variables > Actionsに移動。
+3. `New repository secret` をクリック。
+4. `Name` フィールドにシークレット名を入力し、`Value` フィールドにシークレット値を入力。
+5. `Add secret` をクリック。
+
+#### GitHub Actionsワークフローの設定
+1. リポジトリのルートディレクトリに `.github/workflows` ディレクトリを作成。
+2. ワークフロー定義ファイル (例: `main.yml`) を作成し、以下の内容を記述：
+    ```yaml
+    name: CI
+
+    on:
+      push:
+        branches:
+          - main
+
+    jobs:
+      build:
+        runs-on: ubuntu-latest
+
+        steps:
+          - name: Checkout code
+            uses: actions/checkout@v2
+
+          - name: Use Node.js
+            uses: actions/setup-node@v2
+            with:
+              node-version: '14'
+
+          - name: Install dependencies
+            run: npm install
+
+          - name: Run tests
+            run: npm test
+    ```
+
+#### ワークフローでSecretsを使用する例
+```yaml
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Use Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '14'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run tests
+        run: npm test
+
+      - name: Deploy to AWS
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        run: |
+          aws s3 sync . s3://my-bucket
+```
+
+---
+
+**確認項目:**
+
+1. **GitHub Secretsの設定**
+   - Secretsが正しく設定され、ワークフローで使用できるか確認。
+
+2. **ワークフローの設定**
+   - ワークフローが正しくトリガーされ、適切に実行されるか確認。
+
+3. **アクセス制御の確認**
+   - リポジトリのアクセス権限が適切に設定されているか確認。
+
+---
+
+### Day 1: 環境の準備と基本設定
+
+**目標:**
+- 環境の準備と基本設定を行い、プロジェクトの基盤を構築します。
+
+**タスク:**
+
+1. **開発環境のセットアップ**
+   - Codespacesの作成と設定
+   - リポジトリのクローン
+     ```sh
+     git clone https://github.com/conti0513/development_public.git /workspaces/development_public
+     cd /workspaces/development_public/aws_projects/experience2_flexible_monitoring
+     ```
+
+2. **Terraformのインストールと初期設定**
+   - Terraformをインストールし、作業ディレクトリを初期化します。
+     ```sh
+     sudo apt-get update
+     sudo apt-get install -y terraform
+     cd /workspaces/development_public/aws_projects/experience2_flexible_monitoring/terraform
+     terraform init
+     ```
+
+3. **AWS CLIの設定**
+   - AWS CLIをインストールし、設定ファイルを作成します。
+     ```sh
+     sudo apt-get install -y awscli
+     aws configure
+     ```
+
+4. **VPCとサブネットの作成**
+   - Terraformスクリプトを使用してVPCとサブネットを作成します。
+     ```sh
+     terraform apply -target=module.vpc -auto-approve
+     ```
+
+**環境の削除**
+   ```sh
+   terraform destroy -target=module.vpc -auto-approve
+   ```
+
+---
+
+### Day 2: インフラの構築
+
+**目標:**
+- 基本的なインフラストラクチャ（EC2、セキュリティグループ、ELB）の設定を行います。
+
+**タスク:**
+
+1. **EC2インスタンスの作成**
+   - Terraformスクリプトを使用してEC2インスタンスを作成します。
+     ```sh
+     terraform apply -target=module.ec2 -auto-approve
+     ```
+
+2. **セキュリティグループの設定**
+   - 必要なポートを開放し、セキュリティグループを設定します。
+     ```sh
+     terraform apply -target=module.security_group -auto-approve
+     ```
+
+3. **Elastic Load Balancer (ELB) の設定**
+   - ELBを設定し、EC2インスタンスにトラフィックを分散させます。
+     ```sh
+     terraform apply -target=module.elb -auto-approve
+     ```
+
+4. **Auto Scalingの設定**
+   - Auto Scalingグループを作成し、スケーリングポリシーを設定します。
+     ```sh
+     terraform apply -target=module.autoscaling -auto-approve
+     ```
+
+**環境の削除**
+   ```sh
+   terraform destroy -target=module.ec2 -auto-approve
+   terraform destroy -target=module.security_group -auto-approve
+   terraform destroy -target=module.elb -auto-approve
+   terraform destroy -target=module.autoscaling -auto-approve
+   ```
+
+---
+
+### Day 3: アプリケーションのデプロイとモニタリングの設定
+
+**目標:**
+- アプリケーションをデプロイし、モニタリングとログ収集の設定を行います。
+
+**タスク:**
+
+1. **Dockerコンテナの作成とデプロイ**
+   - Dockerfileを使用してFlaskアプリケーションをコンテナ化し、EC2インスタンス上で実行します。
+     ```sh
+     cd /workspaces/development_public/aws_projects/experience2_flexible_monitoring/docker
+     docker build -t flask_app .
+     docker run -d -p 80:80 flask_app
+     ```
+
+2. **CloudWatch Agentのインストールと設定**
+   - CloudWatch Agentをインストールし、メトリクスを収集します。
+     ```sh
+     ./setup_cloudwatch_agent.sh
+     ```
+
+3. **CloudWatchアラームの設定**
+   - 各種メトリクスのアラームを設定し、SNSトピックを作成します。
+     ```sh
+     ./setup_cloudwatch.sh
+     ```
+
+4. **SNSとSlackの連携**
+   - SNSトピックを作成し、Slackに通知が送信されるよう設定します。
+     ```sh
+     aws sns create-topic --name my-topic
+     aws sns subscribe --topic-arn arn:aws:sns:us-east-1:123456789012:my-topic --protocol https --notification-endpoint https://hooks.slack.com/services/T00000000/B00000000/XXXXXXXXXXXXXXXXXXXXXXXX
+     ```
+
+**環境の削除**
+   ```sh
+   docker stop $(docker ps -q)
+   docker rm $(docker ps -aq)
+   docker rmi flask_app
+   terraform destroy -target=module.cloudwatch -auto-approve
+   ```
+
+---
+
+### Day 4: テストと検証、最終調整
+
+**目標:**
+- システムのテストを行い、最終調整を行います。
+
+**タスク:**
+
+1. **インフラのテスト**
+   - 各コンポーネント（EC2、ELB、Auto Scaling）が正しく機能することを確認します。
+     ```sh
+     ./test_infra.sh
+     ```
+
+2. **アプリケーションのテスト**
+   - アプリケーションが正しくデプロイされ、動作していることを確認します。
+     ```sh
+     curl http://<ELB_DNS_NAME>
+     ```
+
+3. **モニタリングとアラームのテスト**
+   - CloudWatchアラームが正しく設定され、SNSを通じてSlackに通知が送信されることを確認します。
+     ```sh
+     ./test_monitoring.sh
+     ```
+
+4. **最終調整とドキュメントの整備**
+   - READMEファイルとドキュメントを整備し、プロジェクトの最終調整を行います。
+     ```sh
+     vi README.md
+     git add .
+     git commit -m "Final adjustments and documentation"
+     git push origin main
+     ```
+
+**環境の削除**
+   ```sh
+   terraform destroy -auto-approve
+   ```
+
+---
