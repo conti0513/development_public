@@ -4,8 +4,6 @@ on:
   push:
     branches:
       - main
-      - dev
-      - staging
 
 jobs:
   deploy:
@@ -22,23 +20,7 @@ jobs:
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         aws-region: ${{ secrets.AWS_REGION }}
 
-    - name: Deploy based on branch
+    - name: Deploy to development environment
       run: |
-        if [ "${{ github.ref }}" == "refs/heads/main" ]; then
-          echo "Deploying to production environment"
-          ./scripts/deploy.sh production
-        elif [ "${{ github.ref }}" == "refs/heads/staging" ]; then
-          echo "Deploying to staging environment"
-          ./scripts/deploy.sh staging
-        else
-          echo "Deploying to development environment"
-          ./scripts/deploy.sh development
-
-    - name: Terminate EC2 instance after deployment
-      if: github.ref == 'refs/heads/main'
-      run: |
-        INSTANCE_ID=$(aws ec2 describe-instances --filters "Name=tag:Environment,Values=production" --query "Reservations[*].Instances[*].InstanceId" --output text)
-        aws ec2 terminate-instances --instance-ids $INSTANCE_ID
-        aws ec2 wait instance-terminated --instance-ids $INSTANCE_ID
-        echo "Instance $INSTANCE_ID terminated"
+        ./scripts/deploy.sh
 
