@@ -126,96 +126,69 @@ GitHub SecretsにAWSのクレデンシャル情報を保存し、GitHub Actions�
 - **確認方法**: `AWS_ACCESS_KEY_ID`、`AWS_SECRET_ACCESS_KEY`、`AWS_REGION` が設定されていること。
 
 **2. GitHub Actionsワークフローの作成**
-### devブランチの作り方
 
-GitHubで新しいブランチを作成し、それを利用して開発作業を進めるための手順を以下に示します。
+GitHub Actions YAMLファイルは通常 `.github/workflows` ディレクトリに配置します。以下の手順で作成しましょう：
 
-#### 手順:
+1. **ディレクトリの作成**：
+   `.github` ディレクトリとその中に `workflows` ディレクトリを作成します。
 
-1. **`main` ブランチから `dev` ブランチを作成**:
    ```sh
-   # リポジトリのルートディレクトリに移動
-   cd /workspaces/development_public
-
-   # 最新の `main` ブランチを取得
-   git checkout main
-   git pull origin main
-
-   # `dev` ブランチを作成して切り替え
-   git checkout -b dev
-
-   # リモートリポジトリに `dev` ブランチをプッシュ
-   git push -u origin dev
+   mkdir -p /workspaces/development_public/aws_projects/experience2_flexible_monitoring/.github/workflows
    ```
 
-2. **`dev` ブランチに切り替えた後の作業**:
-   - これ以降は `dev` ブランチ上で開発作業を進めます。変更を加えたら、通常のGitのワークフローに従ってコミットし、リモートリポジトリにプッシュします。
+2. **YAMLファイルの作成**：
+   `.github/workflows` ディレクトリ内に `deploy-ec2.yml` ファイルを作成し、指定のYAML内容を記載します。
 
-3. **ワークフローの修正**:
-   - `.github/workflows/deploy.yml` ファイルを修正して、`dev` ブランチに対するワークフローを設定します。
-
-#### `.github/workflows/deploy.yml` の修正例:
-
-```yaml
-name: Deploy EC2
-
-on:
-  push:
-    branches:
-      - main
-      - dev
-      - staging
-
-jobs:
-  deploy:
-    runs-on: ubuntu-latest
-
-    steps:
-    - name: Checkout repository
-      uses: actions/checkout@v2
-
-    - name: Set up AWS CLI
-      uses: aws-actions/configure-aws-credentials@v1
-      with:
-        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        aws-region: ${{ secrets.AWS_REGION }}
-
-    - name: Deploy based on branch
-      run: |
-        if [ "${{ github.ref }}" == "refs/heads/main" ]; then
-          echo "Deploying to production environment"
-          ./scripts/deploy.sh production
-        elif [ "${{ github.ref }}" == "refs/heads/staging" ]; then
-          echo "Deploying to staging environment"
-          ./scripts/deploy.sh staging
-        else
-          echo "Deploying to development environment"
-          ./scripts/deploy.sh development
-
-    - name: Terminate EC2 instance after deployment
-      if: github.ref == 'refs/heads/main'
-      run: |
-        INSTANCE_ID=$(aws ec2 describe-instances --filters "Name=tag:Environment,Values=production" --query "Reservations[*].Instances[*].InstanceId" --output text)
-        aws ec2 terminate-instances --instance-ids $INSTANCE_ID
-        aws ec2 wait instance-terminated --instance-ids $INSTANCE_ID
-        echo "Instance $INSTANCE_ID terminated"
-```
-
-#### 確認手順:
-
-1. **ブランチの作成を確認**:
    ```sh
-   git branch
-   # 出力結果に `dev` ブランチが表示されることを確認
+   cat << 'EOF' > /workspaces/development_public/aws_projects/experience2_flexible_monitoring/.github/workflows/deploy-ec2.yml
+   name: Deploy EC2
+
+   on:
+     push:
+       branches:
+         - main
+         - dev
+         - staging
+
+   jobs:
+     deploy:
+       runs-on: ubuntu-latest
+
+       steps:
+       - name: Checkout repository
+         uses: actions/checkout@v2
+
+       - name: Set up AWS CLI
+         uses: aws-actions/configure-aws-credentials@v1
+         with:
+           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+           aws-region: ${{ secrets.AWS_REGION }}
+
+       - name: Deploy based on branch
+         run: |
+           if [ "${{ github.ref }}" == "refs/heads/main" ]; then
+             echo "Deploying to production environment"
+             ./scripts/deploy.sh production
+           elif [ "${{ github.ref }}" == "refs/heads/staging" ]; then
+             echo "Deploying to staging environment"
+             ./scripts/deploy.sh staging
+           else
+             echo "Deploying to development environment"
+             ./scripts/deploy.sh development
+
+       - name: Terminate EC2 instance after deployment
+         if: github.ref == 'refs/heads/main'
+         run: |
+           INSTANCE_ID=$(aws ec2 describe-instances --filters "Name=tag:Environment,Values=production" --query "Reservations[*].Instances[*].InstanceId" --output text)
+           aws ec2 terminate-instances --instance-ids $INSTANCE_ID
+           aws ec2 wait instance-terminated --instance-ids $INSTANCE_ID
+           echo "Instance $INSTANCE_ID terminated"
+   EOF
    ```
 
-2. **リモートリポジトリに `dev` ブランチが存在することを確認**:
-   - GitHubのリポジトリページにアクセスし、`dev` ブランチがリストにあることを確認します。
+これで、指定のディレクトリにYAMLファイルを作成できます。このファイルがリポジトリに追加されると、GitHub Actionsは各ブランチのプッシュに応じて自動的にデプロイメントを実行します。
 
----
-
-このようにして `dev` ブランチを作成し、以降の開発作業を `dev` ブランチで行うことで、コードの安定性と開発効率を高めることができます。
 **3. テスト実行**
 - **目的**: ワークフローが正しく動作し、EC2インスタンスが起動、"Hello World"の出力、および削除が正しく行われるかを確認する。
 
