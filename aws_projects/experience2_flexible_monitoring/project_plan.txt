@@ -12,7 +12,8 @@
 **学習内容:**
 
 #### GitHub Actionsの概要
-- **GitHub Actions**は、リポジトリのイベントに基づいて自動化されたワークフローを実行するためのCI/CDツールです。これにより、コードのビルド、テスト、デプロイが可能です。
+- **GitHub Actions**は、リポジトリのイベントに基づいて自動化されたワークフローを実行するためのCI/CDツールです。
+これにより、コードのビルド、テスト、デプロイが可能です。
 - **ワークフロー**は、YAMLファイルで定義され、リポジトリの `.github/workflows` ディレクトリに保存されます。
 
 #### GitHub Secretsの管理
@@ -97,6 +98,167 @@ jobs:
         run: |
           aws s3 sync . s3://my-bucket
 ```
+
+
+
+
+
+
+### テストケース: GitHub Secretsを使用してAWS EC2インスタンスを起動し、Hello Worldを出力
+
+#### 概要
+GitHub SecretsにAWSのクレデンシャル情報を保存し、GitHub Actionsを使用してAWS EC2インスタンスを起動し、インスタンスに "Hello World" を出力させ、その後にインスタンスを削除する一連のテストケースを実装します。
+
+---
+
+#### 前提条件
+- GitHubリポジトリが作成されている。
+- AWSアカウントを持っている。
+- GitHub Secretsに以下の情報を設定済み:
+  - `AWS_ACCESS_KEY_ID`
+  - `AWS_SECRET_ACCESS_KEY`
+  - `AWS_REGION`
+
+#### テスト手順
+
+**1. GitHub Secretsの設定**
+- **目的**: GitHubリポジトリに機密情報を保存し、ワークフローで使用できるようにする。
+- **確認方法**: `AWS_ACCESS_KEY_ID`、`AWS_SECRET_ACCESS_KEY`、`AWS_REGION` が設定されていること。
+
+**2. GitHub Actionsワークフローの作成**
+### devブランチの作り方
+
+GitHubで新しいブランチを作成し、それを利用して開発作業を進めるための手順を以下に示します。
+
+#### 手順:
+
+1. **`main` ブランチから `dev` ブランチを作成**:
+   ```sh
+   # リポジトリのルートディレクトリに移動
+   cd /workspaces/development_public
+
+   # 最新の `main` ブランチを取得
+   git checkout main
+   git pull origin main
+
+   # `dev` ブランチを作成して切り替え
+   git checkout -b dev
+
+   # リモートリポジトリに `dev` ブランチをプッシュ
+   git push -u origin dev
+   ```
+
+2. **`dev` ブランチに切り替えた後の作業**:
+   - これ以降は `dev` ブランチ上で開発作業を進めます。変更を加えたら、通常のGitのワークフローに従ってコミットし、リモートリポジトリにプッシュします。
+
+3. **ワークフローの修正**:
+   - `.github/workflows/deploy.yml` ファイルを修正して、`dev` ブランチに対するワークフローを設定します。
+
+#### `.github/workflows/deploy.yml` の修正例:
+
+```yaml
+name: Deploy EC2
+
+on:
+  push:
+    branches:
+      - main
+      - dev
+      - staging
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Set up AWS CLI
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: ${{ secrets.AWS_REGION }}
+
+    - name: Deploy based on branch
+      run: |
+        if [ "${{ github.ref }}" == "refs/heads/main" ]; then
+          echo "Deploying to production environment"
+          ./scripts/deploy.sh production
+        elif [ "${{ github.ref }}" == "refs/heads/staging" ]; then
+          echo "Deploying to staging environment"
+          ./scripts/deploy.sh staging
+        else
+          echo "Deploying to development environment"
+          ./scripts/deploy.sh development
+
+    - name: Terminate EC2 instance after deployment
+      if: github.ref == 'refs/heads/main'
+      run: |
+        INSTANCE_ID=$(aws ec2 describe-instances --filters "Name=tag:Environment,Values=production" --query "Reservations[*].Instances[*].InstanceId" --output text)
+        aws ec2 terminate-instances --instance-ids $INSTANCE_ID
+        aws ec2 wait instance-terminated --instance-ids $INSTANCE_ID
+        echo "Instance $INSTANCE_ID terminated"
+```
+
+#### 確認手順:
+
+1. **ブランチの作成を確認**:
+   ```sh
+   git branch
+   # 出力結果に `dev` ブランチが表示されることを確認
+   ```
+
+2. **リモートリポジトリに `dev` ブランチが存在することを確認**:
+   - GitHubのリポジトリページにアクセスし、`dev` ブランチがリストにあることを確認します。
+
+---
+
+このようにして `dev` ブランチを作成し、以降の開発作業を `dev` ブランチで行うことで、コードの安定性と開発効率を高めることができます。
+**3. テスト実行**
+- **目的**: ワークフローが正しく動作し、EC2インスタンスが起動、"Hello World"の出力、および削除が正しく行われるかを確認する。
+
+**確認方法:**
+- **GitHub Actionsのログ**: ワークフローの各ステップが正常に完了したことをログで確認する。
+  - インスタンスIDの取得
+  - インスタンスの起動
+  - "Hello World"の出力
+  - インスタンスの削除
+
+---
+
+#### 確認項目
+
+1. **GitHub Secretsの設定確認**
+   - `AWS_ACCESS_KEY_ID`、`AWS_SECRET_ACCESS_KEY`、`AWS_REGION`が正しく設定されていること。
+   ```sh
+   echo ${{ secrets.AWS_ACCESS_KEY_ID }}
+   ```
+
+2. **ワークフローの実行確認**
+   - ワークフローが正しくトリガーされ、すべてのステップが成功すること。
+   ```sh
+   git push origin main
+   # Actionsタブでワークフローの実行を確認
+   ```
+
+3. **EC2インスタンスの確認**
+   - EC2インスタンスが起動し、"Hello World"を出力したことを確認。
+   ```sh
+   # EC2インスタンスが起動し、Hello Worldが出力されることを確認
+   ```
+
+4. **インスタンスの削除確認**
+   - EC2インスタンスが正常に削除されることを確認。
+   ```sh
+   # EC2インスタンスが削除されたことを確認
+   ```
+
+---
+
+
+
 
 ---
 
