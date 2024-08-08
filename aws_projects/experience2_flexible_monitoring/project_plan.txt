@@ -127,67 +127,117 @@ GitHub SecretsにAWSのクレデンシャル情報を保存し、GitHub Actions�
 
 **2. GitHub Actionsワークフローの作成**
 
-GitHub Actions YAMLファイルは通常 `.github/workflows` ディレクトリに配置します。以下の手順で作成しましょう：
+### Development Check Summary
 
-1. **ディレクトリの作成**：
-   `.github` ディレクトリとその中に `workflows` ディレクトリを作成します。
+Let's verify the setup and steps you have taken to ensure everything is correctly configured and ready for deployment.
 
-   ```sh
-   mkdir -p /workspaces/development_public/aws_projects/experience2_flexible_monitoring/.github/workflows
-   ```
+#### Directory Structure
+Your current directory structure:
+```plaintext
+/workspaces/development_public/aws_projects/experience2_flexible_monitoring
+├── README.md
+├── autoscaling
+├── check_aws_resources.sh
+├── cloudwatch
+├── ec2
+├── project_plan.txt
+├── scripts
+│   └── deploy.sh
+├── terraform
+└── .github
+    └── workflows
+        └── deploy-ec2.yml
+```
 
-2. **YAMLファイルの作成**：
-   `.github/workflows` ディレクトリ内に `deploy-ec2.yml` ファイルを作成し、指定のYAML内容を記載します。
+#### `scripts/deploy.sh`
+This script is used to deploy an EC2 instance and perform necessary actions:
+```bash
+#!/bin/bash
 
-   ```sh
-   cat << 'EOF' > /workspaces/development_public/aws_projects/experience2_flexible_monitoring/.github/workflows/deploy-ec2.yml
-   name: Deploy EC2
+# 開発環境向けデプロイメント手順
+echo "Deploying to development"
 
-   on:
-     push:
-       branches:
-         - main
-         - dev
-         - staging
+# EC2インスタンスを起動
+INSTANCE_ID=$(aws ec2 run-instances --image-id ami-0c55b159cbfafe1f0 --count 1 --instance-type t2.micro --key-name MyKeyPair --query 'Instances[0].InstanceId' --output text)
+echo "Instance ID: $INSTANCE_ID"
 
-   jobs:
-     deploy:
-       runs-on: ubuntu-latest
+# インスタンスが実行状態になるまで待機
+aws ec2 wait instance-running --instance-ids $INSTANCE_ID
+echo "Instance $INSTANCE_ID is running"
 
-       steps:
-       - name: Checkout repository
-         uses: actions/checkout@v2
+# インスタンスのパブリックIPアドレスを取得
+PUBLIC_IP=$(aws ec2 describe-instances --instance-ids $INSTANCE_ID --query 'Reservations[0].Instances[0].PublicIpAddress' --output text)
+echo "Public IP: $PUBLIC_IP"
 
-       - name: Set up AWS CLI
-         uses: aws-actions/configure-aws-credentials@v1
-         with:
-           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-           aws-region: ${{ secrets.AWS_REGION }}
+# SSHを使用して "Hello World" を出力
+ssh -o StrictHostKeyChecking=no -i /path/to/MyKeyPair.pem ec2-user@$PUBLIC_IP "echo 'Hello World'"
 
-       - name: Deploy based on branch
-         run: |
-           if [ "${{ github.ref }}" == "refs/heads/main" ]; then
-             echo "Deploying to production environment"
-             ./scripts/deploy.sh production
-           elif [ "${{ github.ref }}" == "refs/heads/staging" ]; then
-             echo "Deploying to staging environment"
-             ./scripts/deploy.sh staging
-           else
-             echo "Deploying to development environment"
-             ./scripts/deploy.sh development
+# デプロイメントが完了したらインスタンスを終了
+aws ec2 terminate-instances --instance-ids $INSTANCE_ID
+aws ec2 wait instance-terminated --instance-ids $INSTANCE_ID
+echo "Instance $INSTANCE_ID terminated"
+```
+This script performs the following actions:
+1. Launches an EC2 instance.
+2. Waits for the instance to be in a running state.
+3. Retrieves the public IP address of the instance.
+4. Connects to the instance via SSH and runs a command to echo "Hello World".
+5. Terminates the EC2 instance after deployment.
 
-       - name: Terminate EC2 instance after deployment
-         if: github.ref == 'refs/heads/main'
-         run: |
-           INSTANCE_ID=$(aws ec2 describe-instances --filters "Name=tag:Environment,Values=production" --query "Reservations[*].Instances[*].InstanceId" --output text)
-           aws ec2 terminate-instances --instance-ids $INSTANCE_ID
-           aws ec2 wait instance-terminated --instance-ids $INSTANCE_ID
-           echo "Instance $INSTANCE_ID terminated"
-   EOF
-   ```
+#### `.github/workflows/deploy-ec2.yml`
+This workflow is triggered by a push to the `main` branch:
+```yaml
+name: Deploy EC2
 
-これで、指定のディレクトリにYAMLファイルを作成できます。このファイルがリポジトリに追加されると、GitHub Actionsは各ブランチのプッシュに応じて自動的にデプロイメントを実行します。
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Set up AWS CLI
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: ${{ secrets.AWS_REGION }}
+
+    - name: Deploy to development environment
+      run: |
+        ./scripts/deploy.sh
+```
+This workflow:
+1. Checks out the repository.
+2. Sets up AWS CLI using GitHub Secrets for AWS credentials.
+3. Runs the `deploy.sh` script to deploy the EC2 instance.
+
+### Verification and Next Steps
+
+1. **GitHub Secrets Setup:**
+   - Ensure that `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, and `AWS_REGION` are correctly set in your GitHub repository settings.
+
+2. **SSH Key Pair:**
+   - Ensure the SSH key pair (`MyKeyPair.pem`) is available at the specified path (`/path/to/MyKeyPair.pem`).
+
+3. **Verify GitHub Actions Workflow:**
+   - Push changes to the `main` branch and verify that the GitHub Actions workflow runs successfully.
+
+4. **Check EC2 Instance:**
+   - Use AWS Management Console or AWS CLI to confirm the EC2 instance is running.
+   - Connect to the instance using the retrieved public IP to verify the "Hello World" output.
+
+5. **Monitor and Cleanup:**
+   - Monitor the instance during deployment.
+   - Ensure the instance is terminated after the deployment completes.
+
+By following these steps, you can verify that your setup is correct and that your GitHub Actions workflow deploys the EC2 instance as expected. If any issues arise, check the workflow logs on GitHub Actions for more detailed error messages and troubleshooting information.
 
 **3. テスト実行**
 - **目的**: ワークフローが正しく動作し、EC2インスタンスが起動、"Hello World"の出力、および削除が正しく行われるかを確認する。
