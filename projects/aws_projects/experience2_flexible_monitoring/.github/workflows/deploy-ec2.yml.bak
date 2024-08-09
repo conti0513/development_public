@@ -1,26 +1,25 @@
-name: Deploy EC2
+#!/bin/bash
 
-on:
-  push:
-    branches:
-      - main
+# Deployment procedure for development environment
+echo "Deploying to development"
 
-jobs:
-  deploy:
-    runs-on: ubuntu-latest
+# Launch EC2 instance
+INSTANCE_ID=$(aws ec2 run-instances --image-id ami-0c55b159cbfafe1f0 --count 1 --instance-type t2.micro --key-name MyKeyPair --query 'Instances[0].InstanceId' --output text)
+echo "Instance ID: $INSTANCE_ID"
 
-    steps:
-    - name: Checkout repository
-      uses: actions/checkout@v2
+# Wait until the instance is running
+aws ec2 wait instance-running --instance-ids $INSTANCE_ID
+echo "Instance $INSTANCE_ID is running"
 
-    - name: Set up AWS CLI
-      uses: aws-actions/configure-aws-credentials@v1
-      with:
-        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        aws-region: ${{ secrets.AWS_REGION }}
+# Get the public IP address of the instance
+PUBLIC_IP=$(aws ec2 describe-instances --instance-ids $INSTANCE_ID --query 'Reservations[0].Instances[0].PublicIpAddress' --output text)
+echo "Public IP: $PUBLIC_IP"
 
-    - name: Deploy to development environment
-      run: |
-        ./scripts/deploy.sh
+# Use SSH to output "Hello World"
+ssh -o StrictHostKeyChecking=no -i /path/to/MyKeyPair.pem ec2-user@$PUBLIC_IP "echo 'Hello World'"
+
+# Terminate the instance after deployment is complete
+aws ec2 terminate-instances --instance-ids $INSTANCE_ID
+aws ec2 wait instance-terminated --instance-ids $INSTANCE_ID
+echo "Instance $INSTANCE_ID terminated"
 

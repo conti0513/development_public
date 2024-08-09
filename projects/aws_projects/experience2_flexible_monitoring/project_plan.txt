@@ -132,22 +132,24 @@ GitHub SecretsにAWSのクレデンシャル情報を保存し、GitHub Actions�
 Let's verify the setup and steps you have taken to ensure everything is correctly configured and ready for deployment.
 
 #### Directory Structure
-Your current directory structure:
-```plaintext
-/workspaces/development_public/aws_projects/experience2_flexible_monitoring
-├── README.md
-├── autoscaling
-├── check_aws_resources.sh
-├── cloudwatch
-├── ec2
-├── project_plan.txt
-├── scripts
-│   └── deploy.sh
-├── terraform
-└── .github
-    └── workflows
-        └── deploy-ec2.yml
-```
+├── projects
+│   ├── aws_projects
+│   │   ├── check_aws_resources.sh
+│   │   ├── experience1_new_technologies
+│   │   │   ├── README.md
+│   │   │   ├── docker
+│   │   │   └── terraform
+│   │   ├── experience2_flexible_monitoring
+│   │   │   ├── README.md
+│   │   │   ├── autoscaling
+│   │   │   ├── check_aws_resources.sh
+│   │   │   ├── cloudwatch
+│   │   │   ├── ec2
+│   │   │   ├── project_plan.txt
+│   │   │   ├── scripts
+│   │   │   │   └── deploy.sh
+│   │   │   └── terraform
+
 
 #### `scripts/deploy.sh`
 This script is used to deploy an EC2 instance and perform necessary actions:
