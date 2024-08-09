@@ -1,27 +1,64 @@
-# Development Public Repository
+# Operational Procedure Plan
 
-## Overview
-This repository contains various projects and tutorials related to different technologies, including Python, Docker, PowerShell, PHP, and infrastructure projects.
+## 1. Project Structure
+Each project contains its own CI/CD workflow, Terraform configuration, Docker files, etc., within its respective directory. Workflows are independent for each project, and dependencies between projects are appropriately managed.
 
-## Structure
-The repository is organized into different directories for each topic. Here's a brief overview of the structure:
-- infra_pjt: Infrastructure projects, including EC2 and WordPress setups.
-- tutorial_PowerShell: PowerShell scripts and tutorials.
-- tutorial_docker: Docker-related projects and scripts.
-- tutorial_php: PHP tutorials and scripts.
+```
+/projects/
+    /project1/
+        ├── .github/
+        │   └── workflows/
+        │       └── ci-cd.yml
+        ├── terraform/
+        └── Dockerfile
+    /project2/
+        ├── .github/
+        │   └── workflows/
+        │       └── ci-cd.yml
+        ├── terraform/
+        └── Dockerfile
+```
 
-## Submodules
-This repository includes the TIL (Today I Learned) repository as a submodule. The TIL submodule contains daily learning entries and documentation. You can find the TIL repository at the following URL:
+## 2. CI/CD Workflow Setup
 
-https://github.com/conti0513/TIL
+### 2.1 Workflow for Each Project
+Each project has its own GitHub Actions workflow. This ensures that when changes are made to a specific project, only the workflow for that project is triggered.
 
-### Adding the TIL Submodule
-To add the `TIL` repository as a submodule, the following commands were used:
+### 2.2 Reusing Common Workflows
+If there are processes shared across multiple projects, define them as a common workflow separately and call them from each project's workflow. This avoids duplication of settings.
 
-```bash
-git submodule add https://github.com/conti0513/TIL.git tutorial_sh/TIL
-git submodule init
-git submodule update
+```yaml
+# Example of calling a common workflow
+jobs:
+  use-common-workflow:
+    uses: ./.github/workflows/common_workflow.yml
+```
 
-```bash
-git submodule status
+## 3. Dependency Management
+
+### 3.1 Documenting Dependencies
+If there are dependencies between projects, clearly document these dependencies in the `README.md`. This helps ensure the correct order of builds and tests.
+
+### 3.2 Managing Order
+If there are dependent projects, manage their build order within the workflow and ensure the correct sequence for building or deploying.
+
+```yaml
+jobs:
+  build-dependent-project:
+    needs: build-project-a
+```
+
+## 4. Execution Steps
+
+1. **Update the Code**: Make changes to the code within the project directory.
+2. **Commit and Push**: Commit the changes locally and push them to the remote repository.
+3. **Trigger the Workflow**: The GitHub Actions workflow corresponding to the pushed project will automatically trigger.
+4. **Check the Build and Deployment**: Confirm the results of the workflow to ensure that the build and deployment were successful.
+
+## 5. Maintenance
+
+- **Updating Common Workflows**: When updating common workflows used by multiple projects, carefully check the impact on each project's workflow.
+- **Managing Dependency Changes**: If there are changes in dependencies, update the `README.md` and reflect the changes in the workflow.
+
+---
+
