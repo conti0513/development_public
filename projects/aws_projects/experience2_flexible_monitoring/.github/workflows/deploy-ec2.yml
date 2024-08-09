@@ -22,14 +22,10 @@ jobs:
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         aws-region: ${{ secrets.AWS_REGION }}
 
-    - name: Decode SSH key and set up environment variable
-      run: echo "${{ secrets.MY_PEM_KEY }}" | base64 --decode > /tmp/sawadesign_test01.pem
-
-    - name: Set permissions for SSH key
-      run: chmod 400 /tmp/sawadesign_test01.pem
+    - name: Decode and save SSH key
+      run: cat projects/aws_projects/experience2_flexible_monitoring/sawadesign_test01.pem.b64 | base64 --decode > /workspaces/development_public/projects/aws_projects/sawadesign_test01.pem
+      shell: bash
 
     - name: Deploy to development environment
       run: |
         ./scripts/deploy.sh
-      env:
-        SSH_KEY_PATH: /tmp/sawadesign_test01.pem
