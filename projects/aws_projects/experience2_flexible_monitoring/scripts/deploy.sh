@@ -16,7 +16,7 @@ PUBLIC_IP=$(aws ec2 describe-instances --instance-ids $INSTANCE_ID --query 'Rese
 echo "Public IP: $PUBLIC_IP"
 
 # Use SSH to output "Hello World"
-ssh -o StrictHostKeyChecking=no -i /workspaces/development_public/projects/aws_projects/sawadesign_test01.pem ec2-user@$PUBLIC_IP "echo 'Hello World'"
+ssh -o StrictHostKeyChecking=no -i "$SSH_KEY_PATH" ec2-user@$PUBLIC_IP "echo 'Hello World'"
 
 # Terminate the instance after deployment is complete
 aws ec2 terminate-instances --instance-ids $INSTANCE_ID
