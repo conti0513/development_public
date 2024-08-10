@@ -4,8 +4,8 @@ on:
   push:
     branches:
       - main
-    # paths:
-    #  - 'projects/aws_projects/experience2_flexible_monitoring/**'
+     paths:
+      - 'projects/aws_projects/experience2_flexible_monitoring/**'
 
 jobs:
   test:
