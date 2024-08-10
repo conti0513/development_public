@@ -1,12 +1,12 @@
 name: Test Workflow
 
 on:
-  workflow_dispatch: # 手動トリガーを有効にする
   push:
     branches:
       - main
     paths:
-      - '**'
+      - 'projects/aws_projects/experience2_flexible_monitoring/**'
+  workflow_dispatch: # 手動トリガー
 
 jobs:
   test:
@@ -15,7 +15,6 @@ jobs:
     steps:
     - name: Checkout repository
       uses: actions/checkout@v2
-      
 
     - name: Run a simple test
       run: echo "Hello, World! This is a test workflow."
