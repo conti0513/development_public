@@ -50,7 +50,7 @@ deploy.sh:
 /workspaces/development_public/projects/aws_projects/experience2_flexible_monitoring/scripts/deploy.sh
 
 deploy-ec2.yml:
-/workspaces/development_public/.github/workflows/deploy-ec2.yml
+/workspaces/development_public/.github/workflows/experience2_deploy_ec2.yml
 
 
 
