@@ -32,6 +32,30 @@
 
 **実践内容:**
 
+
+@conti0513 ➜ .../development_public/projects/aws_projects/experience2_flexible_monitoring (main) $ tree -a
+.
+├── .github
+│   └── workflows
+│       └── deploy-ec2.yml
+├── README.md
+├── autoscaling
+├── check_aws_resources.sh
+├── cloudwatch
+├── ec2
+├── project_plan.txt
+├── scripts
+│   └── deploy.sh
+└── terraform
+
+deploy.sh:
+Full Path: /workspaces/development_public/projects/aws_projects/experience2_flexible_monitoring/scripts/deploy.sh
+
+deploy-ec2.yml:
+
+Full Path: /workspaces/development_public/projects/aws_projects/experience2_flexible_monitoring/.github/workflows/deploy-ec2.yml
+
+
 #### GitHub Secretsの設定方法
 1. GitHubリポジトリにアクセス。
 2. Settings > Secrets and variables > Actionsに移動。
@@ -71,33 +95,78 @@
     ```
 
 #### ワークフローでSecretsを使用する例
-```yaml
+name: Deploy EC2
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'projects/aws_projects/experience2_flexible_monitoring/**'
+
 jobs:
-  build:
+  deploy:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
+    - name: Checkout repository
+      uses: actions/checkout@v2
 
-      - name: Use Node.js
-        uses: actions/setup-node@v2
-        with:
-          node-version: '14'
+    - name: Set up AWS CLI
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: ${{ secrets.AWS_REGION }}
 
-      - name: Install dependencies
-        run: npm install
+    - name: Decode and save SSH key
+      run: cat projects/aws_projects/experience2_flexible_monitoring/sawadesign_test01.pem.b64 | base64 --decode > /workspaces/development_public/projects/aws_projects/sawadesign_test01.pem
+      shell: bash
 
-      - name: Run tests
-        run: npm test
+    - name: Deploy to development environment
+      run: |
+        ./scripts/deploy.sh
 
-      - name: Deploy to AWS
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        run: |
-          aws s3 sync . s3://my-bucket
-```
+
+#!/bin/bash
+
+# Deployment procedure for development environment
+echo "Deploying to development"
+
+# Launch EC2 instance
+INSTANCE_ID=$(aws ec2 run-instances --image-id ami-0c55b159cbfafe1f0 --count 1 --instance-type t2.micro --key-name MyKeyPair --query 'Instances[0].InstanceId' --output text)
+echo "Instance ID: $INSTANCE_ID"
+
+# Wait until the instance is running
+aws ec2 wait instance-running --instance-ids $INSTANCE_ID
+echo "Instance $INSTANCE_ID is running"
+
+# Get the public IP address of the instance
+PUBLIC_IP=$(aws ec2 describe-instances --instance-ids $INSTANCE_ID --query 'Reservations[0].Instances[0].PublicIpAddress' --output text)
+echo "Public IP: $PUBLIC_IP"
+
+# Use SSH to output "Hello World"
+ssh -o StrictHostKeyChecking=no -i "$SSH_KEY_PATH" ec2-user@$PUBLIC_IP "echo 'Hello World'"
+
+# Terminate the instance after deployment is complete
+aws ec2 terminate-instances --instance-ids $INSTANCE_ID
+aws ec2 wait instance-terminated --instance-ids $INSTANCE_ID
+echo "Instance $INSTANCE_ID terminated"
+
+@conti0513 ➜ .../development_public/projects/aws_projects/experience2_flexible_monitoring (main) $ tree -a
+.
+├── .github
+│   └── workflows
+│       └── deploy-ec2.yml
+├── README.md
+├── autoscaling
+├── check_aws_resources.sh
+├── cloudwatch
+├── ec2
+├── project_plan.txt
+├── scripts
+│   └── deploy.sh
+└── terraform
 
 
 
@@ -300,7 +369,114 @@ By following these steps, you can verify that your setup is correct and that you
 
 ---
 
+
+
+
+
+
 ### Day 1: 環境の準備と基本設定
+
+
+### Step-by-Step Checklist with Commands
+
+Here's a step-by-step checklist along with commands to ensure that your workflow and script are correctly set up and functioning as expected.
+
+#### 1. **Verify the GitHub Secrets**
+   - Ensure that the required secrets are set in your GitHub repository.
+
+   **Checklist:**
+   - [ ] `AWS_ACCESS_KEY_ID` is set.
+   - [ ] `AWS_SECRET_ACCESS_KEY` is set.
+   - [ ] `AWS_REGION` is set.
+   - [ ] `MY_PEM_KEY` (Base64 encoded PEM key) is set.
+
+   **Check Command:**
+   ```bash
+   # Check GitHub Secrets via GitHub UI or CLI
+   gh secret list
+   ```
+
+#### 2. **Verify the File Structure**
+   - Ensure that your project files are in the correct directories and are named correctly.
+
+   **Checklist:**
+   - [ ] The YAML workflow file is located at `projects/aws_projects/experience2_flexible_monitoring/.github/workflows/deploy-ec2.yml`.
+   - [ ] The `sawadesign_test01.pem.b64` file is located at `projects/aws_projects/experience2_flexible_monitoring/sawadesign_test01.pem.b64`.
+   - [ ] The `deploy.sh` script is located at `projects/aws_projects/experience2_flexible_monitoring/scripts/deploy.sh`.
+
+   **Check Command:**
+   ```bash
+   ls -R projects/aws_projects/experience2_flexible_monitoring/
+   ```
+
+#### 3. **Verify Base64 Decoding**
+   - Ensure that the Base64-encoded PEM key decodes correctly.
+
+   **Checklist:**
+   - [ ] The `sawadesign_test01.pem.b64` file can be decoded into a valid `.pem` file.
+
+   **Check Command:**
+   ```bash
+   cat projects/aws_projects/experience2_flexible_monitoring/sawadesign_test01.pem.b64 | base64 --decode > /tmp/test.pem
+   openssl rsa -in /tmp/test.pem -check
+   ```
+
+   **Expected Output:**
+   - The `openssl` command should return "RSA key ok".
+
+#### 4. **Test the Shell Script**
+   - Manually run the `deploy.sh` script to ensure it works as expected.
+
+   **Checklist:**
+   - [ ] The EC2 instance launches successfully.
+   - [ ] SSH connection is successful, and "Hello World" is printed.
+   - [ ] The EC2 instance is terminated after deployment.
+
+   **Test Command:**
+   ```bash
+   ./projects/aws_projects/experience2_flexible_monitoring/scripts/deploy.sh
+   ```
+
+#### 5. **Check GitHub Actions Workflow**
+   - Ensure that the workflow runs automatically on push to the `main` branch and with changes in the correct path.
+
+   **Checklist:**
+   - [ ] Push a commit to the `main` branch with changes in the `projects/aws_projects/experience2_flexible_monitoring/` directory.
+   - [ ] Verify that the workflow triggers and runs successfully.
+
+   **Check Command:**
+   ```bash
+   # After making changes
+   git add .
+   git commit -m "Test workflow"
+   git push origin main
+   ```
+
+   **Verify Workflow:**
+   - Go to the "Actions" tab in your GitHub repository to see if the workflow ran successfully.
+
+#### 6. **Verify SSH Connection**
+   - Ensure that the SSH connection can be established with the EC2 instance using the decoded `.pem` file.
+
+   **Checklist:**
+   - [ ] The `ssh` command in the `deploy.sh` script should successfully connect and execute the `echo "Hello World"` command.
+
+   **Check Command:**
+   ```bash
+   ssh -i /tmp/test.pem ec2-user@$PUBLIC_IP "echo 'Hello World'"
+   ```
+
+### Summary:
+- Follow each step and run the associated commands to verify the setup.
+- Ensure the workflow, secrets, file paths, and script logic are all correctly configured.
+- If any step fails, review the associated files and settings, and retry the test or command.
+
+
+
+
+
+
+
 
 **目標:**
 - 環境の準備と基本設定を行い、プロジェクトの基盤を構築します。

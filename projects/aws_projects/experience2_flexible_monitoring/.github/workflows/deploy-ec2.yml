@@ -23,7 +23,7 @@ jobs:
         aws-region: ${{ secrets.AWS_REGION }}
 
     - name: Decode and save SSH key
-      run: cat projects/aws_projects/experience2_flexible_monitoring/sawadesign_test01.pem.b64 | base64 --decode > /workspaces/development_public/projects/aws_projects/sawadesign_test01.pem
+      run: echo "${{ secrets.MY_PEM_KEY }}" | base64 --decode > /workspaces/development_public/projects/aws_projects/sawadesign_test01.pem
       shell: bash
 
     - name: Deploy to development environment
