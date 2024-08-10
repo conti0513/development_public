@@ -35,9 +35,7 @@
 
 @conti0513 ➜ .../development_public/projects/aws_projects/experience2_flexible_monitoring (main) $ tree -a
 .
-├── .github
-│   └── workflows
-│       └── deploy-ec2.yml
+
 ├── README.md
 ├── autoscaling
 ├── check_aws_resources.sh
@@ -49,11 +47,23 @@
 └── terraform
 
 deploy.sh:
-Full Path: /workspaces/development_public/projects/aws_projects/experience2_flexible_monitoring/scripts/deploy.sh
+/workspaces/development_public/projects/aws_projects/experience2_flexible_monitoring/scripts/deploy.sh
 
 deploy-ec2.yml:
+/workspaces/development_public/.github/workflows/deploy-ec2.yml
 
-Full Path: /workspaces/development_public/projects/aws_projects/experience2_flexible_monitoring/.github/workflows/deploy-ec2.yml
+
+
+
+@conti0513 ➜ /workspaces/development_public (main) $ ls -la .github/workflows/
+total 16
+drwxrwxrwx+ 2 root root 4096 Aug 10 17:33 .
+drwxrwxrwx+ 3 root root 4096 Jul 29 20:09 ..
+-rw-rw-rw-  1 root root  804 Aug 10 15:47 deploy-ec2.yml
+-rw-rw-rw-  1 root root  386 Aug 10 17:03 test-workflow-renamed.yml
+
+
+
 
 
 #### GitHub Secretsの設定方法
