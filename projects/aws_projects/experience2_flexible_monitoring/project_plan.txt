@@ -62,596 +62,108 @@ drwxrwxrwx+ 3 root root 4096 Jul 29 20:09 ..
 -rw-rw-rw-  1 root root  804 Aug 10 15:47 deploy-ec2.yml
 -rw-rw-rw-  1 root root  386 Aug 10 17:03 test-workflow-renamed.yml
 
-
-
-
-
-#### GitHub Secretsの設定方法
-1. GitHubリポジトリにアクセス。
-2. Settings > Secrets and variables > Actionsに移動。
-3. `New repository secret` をクリック。
-4. `Name` フィールドにシークレット名を入力し、`Value` フィールドにシークレット値を入力。
-5. `Add secret` をクリック。
-
-#### GitHub Actionsワークフローの設定
-1. リポジトリのルートディレクトリに `.github/workflows` ディレクトリを作成。
-2. ワークフロー定義ファイル (例: `main.yml`) を作成し、以下の内容を記述：
-    ```yaml
-    name: CI
-
-    on:
-      push:
-        branches:
-          - main
-
-    jobs:
-      build:
-        runs-on: ubuntu-latest
-
-        steps:
-          - name: Checkout code
-            uses: actions/checkout@v2
-
-          - name: Use Node.js
-            uses: actions/setup-node@v2
-            with:
-              node-version: '14'
-
-          - name: Install dependencies
-            run: npm install
-
-          - name: Run tests
-            run: npm test
-    ```
-
-#### ワークフローでSecretsを使用する例
-name: Deploy EC2
-
-on:
-  push:
-    branches:
-      - main
-    paths:
-      - 'projects/aws_projects/experience2_flexible_monitoring/**'
-
-jobs:
-  deploy:
-    runs-on: ubuntu-latest
-
-    steps:
-    - name: Checkout repository
-      uses: actions/checkout@v2
-
-    - name: Set up AWS CLI
-      uses: aws-actions/configure-aws-credentials@v1
-      with:
-        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        aws-region: ${{ secrets.AWS_REGION }}
-
-    - name: Decode and save SSH key
-      run: cat projects/aws_projects/experience2_flexible_monitoring/sawadesign_test01.pem.b64 | base64 --decode > /workspaces/development_public/projects/aws_projects/sawadesign_test01.pem
-      shell: bash
-
-    - name: Deploy to development environment
-      run: |
-        ./scripts/deploy.sh
-
-
-#!/bin/bash
-
-# Deployment procedure for development environment
-echo "Deploying to development"
-
-# Launch EC2 instance
-INSTANCE_ID=$(aws ec2 run-instances --image-id ami-0c55b159cbfafe1f0 --count 1 --instance-type t2.micro --key-name MyKeyPair --query 'Instances[0].InstanceId' --output text)
-echo "Instance ID: $INSTANCE_ID"
-
-# Wait until the instance is running
-aws ec2 wait instance-running --instance-ids $INSTANCE_ID
-echo "Instance $INSTANCE_ID is running"
-
-# Get the public IP address of the instance
-PUBLIC_IP=$(aws ec2 describe-instances --instance-ids $INSTANCE_ID --query 'Reservations[0].Instances[0].PublicIpAddress' --output text)
-echo "Public IP: $PUBLIC_IP"
-
-# Use SSH to output "Hello World"
-ssh -o StrictHostKeyChecking=no -i "$SSH_KEY_PATH" ec2-user@$PUBLIC_IP "echo 'Hello World'"
-
-# Terminate the instance after deployment is complete
-aws ec2 terminate-instances --instance-ids $INSTANCE_ID
-aws ec2 wait instance-terminated --instance-ids $INSTANCE_ID
-echo "Instance $INSTANCE_ID terminated"
-
-@conti0513 ➜ .../development_public/projects/aws_projects/experience2_flexible_monitoring (main) $ tree -a
-.
-├── .github
-│   └── workflows
-│       └── deploy-ec2.yml
-├── README.md
-├── autoscaling
-├── check_aws_resources.sh
-├── cloudwatch
-├── ec2
-├── project_plan.txt
-├── scripts
-│   └── deploy.sh
-└── terraform
-
-
-
-
-
-
-### テストケース: GitHub Secretsを使用してAWS EC2インスタンスを起動し、Hello Worldを出力
-
-#### 概要
-GitHub SecretsにAWSのクレデンシャル情報を保存し、GitHub Actionsを使用してAWS EC2インスタンスを起動し、インスタンスに "Hello World" を出力させ、その後にインスタンスを削除する一連のテストケースを実装します。
+### 環境構築手順: Flexible Monitoring Environment
 
 ---
 
-#### 前提条件
-- GitHubリポジトリが作成されている。
-- AWSアカウントを持っている。
-- GitHub Secretsに以下の情報を設定済み:
-  - `AWS_ACCESS_KEY_ID`
-  - `AWS_SECRET_ACCESS_KEY`
-  - `AWS_REGION`
-
-#### テスト手順
-
-**1. GitHub Secretsの設定**
-- **目的**: GitHubリポジトリに機密情報を保存し、ワークフローで使用できるようにする。
-- **確認方法**: `AWS_ACCESS_KEY_ID`、`AWS_SECRET_ACCESS_KEY`、`AWS_REGION` が設定されていること。
-
-**2. GitHub Actionsワークフローの作成**
-
-### Development Check Summary
-
-Let's verify the setup and steps you have taken to ensure everything is correctly configured and ready for deployment.
-
-#### Directory Structure
-├── projects
-│   ├── aws_projects
-│   │   ├── check_aws_resources.sh
-│   │   ├── experience1_new_technologies
-│   │   │   ├── README.md
-│   │   │   ├── docker
-│   │   │   └── terraform
-│   │   ├── experience2_flexible_monitoring
-│   │   │   ├── README.md
-│   │   │   ├── autoscaling
-│   │   │   ├── check_aws_resources.sh
-│   │   │   ├── cloudwatch
-│   │   │   ├── ec2
-│   │   │   ├── project_plan.txt
-│   │   │   ├── scripts
-│   │   │   │   └── deploy.sh
-│   │   │   └── terraform
-
-
-#### `scripts/deploy.sh`
-This script is used to deploy an EC2 instance and perform necessary actions:
-```bash
-#!/bin/bash
-
-# 開発環境向けデプロイメント手順
-echo "Deploying to development"
-
-# EC2インスタンスを起動
-INSTANCE_ID=$(aws ec2 run-instances --image-id ami-0c55b159cbfafe1f0 --count 1 --instance-type t2.micro --key-name MyKeyPair --query 'Instances[0].InstanceId' --output text)
-echo "Instance ID: $INSTANCE_ID"
-
-# インスタンスが実行状態になるまで待機
-aws ec2 wait instance-running --instance-ids $INSTANCE_ID
-echo "Instance $INSTANCE_ID is running"
-
-# インスタンスのパブリックIPアドレスを取得
-PUBLIC_IP=$(aws ec2 describe-instances --instance-ids $INSTANCE_ID --query 'Reservations[0].Instances[0].PublicIpAddress' --output text)
-echo "Public IP: $PUBLIC_IP"
-
-# SSHを使用して "Hello World" を出力
-ssh -o StrictHostKeyChecking=no -i /path/to/MyKeyPair.pem ec2-user@$PUBLIC_IP "echo 'Hello World'"
-
-# デプロイメントが完了したらインスタンスを終了
-aws ec2 terminate-instances --instance-ids $INSTANCE_ID
-aws ec2 wait instance-terminated --instance-ids $INSTANCE_ID
-echo "Instance $INSTANCE_ID terminated"
-```
-This script performs the following actions:
-1. Launches an EC2 instance.
-2. Waits for the instance to be in a running state.
-3. Retrieves the public IP address of the instance.
-4. Connects to the instance via SSH and runs a command to echo "Hello World".
-5. Terminates the EC2 instance after deployment.
-
-#### `.github/workflows/deploy-ec2.yml`
-This workflow is triggered by a push to the `main` branch:
-```yaml
-name: Deploy EC2
-
-on:
-  push:
-    branches:
-      - main
-
-jobs:
-  deploy:
-    runs-on: ubuntu-latest
-
-    steps:
-    - name: Checkout repository
-      uses: actions/checkout@v2
-
-    - name: Set up AWS CLI
-      uses: aws-actions/configure-aws-credentials@v1
-      with:
-        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        aws-region: ${{ secrets.AWS_REGION }}
-
-    - name: Deploy to development environment
-      run: |
-        ./scripts/deploy.sh
-```
-This workflow:
-1. Checks out the repository.
-2. Sets up AWS CLI using GitHub Secrets for AWS credentials.
-3. Runs the `deploy.sh` script to deploy the EC2 instance.
-
-### Verification and Next Steps
-
-1. **GitHub Secrets Setup:**
-   - Ensure that `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, and `AWS_REGION` are correctly set in your GitHub repository settings.
-
-2. **SSH Key Pair:**
-   - Ensure the SSH key pair (`MyKeyPair.pem`) is available at the specified path (`/path/to/MyKeyPair.pem`).
-
-3. **Verify GitHub Actions Workflow:**
-   - Push changes to the `main` branch and verify that the GitHub Actions workflow runs successfully.
-
-4. **Check EC2 Instance:**
-   - Use AWS Management Console or AWS CLI to confirm the EC2 instance is running.
-   - Connect to the instance using the retrieved public IP to verify the "Hello World" output.
-
-5. **Monitor and Cleanup:**
-   - Monitor the instance during deployment.
-   - Ensure the instance is terminated after the deployment completes.
-
-By following these steps, you can verify that your setup is correct and that your GitHub Actions workflow deploys the EC2 instance as expected. If any issues arise, check the workflow logs on GitHub Actions for more detailed error messages and troubleshooting information.
-
-**3. テスト実行**
-- **目的**: ワークフローが正しく動作し、EC2インスタンスが起動、"Hello World"の出力、および削除が正しく行われるかを確認する。
-
-**確認方法:**
-- **GitHub Actionsのログ**: ワークフローの各ステップが正常に完了したことをログで確認する。
-  - インスタンスIDの取得
-  - インスタンスの起動
-  - "Hello World"の出力
-  - インスタンスの削除
-
----
-
-#### 確認項目
-
-1. **GitHub Secretsの設定確認**
-   - `AWS_ACCESS_KEY_ID`、`AWS_SECRET_ACCESS_KEY`、`AWS_REGION`が正しく設定されていること。
-   ```sh
-   echo ${{ secrets.AWS_ACCESS_KEY_ID }}
-   ```
-
-2. **ワークフローの実行確認**
-   - ワークフローが正しくトリガーされ、すべてのステップが成功すること。
-   ```sh
-   git push origin main
-   # Actionsタブでワークフローの実行を確認
-   ```
-
-3. **EC2インスタンスの確認**
-   - EC2インスタンスが起動し、"Hello World"を出力したことを確認。
-   ```sh
-   # EC2インスタンスが起動し、Hello Worldが出力されることを確認
-   ```
-
-4. **インスタンスの削除確認**
-   - EC2インスタンスが正常に削除されることを確認。
-   ```sh
-   # EC2インスタンスが削除されたことを確認
-   ```
-
----
-
-
-
-
----
-
-**確認項目:**
-
-1. **GitHub Secretsの設定**
-   - Secretsが正しく設定され、ワークフローで使用できるか確認。
-
-2. **ワークフローの設定**
-   - ワークフローが正しくトリガーされ、適切に実行されるか確認。
-
-3. **アクセス制御の確認**
-   - リポジトリのアクセス権限が適切に設定されているか確認。
-
----
-
-
-
-
-
-
-### Day 1: 環境の準備と基本設定
-
-
-### Step-by-Step Checklist with Commands
-
-Here's a step-by-step checklist along with commands to ensure that your workflow and script are correctly set up and functioning as expected.
-
-#### 1. **Verify the GitHub Secrets**
-   - Ensure that the required secrets are set in your GitHub repository.
-
-   **Checklist:**
-   - [ ] `AWS_ACCESS_KEY_ID` is set.
-   - [ ] `AWS_SECRET_ACCESS_KEY` is set.
-   - [ ] `AWS_REGION` is set.
-   - [ ] `MY_PEM_KEY` (Base64 encoded PEM key) is set.
-
-   **Check Command:**
-   ```bash
-   # Check GitHub Secrets via GitHub UI or CLI
-   gh secret list
-   ```
-
-#### 2. **Verify the File Structure**
-   - Ensure that your project files are in the correct directories and are named correctly.
-
-   **Checklist:**
-   - [ ] The YAML workflow file is located at `projects/aws_projects/experience2_flexible_monitoring/.github/workflows/deploy-ec2.yml`.
-   - [ ] The `sawadesign_test01.pem.b64` file is located at `projects/aws_projects/experience2_flexible_monitoring/sawadesign_test01.pem.b64`.
-   - [ ] The `deploy.sh` script is located at `projects/aws_projects/experience2_flexible_monitoring/scripts/deploy.sh`.
-
-   **Check Command:**
-   ```bash
-   ls -R projects/aws_projects/experience2_flexible_monitoring/
-   ```
-
-#### 3. **Verify Base64 Decoding**
-   - Ensure that the Base64-encoded PEM key decodes correctly.
-
-   **Checklist:**
-   - [ ] The `sawadesign_test01.pem.b64` file can be decoded into a valid `.pem` file.
-
-   **Check Command:**
-   ```bash
-   cat projects/aws_projects/experience2_flexible_monitoring/sawadesign_test01.pem.b64 | base64 --decode > /tmp/test.pem
-   openssl rsa -in /tmp/test.pem -check
-   ```
-
-   **Expected Output:**
-   - The `openssl` command should return "RSA key ok".
-
-#### 4. **Test the Shell Script**
-   - Manually run the `deploy.sh` script to ensure it works as expected.
-
-   **Checklist:**
-   - [ ] The EC2 instance launches successfully.
-   - [ ] SSH connection is successful, and "Hello World" is printed.
-   - [ ] The EC2 instance is terminated after deployment.
-
-   **Test Command:**
-   ```bash
-   ./projects/aws_projects/experience2_flexible_monitoring/scripts/deploy.sh
-   ```
-
-#### 5. **Check GitHub Actions Workflow**
-   - Ensure that the workflow runs automatically on push to the `main` branch and with changes in the correct path.
-
-   **Checklist:**
-   - [ ] Push a commit to the `main` branch with changes in the `projects/aws_projects/experience2_flexible_monitoring/` directory.
-   - [ ] Verify that the workflow triggers and runs successfully.
-
-   **Check Command:**
-   ```bash
-   # After making changes
-   git add .
-   git commit -m "Test workflow"
-   git push origin main
-   ```
-
-   **Verify Workflow:**
-   - Go to the "Actions" tab in your GitHub repository to see if the workflow ran successfully.
-
-#### 6. **Verify SSH Connection**
-   - Ensure that the SSH connection can be established with the EC2 instance using the decoded `.pem` file.
-
-   **Checklist:**
-   - [ ] The `ssh` command in the `deploy.sh` script should successfully connect and execute the `echo "Hello World"` command.
-
-   **Check Command:**
-   ```bash
-   ssh -i /tmp/test.pem ec2-user@$PUBLIC_IP "echo 'Hello World'"
-   ```
-
-### Summary:
-- Follow each step and run the associated commands to verify the setup.
-- Ensure the workflow, secrets, file paths, and script logic are all correctly configured.
-- If any step fails, review the associated files and settings, and retry the test or command.
-
-
-
-
-
-
-
+### DAY 0: 学習と準備
 
 **目標:**
-- 環境の準備と基本設定を行い、プロジェクトの基盤を構築します。
+- GitHub ActionsとGitHub Secretsのセキュリティ管理についての理解を深め、実際のプロジェクトでの適用方法を学ぶ。
+
+**学習内容:**
+- **GitHub Actions**と**GitHub Secrets**の基本を理解し、セキュリティ対策を実践。
+- ワークフローの設計とトリガー条件の設定方法を学習。
+
+**実践内容:**
+- ディレクトリ構造の確認と整理。
+- ワークフローの配置とテスト。
+- SSHキーの管理とEC2インスタンスのデプロイ手順の確認。
+
+---
+
+### DAY 1: 環境の準備と基本設定
+
+**目標:**
+- 基本的な開発環境とインフラの準備を行い、プロジェクトの基盤を構築します。
 
 **タスク:**
-
 1. **開発環境のセットアップ**
-   - Codespacesの作成と設定
-   - リポジトリのクローン
-     ```sh
-     git clone https://github.com/conti0513/development_public.git /workspaces/development_public
-     cd /workspaces/development_public/aws_projects/experience2_flexible_monitoring
-     ```
+   - リポジトリのクローンと必要なツールのインストール。
 
 2. **Terraformのインストールと初期設定**
-   - Terraformをインストールし、作業ディレクトリを初期化します。
-     ```sh
-     sudo apt-get update
-     sudo apt-get install -y terraform
-     cd /workspaces/development_public/aws_projects/experience2_flexible_monitoring/terraform
-     terraform init
-     ```
+   - Terraformを使用してインフラを管理する準備を整えます。
 
 3. **AWS CLIの設定**
-   - AWS CLIをインストールし、設定ファイルを作成します。
-     ```sh
-     sudo apt-get install -y awscli
-     aws configure
-     ```
+   - AWS CLIを設定し、必要なアクセス権を確保します。
 
 4. **VPCとサブネットの作成**
-   - Terraformスクリプトを使用してVPCとサブネットを作成します。
-     ```sh
-     terraform apply -target=module.vpc -auto-approve
-     ```
-
-**環境の削除**
-   ```sh
-   terraform destroy -target=module.vpc -auto-approve
-   ```
+   - 基本的なネットワーク構成をTerraformで構築します。
 
 ---
 
-### Day 2: インフラの構築
+### DAY 2: インフラの構築
 
 **目標:**
-- 基本的なインフラストラクチャ（EC2、セキュリティグループ、ELB）の設定を行います。
+- EC2、セキュリティグループ、ELBの設定を行い、インフラを構築します。
 
 **タスク:**
-
 1. **EC2インスタンスの作成**
-   - Terraformスクリプトを使用してEC2インスタンスを作成します。
-     ```sh
-     terraform apply -target=module.ec2 -auto-approve
-     ```
+   - Terraformを使用してEC2インスタンスを作成し、設定します。
 
 2. **セキュリティグループの設定**
-   - 必要なポートを開放し、セキュリティグループを設定します。
-     ```sh
-     terraform apply -target=module.security_group -auto-approve
-     ```
+   - 必要なポートの開放とセキュリティグループの設定を行います。
 
 3. **Elastic Load Balancer (ELB) の設定**
-   - ELBを設定し、EC2インスタンスにトラフィックを分散させます。
-     ```sh
-     terraform apply -target=module.elb -auto-approve
-     ```
+   - トラフィックを分散させるためのELBの設定を行います。
 
 4. **Auto Scalingの設定**
-   - Auto Scalingグループを作成し、スケーリングポリシーを設定します。
-     ```sh
-     terraform apply -target=module.autoscaling -auto-approve
-     ```
-
-**環境の削除**
-   ```sh
-   terraform destroy -target=module.ec2 -auto-approve
-   terraform destroy -target=module.security_group -auto-approve
-   terraform destroy -target=module.elb -auto-approve
-   terraform destroy -target=module.autoscaling -auto-approve
-   ```
+   - Auto Scalingグループの作成とスケーリングポリシーの設定。
 
 ---
 
-### Day 3: アプリケーションのデプロイとモニタリングの設定
+### DAY 3: アプリケーションのデプロイとモニタリングの設定
 
 **目標:**
-- アプリケーションをデプロイし、モニタリングとログ収集の設定を行います。
+- アプリケーションのデプロイと、モニタリングおよびログ収集の設定を行います。
 
 **タスク:**
-
 1. **Dockerコンテナの作成とデプロイ**
-   - Dockerfileを使用してFlaskアプリケーションをコンテナ化し、EC2インスタンス上で実行します。
-     ```sh
-     cd /workspaces/development_public/aws_projects/experience2_flexible_monitoring/docker
-     docker build -t flask_app .
-     docker run -d -p 80:80 flask_app
-     ```
+   - アプリケーションをコンテナ化し、EC2インスタンス上で実行します。
 
 2. **CloudWatch Agentのインストールと設定**
-   - CloudWatch Agentをインストールし、メトリクスを収集します。
-     ```sh
-     ./setup_cloudwatch_agent.sh
-     ```
+   - メトリクスの収集とモニタリング設定を行います。
 
 3. **CloudWatchアラームの設定**
-   - 各種メトリクスのアラームを設定し、SNSトピックを作成します。
-     ```sh
-     ./setup_cloudwatch.sh
-     ```
+   - メトリクスのアラーム設定と通知機能の設定を行います。
 
 4. **SNSとSlackの連携**
-   - SNSトピックを作成し、Slackに通知が送信されるよう設定します。
-     ```sh
-     aws sns create-topic --name my-topic
-     aws sns subscribe --topic-arn arn:aws:sns:us-east-1:123456789012:my-topic --protocol https --notification-endpoint https://hooks.slack.com/services/T00000000/B00000000/XXXXXXXXXXXXXXXXXXXXXXXX
-     ```
-
-**環境の削除**
-   ```sh
-   docker stop $(docker ps -q)
-   docker rm $(docker ps -aq)
-   docker rmi flask_app
-   terraform destroy -target=module.cloudwatch -auto-approve
-   ```
+   - 通知機能を拡張し、監視結果をSlackに通知します。
 
 ---
 
-### Day 4: テストと検証、最終調整
+### DAY 4: テストと検証、最終調整
 
 **目標:**
-- システムのテストを行い、最終調整を行います。
+- システムのテストと最終調整を行い、プロジェクトを完了します。
 
 **タスク:**
-
 1. **インフラのテスト**
-   - 各コンポーネント（EC2、ELB、Auto Scaling）が正しく機能することを確認します。
-     ```sh
-     ./test_infra.sh
-     ```
+   - 各コンポーネントが正しく動作することを確認します。
 
 2. **アプリケーションのテスト**
-   - アプリケーションが正しくデプロイされ、動作していることを確認します。
-     ```sh
-     curl http://<ELB_DNS_NAME>
-     ```
+   - アプリケーションが期待通りに動作することを確認します。
 
 3. **モニタリングとアラームのテスト**
-   - CloudWatchアラームが正しく設定され、SNSを通じてSlackに通知が送信されることを確認します。
-     ```sh
-     ./test_monitoring.sh
-     ```
+   - 監視システムが正しく機能し、通知が適切に行われることを確認します。
 
 4. **最終調整とドキュメントの整備**
    - READMEファイルとドキュメントを整備し、プロジェクトの最終調整を行います。
-     ```sh
-     vi README.md
-     git add .
-     git commit -m "Final adjustments and documentation"
-     git push origin main
-     ```
-
-**環境の削除**
-   ```sh
-   terraform destroy -auto-approve
-   ```
 
 ---
+
+### ファイル名の管理規則
+
+- 各プロジェクトのワークフローを管理しやすくするために、以下の命名規則を採用します。
+  - 例: `experience2_deploy_ec2.yml`、`experience2_test_workflow.yml`など。
+- プロジェクト名、機能、内容を含めたわかりやすいファイル名を使用します。
