@@ -6,6 +6,7 @@ on:
       - main
     paths:
       - 'projects/aws_projects/experience2_flexible_monitoring/**'
+  workflow_dispatch: # 手動トリガーを有効にする
 
 jobs:
   test:
