@@ -5,28 +5,28 @@ on:
     branches:
       - main
     paths:
-      - 'projects/aws_projects/experience2_flexible_monitoring/**'  # Trigger only when changes occur in this directory
+      - 'projects/aws_projects/experience2_flexible_monitoring/**'
 
 jobs:
   terraform:
-    runs-on: ubuntu-latest  # Use the latest Ubuntu runner
+    runs-on: ubuntu-latest
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2  # Check out the code from the repository
+        uses: actions/checkout@v2
 
       - name: Set up Terraform
-        uses: hashicorp/setup-terraform@v1  # Set up Terraform CLI in the environment
+        uses: hashicorp/setup-terraform@v1
 
       - name: Terraform Init
-        run: terraform init  # Initialize Terraform
-        working-directory: projects/aws_projects/experience2_flexible_monitoring/terraform  # The directory where your Terraform configuration files are located
+        run: terraform init
+        working-directory: terraform  # Correct working directory
 
       - name: Terraform Apply
-        run: terraform apply -auto-approve  # Apply the Terraform configuration automatically
-        working-directory: projects/aws_projects/experience2_flexible_monitoring/terraform  # The directory where your Terraform configuration files are located
+        run: terraform apply -auto-approve
+        working-directory: terraform  # Correct working directory
         env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}  # Pull AWS Access Key ID from GitHub Secrets
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}  # Pull AWS Secret Access Key from GitHub Secrets
-          AWS_REGION: ${{ secrets.AWS_REGION }}  # Pull AWS region from GitHub Secrets
-          TF_VAR_key_name: ${{ secrets.KEY_NAME }}  # Pass the SSH Key Name to Terraform as a variable
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_REGION: ${{ secrets.AWS_REGION }}
+          TF_VAR_key_name: ${{ secrets.KEY_NAME }}
