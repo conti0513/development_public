@@ -2,7 +2,7 @@
 
 ---
 
-### DAY 0: 学習と準備
+### DAY 1: 学習と準備
 
 **目標:**
 - GitHub ActionsとGitHub Secretsのセキュリティ管理についての理解を深め、実際のプロジェクトでの適用方法を学ぶ。
@@ -30,6 +30,12 @@
 
 ---
 
+### DAY 1: 
+- DIRの整理
+- git hubのworkflowをリポジトリのルートDIRの.github/workflowに格納
+- test git hub workflow
+  confirm the trigger of workflow
+
 **実践内容:**
 
 
@@ -46,11 +52,15 @@
 │   └── deploy.sh
 └── terraform
 
-deploy.sh:
-/workspaces/development_public/projects/aws_projects/experience2_flexible_monitoring/scripts/deploy.sh
 
 deploy-ec2.yml:
 /workspaces/development_public/.github/workflows/experience2_deploy_ec2.yml
+
+
+deploy.sh:
+/workspaces/development_public/projects/aws_projects/experience2_flexible_monitoring/scripts/deploy.sh
+
+
 
 
 
@@ -62,47 +72,182 @@ drwxrwxrwx+ 3 root root 4096 Jul 29 20:09 ..
 -rw-rw-rw-  1 root root  804 Aug 10 15:47 deploy-ec2.yml
 -rw-rw-rw-  1 root root  386 Aug 10 17:03 test-workflow-renamed.yml
 
-### 環境構築手順: Flexible Monitoring Environment
+### DAY 3:
+
+- install terraform
+ contrast / compare
+
+####  contrast / compare
+Sure! Here's a brief comparison between Terraform and AWS CLI:
+
+### Terraform
+- **Infrastructure as Code (IaC)**: Terraform allows you to define your entire cloud infrastructure using code, which can be versioned, shared, and reused. It provides a higher-level abstraction of your resources.
+- **State Management**: Terraform keeps track of the state of your infrastructure, allowing you to make incremental changes, plan updates, and ensure that your infrastructure matches the desired configuration.
+- **Multi-Cloud Support**: Terraform is not limited to AWS; it supports multiple cloud providers (like Azure, GCP, etc.), allowing for a unified approach to managing infrastructure across different platforms.
+- **Declarative Syntax**: You describe *what* you want to create, and Terraform figures out *how* to create it. This makes infrastructure provisioning and management more predictable.
+
+### AWS CLI
+- **Command-Line Tool**: The AWS CLI is a command-line tool that allows you to interact directly with AWS services. It's ideal for performing individual, on-the-fly tasks or automating simple scripts.
+- **Procedural**: AWS CLI uses a procedural approach, where you specify *how* to achieve a task (e.g., creating an EC2 instance). This provides more direct control but requires you to manage dependencies and sequences manually.
+- **No State Management**: The AWS CLI does not keep track of the state of your resources. You need to manage resource dependencies and configurations manually.
+- **AWS-Specific**: The AWS CLI is specific to AWS services, so it doesn't support multi-cloud environments like Terraform does.
+
+### Summary:
+- **Terraform** is ideal for defining and managing complex infrastructure across multiple cloud providers in a consistent, repeatable way.
+- **AWS CLI** is more suited for direct, immediate interactions with AWS services, useful for quick tasks or scripts that don't require state management.
+
+We chose Terraform for the following reasons:
+
+1. **Infrastructure as Code (IaC)**: Terraform allows us to define and manage our cloud infrastructure using code. This makes the infrastructure versionable, repeatable, and easier to manage over time.
+
+2. **State Management**: Terraform automatically tracks the state of our resources, ensuring that any changes are applied consistently and predictably, reducing the risk of configuration drift.
+
+3. **Multi-Cloud Support**: Terraform supports multiple cloud providers, which provides flexibility if we need to manage infrastructure across different platforms in the future.
+
+4. **Scalability**: Terraform is well-suited for managing complex, large-scale infrastructure, as it can handle dependencies, orchestration, and modularity efficiently.
+
+5. **Automation**: By using Terraform, we can automate the provisioning and management of resources, reducing manual intervention and minimizing errors.
+
+6. **Community and Ecosystem**: Terraform has a large and active community, with a rich ecosystem of modules and plugins that can help accelerate infrastructure development. 
 
 ---
 
-### DAY 0: 学習と準備
 
-**目標:**
-- GitHub ActionsとGitHub Secretsのセキュリティ管理についての理解を深め、実際のプロジェクトでの適用方法を学ぶ。
 
-**学習内容:**
-- **GitHub Actions**と**GitHub Secrets**の基本を理解し、セキュリティ対策を実践。
-- ワークフローの設計とトリガー条件の設定方法を学習。
 
-**実践内容:**
-- ディレクトリ構造の確認と整理。
-- ワークフローの配置とテスト。
-- SSHキーの管理とEC2インスタンスのデプロイ手順の確認。
 
----
+Hi! Today, we'll be installing Terraform in the root directory of your repository. This setup will allow you to manage your infrastructure as code directly within your project and make it easier to integrate with your existing workflows.
 
-### DAY 1: 環境の準備と基本設定
 
-**目標:**
-- 基本的な開発環境とインフラの準備を行い、プロジェクトの基盤を構築します。
+#### Steps to Install Terraform
 
-**タスク:**
-1. **開発環境のセットアップ**
-   - リポジトリのクローンと必要なツールのインストール。
+1. **Navigate to the Root Directory**:
+   Make sure you're in the root directory of your repository where you want to install Terraform.
 
-2. **Terraformのインストールと初期設定**
-   - Terraformを使用してインフラを管理する準備を整えます。
+   ```bash
+   cd /workspaces/development_public
+   ```
 
-3. **AWS CLIの設定**
-   - AWS CLIを設定し、必要なアクセス権を確保します。
+2. **Download Terraform**:
+   Download the Terraform binary for your operating system.
 
-4. **VPCとサブネットの作成**
-   - 基本的なネットワーク構成をTerraformで構築します。
+   ```bash
+   wget https://releases.hashicorp.com/terraform/1.5.5/terraform_1.5.5_linux_amd64.zip
+   ```
 
----
+3. **Unzip the Binary**:
+   Unzip the downloaded file.
 
-### DAY 2: インフラの構築
+   ```bash
+   unzip terraform_1.5.5_linux_amd64.zip
+   ```
+
+4. **Move Binary to `/usr/local/bin/`**:
+   Move the Terraform binary to `/usr/local/bin/` so it can be executed from anywhere.
+
+   ```bash
+   sudo mv terraform /usr/local/bin/
+   ```
+
+5. **Verify the Installation**:
+   Verify that Terraform has been installed correctly by checking its version.
+
+   ```bash
+   terraform -v
+   ```
+
+6. **Initialize Terraform**:
+   Initialize Terraform in your project. This will download the required provider plugins and set up the backend.
+
+   ```bash
+   terraform init
+   ```
+
+/workspaces/development_public/
+├── terraform/
+│   ├── aws_projects/
+│   │   ├── main.tf
+│   │   ├── variables.tf
+│   │   └── outputs.tf
+│   └── production/
+│       ├── main.tf
+│       ├── variables.tf
+│       └── outputs.tf
+├── README.md
+├── TIL/
+├── projects/
+├── scripts/
+└── tutorials/
+
+#### launch EC2
+
+Here's how to proceed:
+
+1. **Create the `terraform` Directory:**
+   - At the root of your repository, create a new directory called `terraform`.
+   
+   ```bash
+   mkdir terraform
+   cd terraform
+   ```
+
+2. **Create the `.tf` File for EC2 in Tokyo:**
+   - Inside the `terraform` directory, create a new file named `main.tf`.
+   
+   ```bash
+   touch main.tf
+   ```
+
+3. **Edit `main.tf` to Launch EC2 in Tokyo:**
+
+   Open `main.tf` in your preferred editor and add the following configuration:
+
+   ```hcl
+   provider "aws" {
+     region = "ap-northeast-1" # Tokyo region
+   }
+
+   resource "aws_instance" "example" {
+     ami           = "ami-0c08c226b5ff7874c" # AMI ID for Amazon Linux 2 in Tokyo
+     instance_type = "t2.micro"
+     key_name      = var.key_name
+
+     tags = {
+       Name = "TerraformExample"
+     }
+   }
+
+   variable "key_name" {
+     description = "The name of the SSH key pair"
+     type        = string
+   }
+   ```
+
+4. **Initialize Terraform:**
+
+   ```bash
+   terraform init
+   ```
+
+5. **Apply the Configuration:**
+
+   Before applying, make sure your AWS credentials are configured properly.
+
+   ```bash
+   terraform apply
+   ```
+
+   You'll be prompted to enter the value for the `key_name` variable (e.g., `sawadesign_test01`).
+
+6. **Verify the EC2 Instance:**
+   - Once applied, check your AWS console to ensure the EC2 instance is up and running in the Tokyo region.
+
+
+
+
+
+
+### DAY *: インフラの構築
 
 **目標:**
 - EC2、セキュリティグループ、ELBの設定を行い、インフラを構築します。
@@ -122,7 +267,7 @@ drwxrwxrwx+ 3 root root 4096 Jul 29 20:09 ..
 
 ---
 
-### DAY 3: アプリケーションのデプロイとモニタリングの設定
+### DAY*: アプリケーションのデプロイとモニタリングの設定
 
 **目標:**
 - アプリケーションのデプロイと、モニタリングおよびログ収集の設定を行います。
@@ -142,7 +287,7 @@ drwxrwxrwx+ 3 root root 4096 Jul 29 20:09 ..
 
 ---
 
-### DAY 4: テストと検証、最終調整
+### DAY *: テストと検証、最終調整
 
 **目標:**
 - システムのテストと最終調整を行い、プロジェクトを完了します。
