@@ -11,4 +11,5 @@ test 10 git commit -m "Added Terraform configuration for EC2 setup 3"
 test 11 git commit -m "EC2 instance deployment with SG"
 test 12
 test 13
+test 14
 

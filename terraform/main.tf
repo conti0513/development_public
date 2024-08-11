@@ -1,20 +1,20 @@
 # Provider Configuration: Sets the AWS region to be used for deploying resources.
 provider "aws" {
-  region = var.aws_region  # Uses the AWS region defined in the variables below
+  region = "ap-northeast-1"  # Hardcoded to Tokyo region
 }
 
 # Security Group: Creates a security group allowing SSH access from a specific IP and permits all outbound traffic.
 resource "aws_security_group" "allow_ssh" {
-  name        = "allow_ssh_from_anywhere"  # Name of the security group
+  name        = "allow_ssh_from_specific_ip"  # Name of the security group
   description = "Allow SSH inbound traffic from a specific IP"  # Description of the security group
-  vpc_id      = var.vpc_id  # The VPC ID where this security group will be created
+  vpc_id      = var.vpc_id  # Uses the VPC ID provided as a variable
 
   # Inbound rule: Allow SSH access on port 22 from a specific IP address
   ingress {
     from_port   = 22  # Start of port range (22 for SSH)
     to_port     = 22  # End of port range
     protocol    = "tcp"  # Protocol used, TCP for SSH
-    cidr_blocks = [var.public_ip]  # Allow from specific IP address
+    cidr_blocks = ["23.97.62.144/32"]  # Hardcoded IP address (Replace "192.0.2.0/32" with your actual IP)
   }
 
   # Outbound rule: Allow all outbound traffic
@@ -26,7 +26,7 @@ resource "aws_security_group" "allow_ssh" {
   }
 
   tags = {
-    Name = "allow_ssh_from_anywhere"  # Tag for the security group
+    Name = "allow_ssh_from_specific_ip"  # Tag for the security group
   }
 }
 
@@ -44,27 +44,14 @@ resource "aws_instance" "example" {
 
 # Variables: Used to configure the AWS region, SSH key pair, and VPC ID dynamically, making the configuration more flexible.
 
-# AWS region
-variable "aws_region" {
-  description = "The AWS region"
-  type        = string
-  default     = "ap-northeast-1"  # Default to Tokyo region
-}
-
-# SSH key pair name
-variable "key_name" {
-  description = "The name of the SSH key pair"
-  type        = string
-}
-
 # VPC ID
 variable "vpc_id" {
   description = "The VPC ID where the security group will be created"
   type        = string
 }
 
-# Public IP Address
-variable "public_ip" {
-  description = "The public IP address that will be allowed to SSH into the instance"
+# SSH key pair name
+variable "key_name" {
+  description = "The name of the SSH key pair"
   type        = string
 }
