@@ -19,12 +19,12 @@ jobs:
         uses: hashicorp/setup-terraform@v1  # Set up Terraform CLI in the environment
 
       - name: Terraform Init
-        run: terraform init  # Initialize Terraform in the specified directory
-        working-directory: terraform  # The directory where your Terraform configuration files are located
+        run: terraform init  # Initialize Terraform
+        working-directory: projects/aws_projects/experience2_flexible_monitoring/terraform  # The directory where your Terraform configuration files are located
 
       - name: Terraform Apply
         run: terraform apply -auto-approve  # Apply the Terraform configuration automatically
-        working-directory: terraform  # The directory where your Terraform configuration files are located
+        working-directory: projects/aws_projects/experience2_flexible_monitoring/terraform  # The directory where your Terraform configuration files are located
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}  # Pull AWS Access Key ID from GitHub Secrets
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}  # Pull AWS Secret Access Key from GitHub Secrets
