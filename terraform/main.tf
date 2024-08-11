@@ -2,17 +2,17 @@ provider "aws" {
   region = var.aws_region
 }
 
-# Create a security group that allows SSH access
+# Create a security group that allows SSH access from a specific IP
 resource "aws_security_group" "allow_ssh" {
-  name        = "allow_ssh"
-  description = "Allow SSH inbound traffic"
+  name        = "allow_ssh_from_codespaces"
+  description = "Allow SSH inbound traffic from GitHub Codespaces"
   vpc_id      = var.vpc_id
 
   ingress {
     from_port   = 22
     to_port     = 22
     protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
+    cidr_blocks = ["23.97.62.144/32"]  # Only allow SSH from the specified IP
   }
 
   egress {
@@ -23,7 +23,7 @@ resource "aws_security_group" "allow_ssh" {
   }
 
   tags = {
-    Name = "allow_ssh"
+    Name = "allow_ssh_from_codespaces"
   }
 }
 
