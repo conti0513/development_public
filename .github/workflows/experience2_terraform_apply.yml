@@ -1,45 +1,64 @@
-name: Terraform Apply
+# Provider Configuration: Sets the AWS region to be used for deploying resources.
+provider "aws" {
+  region = var.aws_region  # Uses the AWS region defined in the variables below
+}
 
-on:
-  push:
-    branches:
-      - main
-    paths:
-      - 'projects/aws_projects/experience2_flexible_monitoring/**'
+# Security Group: Creates a security group allowing SSH access from any IP and permits all outbound traffic.
+resource "aws_security_group" "allow_ssh" {
+  name        = "allow_ssh_from_anywhere"  # Name of the security group
+  description = "Allow SSH inbound traffic from anywhere"  # Description of the security group
+  vpc_id      = var.vpc_id  # The VPC ID where this security group will be created
 
-jobs:
-  terraform:
-    runs-on: ubuntu-latest
+  # Inbound rule: Allow SSH access on port 22 from any IP address
+  ingress {
+    from_port   = 22  # Start of port range (22 for SSH)
+    to_port     = 22  # End of port range
+    protocol    = "tcp"  # Protocol used, TCP for SSH
+    cidr_blocks = ["0.0.0.0/0"]  # Allow from any IP address (All IPs are allowed)
+  }
 
-    env:
-      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-      AWS_REGION: ${{ secrets.AWS_REGION }}
-      TF_VAR_key_name: ${{ secrets.KEY_NAME }}
-      TF_VAR_vpc_id: ${{ secrets.VPC_ID }}
+  # Outbound rule: Allow all outbound traffic
+  egress {
+    from_port   = 0  # Start of port range
+    to_port     = 0  # End of port range
+    protocol    = "-1"  # Protocol -1 allows all traffic
+    cidr_blocks = ["0.0.0.0/0"]  # Allow to any IP address
+  }
 
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
+  tags = {
+    Name = "allow_ssh_from_anywhere"  # Tag for the security group
+  }
+}
 
-      - name: Print Working Directory
-        run: pwd
+# EC2 Instance: Launches a t2.micro EC2 instance in the Tokyo region, attaching the security group for SSH access.
+resource "aws_instance" "example" {
+  ami           = "ami-0c08c226b5ff7874c" # Amazon Linux 2 AMI ID for Tokyo region
+  instance_type = "t2.micro"  # Instance type (small and low cost)
+  key_name      = var.key_name  # SSH key pair name, provided as a variable
+  security_groups = [aws_security_group.allow_ssh.name]  # Attach the created security group
 
-      - name: List directory contents
-        run: ls -la ./  # 現在の作業ディレクトリの内容をリストアップ
+  tags = {
+    Name = "TerraformExample"  # Tag for the EC2 instance
+  }
+}
 
-      - name: Fetch Public IP and Generate vars.tf
-        run: |
-          chmod +x ./fetch_public_ip.sh
-          ./fetch_public_ip.sh
+# Variables: Used to configure the AWS region, SSH key pair, and VPC ID dynamically, making the configuration more flexible.
 
-      - name: Set up Terraform
-        uses: hashicorp/setup-terraform@v1
+# AWS region
+variable "aws_region" {
+  description = "The AWS region"
+  type        = string
+  default     = "ap-northeast-1"  # Default to Tokyo region
+}
 
-      - name: Terraform Init
-        run: terraform init
-        working-directory: terraform
+# SSH key pair name
+variable "key_name" {
+  description = "The name of the SSH key pair"
+  type        = string
+}
 
-      - name: Terraform Apply
-        run: terraform apply -auto-approve
-        working-directory: terraform
+# VPC ID
+variable "vpc_id" {
+  description = "The VPC ID where the security group will be created"
+  type        = string
+}
