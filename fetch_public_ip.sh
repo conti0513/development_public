@@ -4,5 +4,4 @@
 PUBLIC_IP=$(curl -s http://whatismyip.akamai.com/)
 
 # Save the IP address to a Terraform variable file.
-echo "public_ip = \"${PUBLIC_IP}/32\"" > terraform/vars.tf
-
+echo "public_ip = \"${PUBLIC_IP}/32\"" > terraform/terraform.tfvars
