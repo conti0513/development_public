@@ -53,15 +53,19 @@
 └── terraform
 
 
-deploy-ec2.yml:
-/workspaces/development_public/.github/workflows/experience2_deploy_ec2.yml
+workflow:
+/workspaces/development_public/.github/workflows/experience2_terraform_apply.yml
 
 
-deploy.sh:
-/workspaces/development_public/projects/aws_projects/experience2_flexible_monitoring/scripts/deploy.sh
+terraform main.tf:
+/workspaces/development_public/terraform/main.tf
 
 
 
+# workflow:
+cat /workspaces/development_public/.github/workflows/experience2_terraform_apply.yml
+# terraform main.tf:
+cat /workspaces/development_public/terraform/main.tf
 
 
 
@@ -112,11 +116,6 @@ We chose Terraform for the following reasons:
 
 ---
 
-
-
-
-
-Hi! Today, we'll be installing Terraform in the root directory of your repository. This setup will allow you to manage your infrastructure as code directly within your project and make it easier to integrate with your existing workflows.
 
 
 #### Steps to Install Terraform

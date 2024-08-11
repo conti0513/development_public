@@ -30,3 +30,4 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_REGION: ${{ secrets.AWS_REGION }}
           TF_VAR_key_name: ${{ secrets.KEY_NAME }}
+          TF_VAR_vpc_id: ${{ secrets.VPC_ID }}  # VPC IDをGitHub Secretsから取得
