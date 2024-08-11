@@ -21,7 +21,6 @@ jobs:
         uses: actions/checkout@v2
 
       # fetch Public IP and Generate vars.tf
-
       - name: Fetch Public IP and Generate vars.tf
         run: |
           chmod +x /workspaces/development_public/fetch_public_ip.sh
@@ -40,11 +39,9 @@ jobs:
       - name: Terraform Apply
         run: terraform apply -auto-approve
         working-directory: terraform
-
-      # Set environment variables for the job, passing sensitive data and configuration settings.
-      env:
-        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        AWS_REGION: ${{ secrets.AWS_REGION }}
-        TF_VAR_key_name: ${{ secrets.KEY_NAME }}
-        TF_VAR_vpc_id: ${{ secrets.VPC_ID }}  # Get VPC ID from GitHub Secrets
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_REGION: ${{ secrets.AWS_REGION }}
+          TF_VAR_key_name: ${{ secrets.KEY_NAME }}
+          TF_VAR_vpc_id: ${{ secrets.VPC_ID }}  # Get VPC ID from GitHub Secrets
