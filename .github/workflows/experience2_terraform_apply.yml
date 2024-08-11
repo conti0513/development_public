@@ -27,6 +27,10 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
+      # Debugging step to check if the file exists
+      - name: List directory contents
+        run: ls -la /workspaces/development_public/
+
       # fetch Public IP and Generate vars.tf
       - name: Fetch Public IP and Generate vars.tf
         run: |

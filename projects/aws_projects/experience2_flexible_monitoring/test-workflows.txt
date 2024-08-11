@@ -8,6 +8,6 @@ test 7 Aug 11 19:00
 test 8 git commit -m "Added Terraform configuration for EC2 setup"
 test 9 git commit -m "Added Terraform configuration for EC2 setup 2"
 test 10 git commit -m "Added Terraform configuration for EC2 setup 3"
-test 11 git commit -m "Configured Terraform workflow for EC2 instance deployment with security group"
+test 11 git commit -m "EC2 instance deployment with SG"
 
 
