@@ -3,18 +3,18 @@ provider "aws" {
   region = var.aws_region  # Uses the AWS region defined in the variables below
 }
 
-# Security Group: Creates a security group allowing SSH access from any IP and permits all outbound traffic.
+# Security Group: Creates a security group allowing SSH access from a specific IP and permits all outbound traffic.
 resource "aws_security_group" "allow_ssh" {
   name        = "allow_ssh_from_anywhere"  # Name of the security group
-  description = "Allow SSH inbound traffic from anywhere"  # Description of the security group
+  description = "Allow SSH inbound traffic from a specific IP"  # Description of the security group
   vpc_id      = var.vpc_id  # The VPC ID where this security group will be created
 
-  # Inbound rule: Allow SSH access on port 22 from any IP address
+  # Inbound rule: Allow SSH access on port 22 from a specific IP address
   ingress {
     from_port   = 22  # Start of port range (22 for SSH)
     to_port     = 22  # End of port range
     protocol    = "tcp"  # Protocol used, TCP for SSH
-    cidr_blocks = ["0.0.0.0/0"]  # Allow from any IP address
+    cidr_blocks = [var.public_ip]  # Allow from specific IP address
   }
 
   # Outbound rule: Allow all outbound traffic
@@ -60,5 +60,11 @@ variable "key_name" {
 # VPC ID
 variable "vpc_id" {
   description = "The VPC ID where the security group will be created"
+  type        = string
+}
+
+# Public IP Address
+variable "public_ip" {
+  description = "The public IP address that will be allowed to SSH into the instance"
   type        = string
 }
