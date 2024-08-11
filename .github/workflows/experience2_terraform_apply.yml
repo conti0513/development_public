@@ -15,6 +15,13 @@ jobs:
   terraform:
     runs-on: ubuntu-latest
 
+    env:
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      AWS_REGION: ${{ secrets.AWS_REGION }}
+      TF_VAR_key_name: ${{ secrets.KEY_NAME }}
+      TF_VAR_vpc_id: ${{ secrets.VPC_ID }}  # Get VPC ID from GitHub Secrets
+
     steps:
       # Ensure the workflow has the latest code before proceeding with the next steps.
       - name: Checkout code
@@ -39,11 +46,3 @@ jobs:
       - name: Terraform Apply
         run: terraform apply -auto-approve
         working-directory: terraform
-
-      # Set environment variables for the job, passing sensitive data and configuration settings.
-      env:
-        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        AWS_REGION: ${{ secrets.AWS_REGION }}
-        TF_VAR_key_name: ${{ secrets.KEY_NAME }}
-        TF_VAR_vpc_id: ${{ secrets.VPC_ID }}  # Get VPC ID from GitHub Secrets
