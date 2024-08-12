@@ -1,0 +1,34 @@
+name: Terraform Apply
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'projects/aws_projects/experience2_flexible_monitoring/trigger_workflow_allow_limit_IP.txt'
+
+jobs:
+  terraform:
+    runs-on: ubuntu-latest
+
+    env:
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      AWS_REGION: ${{ secrets.AWS_REGION }}
+      TF_VAR_key_name: ${{ secrets.KEY_NAME }}
+      TF_VAR_vpc_id: ${{ secrets.VPC_ID }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Terraform
+        uses: hashicorp/setup-terraform@v1
+
+      - name: Terraform Init
+        run: terraform init
+        working-directory: terraform/scenario_2/
+
+      - name: Terraform Apply
+        run: terraform apply -auto-approve
+        working-directory: terraform/scenario_2/

@@ -55,6 +55,8 @@
 
 # Git Hub Actions workflow:
 /workspaces/development_public/.github/workflows/experience2_terraform_apply.yml
+/workspaces/development_public/.github/workflows/experience2_terraform_limit.yml
+/workspaces/development_public/.github/workflows/experience2_test-workflow.yml.bk
 
 # terraform main.tf:
 /workspaces/development_public/terraform/main.tf
@@ -67,6 +69,22 @@ cat /workspaces/development_public/.github/workflows/experience2_terraform_apply
 # terraform main.tf:
 cat /workspaces/development_public/terraform/main.tf
 
+
+
+The process works as follows:
+
+1. **Workflow YAML (GitHub Actions)**
+   - When you push code to your repository, the workflow YAML file (e.g., `experience2_terraform_apply.yml`) is read first by GitHub Actions.
+   - The YAML file defines the steps that GitHub Actions will take, such as checking out the code, setting up Terraform, and running `terraform init` and `terraform apply`.
+
+2. **Main.tf (Terraform)**
+   - Within the workflow YAML, one of the steps typically involves running Terraform commands (`terraform init`, `terraform apply`).
+   - When `terraform apply` is executed, Terraform reads the `main.tf` file and any other `.tf` files in the directory to determine the desired state of your infrastructure and apply the necessary changes.
+
+the workflow YAML file is read first to determine the overall process, 
+and then Terraform reads the `main.tf` file as part of executing
+the infrastructure deployment steps defined in the workflow.
+---
 
 
 ### DAY 3:
