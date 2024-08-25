@@ -1,7 +1,5 @@
 # 
 
-
-
 # DIR構成
 /workspaces/development_public
 └── projects
@@ -29,142 +27,126 @@
         │   └── docs                       # ドキュメント用ディレクトリ
         │       └── architecture.md        # システムアーキテクチャの説明
 
+Here's a step-by-step guide to set up a simple Next.js project on GitHub Codespaces. 
+The goal is to create a "Hello, World" application for testing.
 
-# 次のステップ
-1 README
-プロジェクトの目的
-キュレーションサイトの作成
+### Step 1: Set Up the Next.js Project
 
+1. **Navigate to the Project Directory:**
+   Open terminal in Codespaces and navigate to the `curation` directory:
+   ```bash
+   cd /workspaces/development_public/projects/infra_pjt/curation
+   ```
 
-### 技術スタックの妥当性
+2. **Initialize a Next.js Project:**
+   Run the following command to set up a new Next.js project:
+   ```bash
+   npx create-next-app@latest hello-world
+   ```
+   Follow the prompts to create the app. You can accept the defaults.
 
-1. **Next.js (app router)**:
-   - **特徴**: Next.jsはReactベースのフレームワークで、SEO対応やサーバーサイドレンダリング(SSR)が簡単に実装できます。App Routerを使うことで、ページやAPIのルーティングが柔軟に管理できます。
-   - **利点**: パフォーマンスが高く、開発がしやすい。特に情報をキュレーションするようなサービスでは、ページの初期表示が速く、SEOが重要になるため、適しています。
+3. **Move the Project Files:**
+   The Next.js project will be created in a `hello-world` directory. Move its contents to the appropriate directories under `curation`:
+   ```bash
+   mv hello-world/* ./
+   mv hello-world/.gitignore ./
+   mv hello-world/public ./docs  # Assuming public assets go to docs
+   mv hello-world/pages/index.js ./docker/app/index.js
+   mv hello-world/package.json ./docker/app/
+   mv hello-world/package-lock.json ./docker/app/
+   rm -rf hello-world
+   ```
 
-2. **Shadcn/ui**:
-   - **特徴**: シンプルでカスタマイズ性の高いUIコンポーネントライブラリ。デザインを効率よく構築するために使えます。
-   - **利点**: Next.jsと組み合わせることで、迅速に美しいUIを構築できます。
+### Step 2: Update Docker and Compose Files
 
-3. **Supabase**:
-   - **特徴**: SupabaseはPostgreSQLをベースとしたオープンソースのリアルタイムデータベースサービスです。バックエンドの構築に必要な認証、ストレージ、データベースの機能が統合されています。
-   - **利点**: サーバーレスで管理が簡単。リアルタイムでデータを扱うことができ、APIの自動生成もできるので、迅速にプロジェクトを進められます。
+1. **Dockerfile:**
+   Create or update the `Dockerfile` under the `docker` directory:
+   ```dockerfile
+   FROM node:16-alpine
 
-4. **Cloud Run + Artifact Registry**:
-   - **特徴**: Cloud Runはコンテナベースのアプリケーションをサーバーレスで実行できるGoogle Cloudのサービス。Artifact RegistryはDockerイメージなどを管理するためのサービスです。
-   - **利点**: スケーラビリティが高く、トラフィックに応じて自動的にスケールします。インフラ管理の負担が少なく、コスト効率も高いです。
+   WORKDIR /app
 
-5. **Cloud Build (Auto Deploy) + GitHub Actions**:
-   - **特徴**: Cloud BuildはGoogle CloudのCI/CDサービスで、コードのビルド、テスト、デプロイを自動化できます。GitHub Actionsはリポジトリのイベントに基づいて自動的にタスクを実行できます。
-   - **利点**: 開発からデプロイまでのプロセスを自動化することで、開発のスピードと品質を向上させます。Cloud BuildとGitHub Actionsを組み合わせることで、柔軟なCI/CDパイプラインを構築できます。
+   COPY app/package*.json ./
 
-まず、インフラストラクチャの構築と「Hello World」の表示を確認するためのプランを以下に提供します。このプランでは、Google Cloudを使用して、Cloud RunにシンプルなNext.jsアプリケーションをデプロイします。
+   RUN npm install
 
-### プラン概要
-1. **Google Cloudプロジェクトの設定**
-2. **Artifact Registryの設定**
-3. **Next.jsアプリケーションの作成**
-4. **Dockerfileの作成**
-5. **Cloud Buildの設定**
-6. **Cloud Runへのデプロイ**
-7. **Hello Worldの確認**
+   COPY app/ ./
 
-### ステップバイステップのプラン
+   EXPOSE 3000
 
-#### 1. Google Cloudプロジェクトの設定
-- **Google Cloudにログイン**し、新しいプロジェクトを作成します。
-- **Billingを有効化**し、必要なAPI（Cloud Run, Artifact Registry, Cloud Build）を有効にします。
-- **IAMとサービスアカウントの設定**: Cloud BuildがCloud Runにデプロイできるようにするため、必要な役割（roles/run.admin, roles/storage.adminなど）を持つサービスアカウントを作成し、そのサービスアカウントをCloud Buildに紐付けます。
+   CMD ["npm", "run", "dev"]
+   ```
 
-#### 2. Artifact Registryの設定
-- **Artifact Registryを設定**します。これは、コンテナイメージを格納するリポジトリです。
-  - コンテナレジストリを作成:
-    ```bash
-    gcloud artifacts repositories create my-repo --repository-format=docker --location=us-central1
-    ```
-  - リポジトリ名は `my-repo` として、必要に応じて地域を変更します。
+2. **docker-compose.yml:**
+   Update or create `docker-compose.yml` to define the service:
+   ```yaml
+   version: '3.8'
 
-#### 3. Next.jsアプリケーションの作成
-- **Next.jsプロジェクトを作成**します。
-  ```bash
-  npx create-next-app@latest hello-world
-  cd hello-world
-  ```
-- **シンプルなHello Worldページを作成**します。`pages/index.js`を以下の内容に変更します:
-  ```javascript
-  export default function Home() {
-    return (
-      <div>
-        <h1>Hello, World!</h1>
-      </div>
-    )
-  }
-  ```
+   services:
+     app:
+       build: .
+       ports:
+         - '3000:3000'
+       volumes:
+         - ./app:/app
+       environment:
+         NODE_ENV: development
+   ```
 
-#### 4. Dockerfileの作成
-- **プロジェクトのルートにDockerfileを作成**します。
-  ```Dockerfile
-  # Install dependencies only when needed
-  FROM node:16-alpine AS deps
-  WORKDIR /app
-  COPY package.json yarn.lock ./
-  RUN yarn install
+### Step 3: Modify GitHub Actions Workflow
 
-  # Rebuild the source code only when needed
-  FROM node:16-alpine AS builder
-  WORKDIR /app
-  COPY . .
-  RUN yarn build
+1. **CI/CD Workflow:**
+   Update or create the `.github/workflows/ci-cd.yml` file to include steps for testing and building the Next.js app:
+   ```yaml
+   name: CI/CD
 
-  # Production image, copy all the files and run next
-  FROM node:16-alpine AS runner
-  WORKDIR /app
-  ENV NODE_ENV production
+   on:
+     push:
+       branches:
+         - main
+     pull_request:
 
-  # Install dependencies only for production
-  RUN yarn install --production
+   jobs:
+     build:
+       runs-on: ubuntu-latest
 
-  EXPOSE 3000
+       steps:
+       - name: Checkout code
+         uses: actions/checkout@v2
 
-  CMD ["yarn", "start"]
-  ```
-- **`.dockerignore`** ファイルを作成し、ビルドに不要なファイルを除外します。
-  ```plaintext
-  node_modules
-  .next
-  ```
+       - name: Set up Node.js
+         uses: actions/setup-node@v2
+         with:
+           node-version: '16'
 
-#### 5. Cloud Buildの設定
-- **Cloud Buildの設定ファイルを作成**します。`cloudbuild.yaml`をプロジェクトのルートに作成します。
-  ```yaml
-  steps:
-    - name: 'gcr.io/cloud-builders/docker'
-      args: ['build', '-t', 'us-central1-docker.pkg.dev/[PROJECT_ID]/my-repo/hello-world', '.']
-    - name: 'gcr.io/cloud-builders/docker'
-      args: ['push', 'us-central1-docker.pkg.dev/[PROJECT_ID]/my-repo/hello-world']
+       - name: Install dependencies
+         run: npm install
+         working-directory: ./docker/app
 
-  images:
-    - 'us-central1-docker.pkg.dev/[PROJECT_ID]/my-repo/hello-world'
-  ```
-- `[PROJECT_ID]`はGoogle CloudプロジェクトのIDに置き換えてください。
+       - name: Run tests
+         run: npm run test
+         working-directory: ./docker/app
 
-#### 6. Cloud Runへのデプロイ
-- **Cloud Runにデプロイ**します。以下のコマンドを実行します:
-  ```bash
-  gcloud run deploy hello-world \
-    --image=us-central1-docker.pkg.dev/[PROJECT_ID]/my-repo/hello-world \
-    --platform=managed \
-    --region=us-central1 \
-    --allow-unauthenticated
-  ```
-- `--allow-unauthenticated`オプションは、誰でもアクセスできるようにします。
+       - name: Build project
+         run: npm run build
+         working-directory: ./docker/app
+   ```
 
-#### 7. Hello Worldの確認
-- デプロイ後、Cloud RunのURLが表示されます。ブラウザでそのURLを開き、"Hello, World!"が表示されることを確認します。
+### Step 4: Run the Application
 
-### 最終確認
-- すべてのステップが完了したら、シンプルなNext.jsアプリケーションがGoogle Cloud Run上で動作し、「Hello World」の表示が確認できます。
+1. **Run the Application:**
+   In the terminal, navigate to the `curation` directory and start the Docker service:
+   ```bash
+   docker-compose up
+   ```
+   Your Next.js app should be running on `http://localhost:3000`, displaying "Hello, World".
 
-### 次のステップ
-この後、Supabaseを接続してデータベース機能を追加したり、Cloud BuildとGitHub Actionsを連携させてCI/CDを構築することも可能です。
+### Step 5: Test in Codespaces
 
+1. **Access the App:**
+   Open the browser tab within Codespaces to test the application:
+   ```bash
+   Open Browser > Forward Port > 3000
+   ```
+
+If everything is set up correctly, you'll see a "Hello, World" message on the page.
