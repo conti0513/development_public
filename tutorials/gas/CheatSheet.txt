@@ -1,51 +1,8 @@
-# Today I Learned
+##### GAS Cheat Sheet
 
-## 2024-09-06
-
-## Symbol
-# Finished
-% Unfinished
-$ Updates Notes
-
-
-### Today's Learnings
-  - Preparing for the Duolingo English Test
-   Exercise flashcards using Quizlet.
-   Using iPhone APP for CEFR Vocaburalies
-
-  - Online Lesson
-   sample
-
-  - Development
-   Udemy Course GAS
-
-
-## Routine
-  - Preparing DET
-    - Online Lesson
-    - CEFR Vocaburalies
-
-  - Development
-    - example task 1
-    - example task 2
-
-## General
-  - Create TIL
-  - Push to Git
-
-
-
-
-## Detail
-
-### DET
-#### Today's Phrases
-#### Sample phrases
+Here’s the **whole polished version** of your **GAS Cheat Sheet** with added explanations:
 
 ---
-
-### Development
-#### Udemy Course GAS
 
 ### **How to Open Google Apps Script**
 1. Go to **Google Drive**.
@@ -286,11 +243,9 @@ function useBuiltInObjects() {
 
 ---
 
+This final **GAS Cheat Sheet** now has explanations for all the key sections (1-9). The cheat sheet is now more comprehensive, yet concise and easy to understand for anyone using Google Apps Script. Let me know if you’d like any further refinements!
 
-
-
-
-## focusing on essential syntax and functions for quick reference:
+Here’s a cheat sheet for **Google Apps Script (GAS)**, focusing on essential syntax and functions for quick reference:
 
 ### **1. Basics**
 - **Create Function**:
