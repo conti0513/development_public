@@ -1,0 +1,75 @@
+# Intro to Defensive Security
+  - index
+    - Introduction to Defensive Security
+    - Areas of Defensive Security
+    - SOC and SEIM
+
+# Introduction to Defensive Security
+
+## Defensive Security:
+  - Focuses on preventing intrusions and detecting/responding when they happen.
+  - Blue Teams specialize in defensive security.
+
+## Key Tasks:
+  - User cybersecurity awareness: Training users to avoid attacks.
+  - Documenting and managing assets: Keeping track of systems and devices.
+  - Updating and patching: Protecting systems against known vulnerabilities.
+  - Preventative security: Using firewalls and Intrusion Prevention Systems (IPS) to block attacks.
+  - Logging and monitoring: Detecting intrusions and monitoring network activity.
+
+## In this room, you'll learn about:
+  - Security Operations Center (SOC)
+  - Threat Intelligence
+  - Digital Forensics and Incident Response (DFIR)
+  - Malware Analysis
+
+## Key Question:
+  - Which team focuses on defensive security? Blue Team
+
+
+
+# Areas of Defensive Security
+
+## Defensive Security Areas:
+  1. Security Operations Center (SOC):
+    - A team that monitors networks and systems to detect vulnerabilities, policy violations, and intrusions.
+    - They handle threat intelligence, gathering information on potential attackers and preparing defenses.
+
+  2. Digital Forensics and Incident Response (DFIR):
+    - Digital Forensics: Investigating digital crimes by analyzing files, system memory, logs, and network traffic to find evidence of an attack.
+    - Incident Response: Handling cyber attacks by following a 4-step process: 
+      Preparation, Detection and Analysis, Containment, Eradication, and Recovery, and Post-Incident Activity.
+
+  3. Malware Analysis:
+    - Static analysis: Inspecting malware without running it.
+    - Dynamic analysis: Running malware in a controlled environment to observe its behavior.
+
+## Types of Malware:
+    - Virus: Spreads by altering or deleting files.
+    - Trojan Horse: Disguises as a useful program but hides malicious functions.
+    - Ransomware: Encrypts files and demands payment to unlock them.
+
+## Key Questions:
+    - What team monitors a network for malicious events? Security Operations Center
+    - What does DFIR stand for? Digital Forensics and Incident Response
+    - Which malware requires payment to regain access to files? Ransomware
+
+
+# SOC and SEIM
+
+## Security Operations Center (SOC):
+  - As part of the SOC for a bank, you use a Security Information and Event Management (SIEM) system to monitor security events.
+  - A SIEM collects data from various sources and detects potential security incidents, such as:
+    - Failed login attempts.
+    - Logins from unusual locations.
+    - Unusual behavior (e.g., a user logging in at odd hours).
+
+## Your Task:
+  1. Monitor events in real-time using the SIEM.
+  2. Identify suspicious events flagged in red.
+  3. Investigate the cause (local user, computer, or remote IP address).
+  4. Confirm if the event is malicious and take action (e.g., report the event or block the IP address).
+---
+
+
+
