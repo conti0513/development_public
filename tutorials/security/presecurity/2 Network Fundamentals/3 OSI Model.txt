@@ -1,0 +1,126 @@
+#### OSI Model
+
+Network Fundamentals > OSI Model
+
+  - Index
+    # What is the OSI Model?
+    # Layer 7 - Application
+    # Layer 6 - Presentation
+    # Layer 5 - Session
+    # Layer 4 - Transport
+    # Layer 3 - Network
+    # Layer 2 - Datalink
+    # Layer 1 - Physical
+
+##### What is the OSI Model?
+  - OSI Model (Open Systems Interconnection Model)
+    - Purpose: A fundamental framework in networking that dictates how devices send, receive, and 
+      interpret data.
+    - Benefit: Allows devices with different designs and functions to communicate smoothly across a 
+      network by following the same standard.
+    - Layers: The OSI model consists of 7 layers (Layer 7 to Layer 1), each with specific 
+      responsibilities.
+    - Encapsulation: As data travels through the layers, extra information is added at each stage.
+
+  - Key Points:
+    - OSI stands for Open Systems Interconnection.
+    - The model has 7 layers.
+    - Encapsulation refers to the process of adding information to data at each layer.
+    - This version is short and to the point!
+
+  - OSI 7 Layer
++-----------------------+
+| Application  (Layer 7) |  Interface (Facilitates user interaction with the network)
++-----------------------+
+| Presentation (Layer 6) |  Translator (Data formatting and encryption)
++-----------------------+
+| Session      (Layer 5) |  Control (Manages and maintains communication sessions)
++-----------------------+
+| Transport    (Layer 4) |  Reliable delivery (TCP/UDP, error recovery)
++-----------------------+
+| Network      (Layer 3) |  Routing (IP addresses, path determination)
++-----------------------+
+| Data Link    (Layer 2) |  MAC addresses, frames (Error detection)
++-----------------------+
+| Physical     (Layer 1) |  Physical media (Cables, signals)
++-----------------------+
+Physical     (Layer 1) |  Physical media (Cables, signals)
++-----------------------+
+
+
+  - Details:
++-------+----------------------+---------------------------+
+| Layer | Name                 | Brief Description          |
++-------+----------------------+---------------------------+
+|   7   | Application           | Interface with user apps  |
++-------+----------------------+---------------------------+
+|   6   | Presentation          | Translator for data       |
++-------+----------------------+---------------------------+
+|   5   | Session               | Control of connections    |
++-------+----------------------+---------------------------+
+|   4   | Transport             | Reliable data delivery    |
++-------+----------------------+---------------------------+
+|   3   | Network               | Routing and IP addresses  |
++-------+----------------------+---------------------------+
+|   2   | Data Link             | MAC addresses, frames     |
++-------+----------------------+---------------------------+
+|   1   | Physical              | Physical hardware (media) |
++-------+----------------------+---------------------------+
+
+
+
+
+##### Layer 7: Application Layer
+  - Purpose: The layer where users interact with data through protocols and rules.
+  - Common Applications: Email clients, web browsers, and file servers like FileZilla.
+  - Protocols: Includes DNS (translates website names to IP addresses).
+  - Key Points:
+   - This layer is called the Application layer.
+   - The software users interact with is called a Graphical User Interface (GUI).
+
+##### Layer 6: Presentation Layer
+  - Purpose: Translates data between the application layer and the network. 
+    Handles data encoding, encryption, and compression.
+  - Example: SSL/TLS encryption used in secure web browsing.
+  - Key Points:
+    - Translates data and ensures it's in a readable format.
+    - Manages encryption and compression.
+
+##### Layer 5: Session Layer
+  - Purpose: Manages communication sessions between devices, establishing, maintaining, 
+    and terminating connections.
+  - Example: Login sessions for applications like remote desktop or websites.
+  - Key Points:
+    - Controls and manages connections between devices.
+    - Starts and ends communication sessions.
+
+##### Layer 4: Transport Layer
+  - Purpose: Ensures reliable data transfer using protocols like TCP (reliable) 
+    and UDP (fast but unreliable).
+  - Example: TCP for web browsing, UDP for streaming video.
+  - Key Points:
+    - Ensures reliable delivery of data.
+    - Uses protocols like TCP and UDP.
+
+##### Layer 3: Network Layer
+  - Purpose: Manages routing and forwarding of data based on IP addresses.
+  - Example: Routers sending data across networks using IP.
+  - Key Points:
+    - Routes data based on IP addresses.
+    - Operates at the IP level.
+
+##### Layer 2: Data Link Layer
+  - Purpose: Transfers data between devices on the same network. 
+    Uses MAC addresses for communication within a local area network (LAN).
+  - Example: Ethernet, Wi-Fi.
+  - Key Points:
+    - Transfers data using MAC addresses.
+    - Works within the same network.
+
+##### Layer 1: Physical Layer
+  - Purpose: Deals with the physical connection between devices, like cables and hardware.
+  - Example: Ethernet cables, fiber optics, and network interface cards.
+  - Key Points:
+    - Manages the physical transmission of data (signals, cables, etc.).
+    - Focuses on hardware and connection media.
+---

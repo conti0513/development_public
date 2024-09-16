@@ -1,0 +1,26 @@
+# What is Networking?
+
+## index
+  - What is Networking?
+  - What is the internet?
+  - Indentifying Devices on a Network
+  - Ping(ICMP)
+---
+
+
+## What is Networking?
+
+
+
+## What is the internet?
+
+
+
+## Indentifying Devices on a Network
+
+
+
+## Ping(ICMP)
+
+
+
