@@ -1,0 +1,84 @@
+# How The Web Works> DNS in detail
+  - Index
+    - DNS in detail
+    - HTTP in detail
+    - How Websites Work
+    - Putting it all together
+
+
+
+## DNS in detail
+  - Index
+    - What is DNS?
+    - Domain Heerarchy
+    - Record Types
+    - Making A Request
+    - Practical
+
+---
+
+### What is DNS?
+  - DNS (Domain Name System) translates easy-to-remember domain names (like tryhackme.com) into complex IP addresses (like 104.26.10.229). This allows users to access websites without needing to remember numerical IP addresses.
+
+  - Key Question:
+    What does DNS stand for? Domain Name System
+
+### Domain Heerarchy
+  - Domain Hierarchy Summary:
+    - TLD (Top-Level Domain): The last part of a domain name (e.g., .com in tryhackme.com). There are two types:
+
+      - gTLD (Generic Top-Level Domain): Purpose-based (e.g., .com for commercial, .edu for education).
+    
+      - ccTLD (Country Code Top-Level Domain): Country-based (e.g., .co.uk for the UK, .ca for Canada).
+    
+    - Second-Level Domain: The part before the TLD (e.g., tryhackme in tryhackme.com). It can use letters, numbers, and hyphens, with a maximum of 63 characters.
+
+    - Subdomain: A domain that is part of a larger domain, placed to the left of the second-level domain (e.g., admin in admin.tryhackme.com). Subdomains also have a 63-character limit.
+
+  - Key Questions:
+    - Maximum length of a subdomain: 63
+    - Characters that cannot be used in a subdomain: _
+    - Maximum length of a full domain name: 253
+    - Type of TLD for .co.uk: ccTLD
+---
+
+### Record Types
+
+  - DNS Record Types Summary:
+    - A Record: Resolves to an IPv4 address (e.g., 104.26.10.229).
+    - AAAA Record: Resolves to an IPv6 address (e.g., 2606:4700:20::681a:be5).
+    - CNAME Record: Points to another domain name (e.g., store.tryhackme.com -> shops.shopify.com).
+    - MX Record: Directs email to the appropriate mail servers, with priority flags for backup servers (e.g., alt1.aspmx.l.google.com).
+    - TXT Record: Stores free text, often used for email authentication or verifying domain ownership.
+    
+  - Key Questions:
+    - What type of record is used to direct email? MX
+    - What type of record handles IPv6 addresses? AAAA
+---
+
+
+### Making A Request
+  - What Happens When You Make a DNS Request?
+    1. Local Cache Check: When you request a domain, your computer first checks its local cache to see if the address has been recently looked up.
+
+    2. Recursive DNS Server: If the address isn't found locally, your computer sends a request to the Recursive DNS Server, usually provided by your ISP. This server also has a local cache.
+
+    3. Root DNS Server: If the recursive server doesn’t find the address, it contacts the Root DNS Server, which directs it to the appropriate TLD server based on the domain's extension (e.g., .com).
+
+    4. TLD Server: The TLD server directs the request to the authoritative server (nameserver) for the domain.
+
+    5. Authoritative DNS Server: The authoritative server holds the actual DNS records for the domain. It returns the appropriate DNS record to the recursive server, which then caches it for future requests and sends it back to the client.
+
+  - Key Concepts:
+    - TTL (Time To Live): Specifies how long a DNS record should be cached.
+    - Recursive DNS Server: Typically provided by your ISP to handle your DNS requests.
+    - Authoritative DNS Server: Stores and provides the DNS records for a domain.
+  
+  - Key Questions:
+    - What field specifies how long a DNS record should be cached? TTL
+    - What type of DNS Server is usually provided by your ISP? Recursive
+    - What type of server holds all the records for a domain? Authoritative
+---
+
+
+
