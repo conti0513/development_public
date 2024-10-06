@@ -1,0 +1,337 @@
+### キッティング
+
+#### WIndows
+アプリごとに多くのオプションが存在することを考慮し、操作しやすくするために、各アプリに基本的なデフォルトオプションを設定しつつ、簡単に変更できる形
+
+# 基本的なインストール設定をまとめた辞書 (アプリ名 => オプション)
+$installOptions = @{
+    "Google Chrome"  = "/silent /install"
+    "Microsoft Edge" = "/silent /install"
+    "IceCube"        = "/silent /install"  # 実際のオプションを適用
+    "Malion Cloud"   = "/silent /install"  # 実際のオプションを適用
+}
+
+# インストールするアプリケーションのフォルダ
+$installerFolder = "C:\installers"
+
+# インストール用の共通関数
+function Install-App {
+    param (
+        [string]$appName,
+        [string]$installerPath
+    )
+    
+    if ($installOptions.ContainsKey($appName)) {
+        $options = $installOptions[$appName]
+        Write-Host "$appName を $options オプションでインストールします..."
+        Start-Process $installerPath -ArgumentList $options -Wait
+    } else {
+        Write-Host "$appName のインストールオプションが見つかりませんでした。"
+    }
+}
+
+# Google Chrome のインストール
+$chromeInstallerPath = "$installerFolder\chrome_installer.exe"
+Install-App "Google Chrome" $chromeInstallerPath
+
+# Microsoft Edge のインストール
+$edgeInstallerPath = "$installerFolder\edge_installer.exe"
+Install-App "Microsoft Edge" $edgeInstallerPath
+
+# IceCube のインストール (ローカルのインストーラーを指定)
+$iceCubeInstallerPath = "$installerFolder\icecube_installer.exe"
+Install-App "IceCube" $iceCubeInstallerPath
+
+# Malion Cloud のインストール (ローカルのインストーラーを指定)
+$malionCloudInstallerPath = "$installerFolder\malioncloud_installer.exe"
+Install-App "Malion Cloud" $malionCloudInstallerPath
+
+# 必要なら他のアプリを追加
+シンプル版の特徴：
+
+基本的なインストールオプションを事前定義：
+
+各アプリケーションごとに基本的なインストールオプション（サイレントインストールなど）を定義し、必要に応じて後から簡単に変更できます。
+
+簡単なインストール関数：
+Install-App 関数を使って、インストーラーのパスとアプリ名を指定するだけでインストールを行います。これにより、同じパターンで他のアプリも追加しやすくなっています。
+
+柔軟性と簡単さの両立：
+各アプリのオプションを辞書型 ($installOptions) にまとめているため、必要な場合にそこだけ変更することで簡単に設定を調整できます。ハードコードは避けながら、必要最低限の柔軟性を保っています。
+
+
+---
+
+#### Mac
+各アプリの基本的なインストールオプションを定義し、Homebrewまたはローカルインストーラー（.dmg/.pkg）を使用してアプリケーションをインストールします。以下に各部分を説明します。
+
+macOSスクリプトの内容
+bash
+コードをコピーする
+#!/bin/bash
+
+# 各アプリの基本インストールオプションを定義 (アプリ名 => オプション)
+declare -A installOptions=(
+    ["Google Chrome"]="--cask"
+    ["Microsoft Edge"]="--cask"
+    ["IceCube"]=""  # IceCube の実際のオプションを追加可能
+    ["Malion Cloud"]=""  # Malion Cloud の実際のオプションを追加可能
+)
+
+# インストーラーが保存されるフォルダ（または brew がアプリのインストールを行う場所）
+installerFolder="/Applications"
+
+# アプリをインストールするための関数
+function install_app() {
+    local appName=$1
+    local options=$2
+
+    if [ "${installOptions[$appName]+_}" ]; then
+        echo "オプション: $options で $appName をインストールしています..."
+        if [[ "$options" == "--cask" ]]; then
+            # brew cask を使ってアプリをインストール
+            brew install $appName $options
+        else
+            # brew 以外のインストール（dmgやpkgファイルを想定）
+            echo "提供されたインストーラーを使って $appName を手動でインストールしてください。"
+            echo "インストーラーは $installerFolder にある必要があります。"
+            # .dmg ファイルをマウントしてインストール（必要な場合）
+            dmgFile="$installerFolder/$appName.dmg"
+            if [ -f "$dmgFile" ]; then
+                echo "$dmgFile から $appName をマウントしてインストール中"
+                hdiutil attach "$dmgFile"
+                # .app または .pkg ファイルがDMG内にあると仮定
+                sudo cp -R /Volumes/"$appName"/*.app /Applications/
+                hdiutil detach /Volumes/"$appName"
+            else
+                echo "$dmgFile が見つかりません。インストーラーをダウンロードしてください。"
+            fi
+        fi
+    else
+        echo "$appName のインストールオプションが見つかりませんでした。"
+    fi
+}
+
+# Google Chrome のインストール
+install_app "google-chrome" "${installOptions["Google Chrome"]}"
+
+# Microsoft Edge のインストール
+install_app "microsoft-edge" "${installOptions["Microsoft Edge"]}"
+
+# IceCube のインストール（ローカルインストーラーが必要）
+install_app "IceCube" "${installOptions["IceCube"]}"
+
+# Malion Cloud のインストール（ローカルインストーラーが必要）
+install_app "Malion Cloud" "${installOptions["Malion Cloud"]}"
+
+# 必要に応じて、他のアプリケーションをここに追加可能
+各部分の説明
+1. Homebrewを使ったパッケージ管理
+brew を使ってアプリケーションを簡単にインストールします。
+Google ChromeやMicrosoft Edgeなどはbrew caskを使用し、サイレントインストールが可能です。
+2. インストーラーの保存場所
+installerFolderに指定したディレクトリ（デフォルトでは/Applications）に、手動インストール用の.dmgや.pkgファイルがあることを想定しています。
+スクリプトは.dmgファイルをマウントしてアプリをコピーし、完了後にアンマウントします。
+3. インストール関数
+install_app 関数は辞書（installOptions）で定義されたインストールオプションを参照してインストールを行います。
+brewがサポートするアプリの場合、brewコマンドでインストールします。
+それ以外の場合は、手動でインストーラーを使ってインストールすることを前提にしています（.dmgや.pkgファイルを使ってインストール）。
+4. 柔軟性
+各アプリのインストールオプションはinstallOptionsで定義されており、簡単に変更や追加が可能です。
+より複雑なオプションが必要な場合は、辞書に追加して対応できます。
+----
+
+
+
+
+
+
+
+＃＃＃＃　Chocolatyを利用したバージョン
+
+
+---
+
+### 手順 1: 工場出荷状態のPCを起動
+- **目的**：工場出荷状態のWindows PCを最初に起動し、Windowsの初期セットアップを進めます（言語、地域、ネットワーク設定など）。
+
+---
+
+### 手順 2: PowerShellにコマンドを手動入力し、Windowsのセットアップを自動化
+- **目的**：PowerShellを使って管理者アカウントとユーザアカウントを自動的に作成し、基本設定を進めます。
+
+#### **PowerShellの起動**
+1. Windowsセットアップが完了したら、**「Windowsキー + X」**を押して「Windows PowerShell（管理者）」を選択します。
+2. 次に、以下のコマンドをPowerShellに手動で入力し、管理者アカウントとユーザアカウントを自動的に作成します。
+
+#### **PowerShellスクリプト（アカウント作成と初期設定）**
+```powershell
+# 1. 管理者アカウントの作成
+$adminPassword = ConvertTo-SecureString "P@ssword123" -AsPlainText -Force
+New-LocalUser -Name "AdminUser" -Password $adminPassword -FullName "Administrator" -Description "Local Administrator Account"
+Add-LocalGroupMember -Group "Administrators" -Member "AdminUser"
+
+# 2. 標準ユーザーアカウントの作成
+$userPassword = ConvertTo-SecureString "UserPass123" -AsPlainText -Force
+New-LocalUser -Name "StandardUser" -Password $userPassword -FullName "Standard User" -Description "Standard User Account"
+
+# 3. 管理者権限を付与する
+Add-LocalGroupMember -Group "Administrators" -Member "AdminUser"
+
+# 4. 実行ポリシーをバイパス（スクリプトの実行を許可）
+Set-ExecutionPolicy Bypass -Scope Process -Force
+```
+
+---
+
+### 手順 3: 管理者アカウントとユーザアカウントの設定
+- **目的**：手順2で実行されたPowerShellスクリプトにより、管理者アカウント「AdminUser」と標準ユーザ「StandardUser」が自動的に作成されます。それぞれのアカウントに適切な権限が設定されます。
+
+---
+
+### 手順 4: 必要なアプリケーションのインストール
+
+- **目的**：Windows環境に必要なアプリケーション（Zoom、Malion Cloud、Chrome、CubeIce、ESET）を一括でインストールします。ここでは、**Chocolatey**を使ってインストールを自動化します。
+
+#### **Chocolateyのインストール**
+PowerShellを使って以下のコマンドを実行し、Chocolateyをインストールします。
+
+```powershell
+Set-ExecutionPolicy Bypass -Scope Process -Force
+iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
+```
+
+#### **アプリケーションの一括インストール**
+Chocolateyがインストールされたら、必要なアプリケーションを一括でインストールします。
+
+```powershell
+# アプリケーションのインストール
+choco install zoom -y
+choco install googlechrome -y
+choco install cubeice -y
+choco install malioncloud -y  # Malion Cloudのパッケージが公式にない場合は、手動インストールの指示を考慮する
+choco install eset -y
+```
+
+- **注記**：Malion Cloudのように公式にChocolateyリポジトリで提供されていないアプリケーションについては、手動でインストーラーをダウンロードしてインストールすることも検討してください。
+
+---
+
+### 手順 5: 細かな設定と最終確認
+- **目的**：Windowsの基本設定（タイムゾーン、言語、Windows Update）を行い、ユーザ引渡し前の最終確認をします。
+
+#### **タイムゾーンと言語の設定**
+```powershell
+# タイムゾーン設定
+Set-TimeZone -Id "Tokyo Standard Time"
+
+# システム言語の設定
+Set-WinUILanguageOverride -Language "ja-JP"
+Set-WinDefaultInputMethodOverride -InputTip "0411:00000411"
+```
+
+#### **Windows Updateの実行**
+```powershell
+# Windows Updateを実行し、システムを最新の状態に更新
+Install-WindowsUpdate -AcceptAll -AutoReboot
+```
+
+---
+
+###＃　MDTを利用したバージョン
+以下に、MDTを使用してWindows 11環境で初期セットアップを行い、ネットワークブートを使用して対象マシンに初期設定を展開する方法をまとめました。
+
+---
+
+### **1. MDTの初期セットアップ（管理者PC：Windows 11）**
+
+#### **ステップ 1: 必要なツールのインストール**
+1. **Windows ADK（Assessment and Deployment Kit）のインストール**:
+   - Microsoftの公式サイトから**Windows ADK**をダウンロードしてインストールします。
+   - インストール時に、以下のコンポーネントを選択します。
+     - **Deployment Tools**
+     - **Windows Preinstallation Environment (WinPE)**
+
+2. **MDT（Microsoft Deployment Toolkit）のインストール**:
+   - Microsoftの公式サイトから**MDT**をダウンロードしてインストールします。
+
+---
+
+#### **ステップ 2: Deployment Shareの作成**
+1. **MDTを起動**:
+   - 管理者PCで**MDTコンソール**を開きます。
+
+2. **新しいDeployment Shareを作成**:
+   - **「Deployment Shares」**を右クリックして、**「New Deployment Share」**を選択します。
+   - 展開共有フォルダのパスを指定（例: `C:\DeploymentShare`）します。
+   - 「New Deployment Share Wizard」に従って設定を進めます。
+
+3. **OSイメージの追加**:
+   - MDTの展開共有フォルダに、Windowsの**OSイメージ（install.wim）**を追加します。
+     - **「Operating Systems」**を右クリックし、OSイメージをインポートします。
+
+4. **アプリケーションの追加**:
+   - インストールしたいアプリケーション（例: Zoom、Google Chrome、ESETなど）を追加します。
+     - **「Applications」**を右クリックして、アプリケーションをインポートします。
+
+5. **タスクシーケンスの作成**:
+   - **「Task Sequences」**を右クリックして、新しいタスクシーケンスを作成します。
+   - タスクシーケンスの中にOSのインストール、アプリケーションのインストール、アカウント作成など、必要なステップを設定します。
+
+---
+
+#### **ステップ 3: WinPEブートイメージの作成**
+1. **ブートイメージの作成**:
+   - **Deployment Share**を右クリックし、**「Update Deployment Share」**を選択してWinPEイメージ（`LiteTouchPE_x64.wim`）を生成します。
+
+2. **ブートイメージの保存**:
+   - ブートイメージ（WIMファイル）は、後でWindows Deployment Services (WDS) に追加してPXEブートに使用します。
+
+---
+
+### **2. MDTを利用して対象マシンをネットワークブートから初期設定する方法**
+
+#### **ステップ 1: WDS（Windows Deployment Services）の設定**
+1. **WDSのインストール**:
+   - 管理者PCまたはサーバーに**Windows Deployment Services（WDS）**の役割を追加します。
+   - サーバーマネージャーを開き、**「役割と機能の追加」**を選択して、WDSをインストールします。
+
+2. **WDSの構成**:
+   - WDSの初期設定ウィザードに従い、PXEブートサーバーを構成します。
+   - **「Transport Server」**と**「Deployment Server」**を有効にします。
+
+3. **MDTのブートイメージをWDSに追加**:
+   - WDSコンソールを開き、**「ブートイメージ」**を右クリックして、MDTで生成した**WinPEブートイメージ（LiteTouchPE_x64.wim）**を追加します。
+
+---
+
+#### **ステップ 2: 対象マシンのネットワークブート設定**
+1. **BIOS/UEFI設定でPXEブートを有効化**:
+   - 対象マシンのBIOSまたはUEFI設定に入り、**ネットワーク（PXE）ブート**を有効化します。
+   - PXEブートが最優先になるように設定し、保存して再起動します。
+
+2. **対象マシンをネットワークブート**:
+   - 対象マシンを起動すると、PXEブートが開始され、管理者PCのWDSサーバーからMDTのWinPEブートイメージが読み込まれます。
+
+---
+
+#### **ステップ 3: MDT展開ウィザードの実行**
+1. **展開ウィザードの表示**:
+   - PXEブート後、対象マシンに**MDT展開ウィザード**が表示されます。
+
+2. **タスクシーケンスの選択**:
+   - 展開ウィザード内で、事前に作成したタスクシーケンスを選択します。
+
+3. **自動セットアップの実行**:
+   - タスクシーケンスに基づいて、OSのインストール、アプリケーションのインストール、管理者およびユーザアカウントの作成が自動的に実行されます。
+
+---
+
+### まとめ
+
+1. **MDTの初期セットアップ**：
+   - Windows ADKとMDTをインストールし、Deployment Shareを作成してOSイメージやアプリケーションを追加し、タスクシーケンスを設定します。
+2. **ネットワークブートによる展開**：
+   - WDSを設定し、PXEブートを有効にした対象マシンでMDTの展開ウィザードを通じて、自動的にOSやアプリケーションを展開します。
+
+---
