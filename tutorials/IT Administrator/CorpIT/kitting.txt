@@ -1,64 +1,147 @@
 ### キッティング
 
 #### WIndows
-アプリごとに多くのオプションが存在することを考慮し、操作しやすくするために、各アプリに基本的なデフォルトオプションを設定しつつ、簡単に変更できる形
 
-# 基本的なインストール設定をまとめた辞書 (アプリ名 => オプション)
-$installOptions = @{
-    "Google Chrome"  = "/silent /install"
-    "Microsoft Edge" = "/silent /install"
-    "IceCube"        = "/silent /install"  # 実際のオプションを適用
-    "Malion Cloud"   = "/silent /install"  # 実際のオプションを適用
-}
-
-# インストールするアプリケーションのフォルダ
-$installerFolder = "C:\installers"
-
-# インストール用の共通関数
-function Install-App {
-    param (
-        [string]$appName,
-        [string]$installerPath
-    )
-    
-    if ($installOptions.ContainsKey($appName)) {
-        $options = $installOptions[$appName]
-        Write-Host "$appName を $options オプションでインストールします..."
-        Start-Process $installerPath -ArgumentList $options -Wait
-    } else {
-        Write-Host "$appName のインストールオプションが見つかりませんでした。"
+setup.ps1
+# ステップ1: 管理者アカウントとユーザーアカウント作成
+function Step1 {
+    $adminUser = Read-Host "Enter the administrator username (or type 'exit' to stop)"
+    if ($adminUser -eq "exit") {
+        Write-Host "Setup aborted at Step 1."
+        exit
     }
+    $adminPassword = Read-Host -AsSecureString "Enter the administrator password"
+    New-LocalUser -Name $adminUser -Password $adminPassword -FullName "Administrator Account"
+    Add-LocalGroupMember -Group "Administrators" -Member $adminUser
+
+    $userUser = Read-Host "Enter the standard user username (or type 'exit' to stop)"
+    if ($userUser -eq "exit") {
+        Write-Host "Setup aborted at Step 1."
+        exit
+    }
+    $userPassword = Read-Host -AsSecureString "Enter the standard user password"
+    New-LocalUser -Name $userUser -Password $userPassword -FullName "Standard User Account"
+    Add-LocalGroupMember -Group "Users" -Member $userUser
 }
 
-# Google Chrome のインストール
-$chromeInstallerPath = "$installerFolder\chrome_installer.exe"
-Install-App "Google Chrome" $chromeInstallerPath
+# ステップ2: Chocolateyのインストールとアプリのインストール
+function Step2 {
+    $continue = Read-Host "Proceed with installing Chocolatey and applications? (yes/exit)"
+    if ($continue -eq "exit") {
+        Write-Host "Setup aborted at Step 2."
+        exit
+    }
+    
+    # Chocolateyのインストール
+    Set-ExecutionPolicy Bypass -Scope Process -Force
+    iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
 
-# Microsoft Edge のインストール
-$edgeInstallerPath = "$installerFolder\edge_installer.exe"
-Install-App "Microsoft Edge" $edgeInstallerPath
+    # アプリケーションのインストール
+    choco install googlechrome -y
+    choco install zoom -y
+}
 
-# IceCube のインストール (ローカルのインストーラーを指定)
-$iceCubeInstallerPath = "$installerFolder\icecube_installer.exe"
-Install-App "IceCube" $iceCubeInstallerPath
+# ステップ3: インストーラー形式のアプリのインストール
+function Step3 {
+    $continue = Read-Host "Proceed with installing app1.exe? (yes/exit)"
+    if ($continue -eq "exit") {
+        Write-Host "Setup aborted at Step 3."
+        exit
+    }
+    
+    Start-Process "C:\Scripts\setup\app1.exe" -ArgumentList "/silent" -Wait
+    Start-Process "C:\Scripts\setup\app2.exe" -ArgumentList "/silent" -Wait
+}
 
-# Malion Cloud のインストール (ローカルのインストーラーを指定)
-$malionCloudInstallerPath = "$installerFolder\malioncloud_installer.exe"
-Install-App "Malion Cloud" $malionCloudInstallerPath
+# ステップ4: システム設定（タイムゾーン、言語）
+function Step4 {
+    $continue = Read-Host "Proceed with system settings? (yes/exit)"
+    if ($continue -eq "exit") {
+        Write-Host "Setup aborted at Step 4."
+        exit
+    }
+    
+    Set-TimeZone -Id "Tokyo Standard Time"
+    Set-WinUILanguageOverride -Language "ja-JP"
+    Set-WinDefaultInputMethodOverride -InputTip "0411:00000411"
+}
 
-# 必要なら他のアプリを追加
-シンプル版の特徴：
+# スクリプト実行
+Write-Host "Starting setup..."
 
-基本的なインストールオプションを事前定義：
+Step1
+Step2
+Step3
+Step4
 
-各アプリケーションごとに基本的なインストールオプション（サイレントインストールなど）を定義し、必要に応じて後から簡単に変更できます。
+Write-Host "Setup completed successfully."
 
-簡単なインストール関数：
-Install-App 関数を使って、インストーラーのパスとアプリ名を指定するだけでインストールを行います。これにより、同じパターンで他のアプリも追加しやすくなっています。
 
-柔軟性と簡単さの両立：
-各アプリのオプションを辞書型 ($installOptions) にまとめているため、必要な場合にそこだけ変更することで簡単に設定を調整できます。ハードコードは避けながら、必要最低限の柔軟性を保っています。
 
+---
+### **README: Windows 初期セットアップ用 PowerShell スクリプト**
+
+#### 1. 概要
+このフォルダには、Windows PCの初期セットアップを効率化するためのスクリプトと必要なアプリケーションのインストーラーファイルが含まれています。スクリプトは、管理者権限での実行が必要です。
+
+---
+
+#### 2. Chocolateyについて
+**Chocolatey**は、Windowsのパッケージ管理ツールです。アプリケーションのインストール、更新、アンインストールをコマンドラインで自動化でき、複数のPCに対するアプリケーションの展開や管理が効率化されます。
+
+##### Chocolateyの主な利点：
+- **アプリケーションの一括インストール**。
+- **自動アップデート**機能により、アプリケーションの最新バージョン管理を簡単に行える。
+- **豊富なリポジトリ**から、様々なアプリをインストール可能。
+
+##### Chocolatey利用例：
+以下のコマンドでGoogle ChromeやZoomをインストールします：
+```powershell
+choco install googlechrome -y
+choco install zoom -y
+```
+
+---
+
+#### 3. スクリプトの実行手順
+1. **管理者権限でPowerShellを起動**します。
+2. `setup.ps1`を次のコマンドで実行します：
+   ```powershell
+   .\setup.ps1
+   ```
+
+##### スクリプト実行の流れ：
+- **ステップ1**: 管理者アカウントと標準ユーザーアカウントの作成（対話形式）
+- **ステップ2**: Chocolateyを使ったアプリケーション（Google Chrome、Zoom）のインストール
+- **ステップ3**: インストーラー形式のアプリ（app1.exe, app2.exe）のインストール
+- **ステップ4**: システム設定（タイムゾーン、言語設定）
+
+**各ステップで中断**したい場合は、`exit`と入力してスクリプトを終了できます。
+
+---
+
+#### 4. システム設定内容
+- **タイムゾーン**: 日本標準時（Tokyo）
+- **システム言語**: 日本語（ja-JP）
+- **キーボード設定**: 日本語キーボード (0411:00000411)
+
+---
+
+#### 5. 注意事項
+- インターネット接続が必要です（Chocolateyのインストールに必要）。
+- スクリプトは中断後、再実行時には最初から実行されます。
+- フォルダ内のインストーラー（app1.exe, app2.exe）は、適切なパスに配置されている必要があります。
+
+---
+
+### **setupフォルダ構成**
+```
+/setup
+   ├── setup.ps1         # PowerShellスクリプト
+   ├── README.txt        # 実行手順や仕様説明
+   ├── app1.exe          # インストーラー形式アプリケーション1
+   ├── app2.exe          # インストーラー形式アプリケーション2
+```
 
 ---
 
@@ -145,193 +228,3 @@ brewがサポートするアプリの場合、brewコマンドでインストー
 
 
 
-
-
-＃＃＃＃　Chocolatyを利用したバージョン
-
-
----
-
-### 手順 1: 工場出荷状態のPCを起動
-- **目的**：工場出荷状態のWindows PCを最初に起動し、Windowsの初期セットアップを進めます（言語、地域、ネットワーク設定など）。
-
----
-
-### 手順 2: PowerShellにコマンドを手動入力し、Windowsのセットアップを自動化
-- **目的**：PowerShellを使って管理者アカウントとユーザアカウントを自動的に作成し、基本設定を進めます。
-
-#### **PowerShellの起動**
-1. Windowsセットアップが完了したら、**「Windowsキー + X」**を押して「Windows PowerShell（管理者）」を選択します。
-2. 次に、以下のコマンドをPowerShellに手動で入力し、管理者アカウントとユーザアカウントを自動的に作成します。
-
-#### **PowerShellスクリプト（アカウント作成と初期設定）**
-```powershell
-# 1. 管理者アカウントの作成
-$adminPassword = ConvertTo-SecureString "P@ssword123" -AsPlainText -Force
-New-LocalUser -Name "AdminUser" -Password $adminPassword -FullName "Administrator" -Description "Local Administrator Account"
-Add-LocalGroupMember -Group "Administrators" -Member "AdminUser"
-
-# 2. 標準ユーザーアカウントの作成
-$userPassword = ConvertTo-SecureString "UserPass123" -AsPlainText -Force
-New-LocalUser -Name "StandardUser" -Password $userPassword -FullName "Standard User" -Description "Standard User Account"
-
-# 3. 管理者権限を付与する
-Add-LocalGroupMember -Group "Administrators" -Member "AdminUser"
-
-# 4. 実行ポリシーをバイパス（スクリプトの実行を許可）
-Set-ExecutionPolicy Bypass -Scope Process -Force
-```
-
----
-
-### 手順 3: 管理者アカウントとユーザアカウントの設定
-- **目的**：手順2で実行されたPowerShellスクリプトにより、管理者アカウント「AdminUser」と標準ユーザ「StandardUser」が自動的に作成されます。それぞれのアカウントに適切な権限が設定されます。
-
----
-
-### 手順 4: 必要なアプリケーションのインストール
-
-- **目的**：Windows環境に必要なアプリケーション（Zoom、Malion Cloud、Chrome、CubeIce、ESET）を一括でインストールします。ここでは、**Chocolatey**を使ってインストールを自動化します。
-
-#### **Chocolateyのインストール**
-PowerShellを使って以下のコマンドを実行し、Chocolateyをインストールします。
-
-```powershell
-Set-ExecutionPolicy Bypass -Scope Process -Force
-iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
-```
-
-#### **アプリケーションの一括インストール**
-Chocolateyがインストールされたら、必要なアプリケーションを一括でインストールします。
-
-```powershell
-# アプリケーションのインストール
-choco install zoom -y
-choco install googlechrome -y
-choco install cubeice -y
-choco install malioncloud -y  # Malion Cloudのパッケージが公式にない場合は、手動インストールの指示を考慮する
-choco install eset -y
-```
-
-- **注記**：Malion Cloudのように公式にChocolateyリポジトリで提供されていないアプリケーションについては、手動でインストーラーをダウンロードしてインストールすることも検討してください。
-
----
-
-### 手順 5: 細かな設定と最終確認
-- **目的**：Windowsの基本設定（タイムゾーン、言語、Windows Update）を行い、ユーザ引渡し前の最終確認をします。
-
-#### **タイムゾーンと言語の設定**
-```powershell
-# タイムゾーン設定
-Set-TimeZone -Id "Tokyo Standard Time"
-
-# システム言語の設定
-Set-WinUILanguageOverride -Language "ja-JP"
-Set-WinDefaultInputMethodOverride -InputTip "0411:00000411"
-```
-
-#### **Windows Updateの実行**
-```powershell
-# Windows Updateを実行し、システムを最新の状態に更新
-Install-WindowsUpdate -AcceptAll -AutoReboot
-```
-
----
-
-###＃　MDTを利用したバージョン
-以下に、MDTを使用してWindows 11環境で初期セットアップを行い、ネットワークブートを使用して対象マシンに初期設定を展開する方法をまとめました。
-
----
-
-### **1. MDTの初期セットアップ（管理者PC：Windows 11）**
-
-#### **ステップ 1: 必要なツールのインストール**
-1. **Windows ADK（Assessment and Deployment Kit）のインストール**:
-   - Microsoftの公式サイトから**Windows ADK**をダウンロードしてインストールします。
-   - インストール時に、以下のコンポーネントを選択します。
-     - **Deployment Tools**
-     - **Windows Preinstallation Environment (WinPE)**
-
-2. **MDT（Microsoft Deployment Toolkit）のインストール**:
-   - Microsoftの公式サイトから**MDT**をダウンロードしてインストールします。
-
----
-
-#### **ステップ 2: Deployment Shareの作成**
-1. **MDTを起動**:
-   - 管理者PCで**MDTコンソール**を開きます。
-
-2. **新しいDeployment Shareを作成**:
-   - **「Deployment Shares」**を右クリックして、**「New Deployment Share」**を選択します。
-   - 展開共有フォルダのパスを指定（例: `C:\DeploymentShare`）します。
-   - 「New Deployment Share Wizard」に従って設定を進めます。
-
-3. **OSイメージの追加**:
-   - MDTの展開共有フォルダに、Windowsの**OSイメージ（install.wim）**を追加します。
-     - **「Operating Systems」**を右クリックし、OSイメージをインポートします。
-
-4. **アプリケーションの追加**:
-   - インストールしたいアプリケーション（例: Zoom、Google Chrome、ESETなど）を追加します。
-     - **「Applications」**を右クリックして、アプリケーションをインポートします。
-
-5. **タスクシーケンスの作成**:
-   - **「Task Sequences」**を右クリックして、新しいタスクシーケンスを作成します。
-   - タスクシーケンスの中にOSのインストール、アプリケーションのインストール、アカウント作成など、必要なステップを設定します。
-
----
-
-#### **ステップ 3: WinPEブートイメージの作成**
-1. **ブートイメージの作成**:
-   - **Deployment Share**を右クリックし、**「Update Deployment Share」**を選択してWinPEイメージ（`LiteTouchPE_x64.wim`）を生成します。
-
-2. **ブートイメージの保存**:
-   - ブートイメージ（WIMファイル）は、後でWindows Deployment Services (WDS) に追加してPXEブートに使用します。
-
----
-
-### **2. MDTを利用して対象マシンをネットワークブートから初期設定する方法**
-
-#### **ステップ 1: WDS（Windows Deployment Services）の設定**
-1. **WDSのインストール**:
-   - 管理者PCまたはサーバーに**Windows Deployment Services（WDS）**の役割を追加します。
-   - サーバーマネージャーを開き、**「役割と機能の追加」**を選択して、WDSをインストールします。
-
-2. **WDSの構成**:
-   - WDSの初期設定ウィザードに従い、PXEブートサーバーを構成します。
-   - **「Transport Server」**と**「Deployment Server」**を有効にします。
-
-3. **MDTのブートイメージをWDSに追加**:
-   - WDSコンソールを開き、**「ブートイメージ」**を右クリックして、MDTで生成した**WinPEブートイメージ（LiteTouchPE_x64.wim）**を追加します。
-
----
-
-#### **ステップ 2: 対象マシンのネットワークブート設定**
-1. **BIOS/UEFI設定でPXEブートを有効化**:
-   - 対象マシンのBIOSまたはUEFI設定に入り、**ネットワーク（PXE）ブート**を有効化します。
-   - PXEブートが最優先になるように設定し、保存して再起動します。
-
-2. **対象マシンをネットワークブート**:
-   - 対象マシンを起動すると、PXEブートが開始され、管理者PCのWDSサーバーからMDTのWinPEブートイメージが読み込まれます。
-
----
-
-#### **ステップ 3: MDT展開ウィザードの実行**
-1. **展開ウィザードの表示**:
-   - PXEブート後、対象マシンに**MDT展開ウィザード**が表示されます。
-
-2. **タスクシーケンスの選択**:
-   - 展開ウィザード内で、事前に作成したタスクシーケンスを選択します。
-
-3. **自動セットアップの実行**:
-   - タスクシーケンスに基づいて、OSのインストール、アプリケーションのインストール、管理者およびユーザアカウントの作成が自動的に実行されます。
-
----
-
-### まとめ
-
-1. **MDTの初期セットアップ**：
-   - Windows ADKとMDTをインストールし、Deployment Shareを作成してOSイメージやアプリケーションを追加し、タスクシーケンスを設定します。
-2. **ネットワークブートによる展開**：
-   - WDSを設定し、PXEブートを有効にした対象マシンでMDTの展開ウィザードを通じて、自動的にOSやアプリケーションを展開します。
-
----
