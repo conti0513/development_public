@@ -48,3 +48,33 @@ Steps to Verify Deletion from Braze Dashboard:
 ---
 
 https://www.braze.com/docs/ja/user_guide/administrative/app_settings/manage_your_braze_users/adding_users_to_your_dashboard/#braze-%E3%83%A6%E3%83%BC%E3%82%B6%E3%83%BC%E3%81%AE%E8%BF%BD%E5%8A%A0:~:text=%E9%9B%BB%E5%AD%90%E3%83%A1%E3%83%BC%E3%83%AB%E3%82%A2%E3%83%89%E3%83%AC%E3%82%B9%E3%81%AE,%E8%A1%A8%E7%A4%BA%E3%81%95%E3%82%8C%E3%82%8B%E3%80%82
+
+
+Summary
+
+Issue:
+You attempted to create a new user with the email address aaa.bbb@aaa-web.com, but the action failed due to the user ID needing to be unique across Braze environments. It’s likely that this email already exists in another Braze environment.
+Solution:
+This issue cannot be resolved from the user side alone and requires assistance from Braze Support. The following steps are suggested for resolution:
+
+Explain the Problem:
+
+Inform Braze Support that you encountered an error when trying to create a user with the email aaa.bbb@aaa-web.com. Explain that the user ID conflict may be due to the email already existing in another environment, triggering Braze’s unique user ID limitation.
+Request Support’s Help:
+
+Ask Braze Support to investigate whether the email aaa.bbb@aaa-web.com is registered in another environment and causing the issue.
+Request guidance on either removing the existing user or allowing you to create a new user with the same email.
+Provide Relevant Information:
+
+Give the support team the email address (aaa.bbb@aaa-web.com) and error message details (“Action failed”) to help them diagnose the issue faster.
+Include details about any other environments where the email might be in use.
+By contacting Braze Support, they can assist with identifying where the conflict is occurring and provide a solution, such as deleting the conflicting user or allowing the new account creation.
+
+This approach ensures that the user ID conflict is properly resolved.
+---
+
+
+
+
+
+
