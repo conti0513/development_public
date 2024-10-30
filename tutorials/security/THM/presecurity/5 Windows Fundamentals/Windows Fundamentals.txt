@@ -1,0 +1,226 @@
+### Windows fundamentals 1 
+YouTube channel
+https://www.youtube.com/watch?v=uqE1-ObiRHk
+
+lusrmgr.msc
+
+control panel
+
+
+### Windows fundamentals 2
+
+  - lusrmgr.msc (Local Users and Groups Manager):
+    - Used to manage local users and groups on a Windows machine.
+    - Allows you to add, remove, and modify user accounts and groups.
+    - Can be used to assign permissions and roles to users.
+  
+  - Control Panel:
+    - A centralized place for managing system settings in Windows.
+    - Allows users to configure hardware, software, user accounts, system security, and other system preferences.
+    - Contains tools for managing network settings, adding/removing programs, and customizing appearance.
+
+
+
+
+  - System Configuration Utility (MSConfig) is a tool primarily used for advanced troubleshooting and diagnosing startup issues on Windows systems. It requires local administrator rights to access and has the following five tabs:
+
+    - General: Allows you to select what devices and services to load at startup (Normal, Diagnostic, or Selective startup).
+
+    - Boot: Configures boot options for the operating system.
+    
+    - Services: Lists all system services, regardless of whether they are running or stopped.
+    
+    - Startup: Directs users to Task Manager to manage startup items (MSConfig is not a startup manager).
+    
+    - Tools: Provides a list of system utilities and tools for further OS configuration, with descriptions for each tool.
+    
+    - Commands:
+    Windows Troubleshooting Command:
+    C:\Windows\System32\control.exe /name Microsoft.Troubleshooting
+
+    Control Panel Command:
+    control.exe
+---
+
+#### UAC
+  - What is the command to open User Account Control Settings?
+   (The answer is the name of the .exe file, not the full path)
+    UserAccountControlSettings.exe
+---
+
+
+#### Computer Management:
+
+  - Computer Management is a utility that provides access to various system tools. The utility is divided into three main sections:
+    
+    - System Tools: Includes Task Scheduler, Event Viewer, Shared Folders, Local Users and Groups, Performance, and Device Manager.
+    
+    - Task Scheduler: Automates tasks, such as running programs or scripts at specific times or intervals.
+    
+    - Event Viewer: Displays logs of system events (errors, warnings, etc.) and can help diagnose problems or track actions.
+    
+    - Shared Folders: Lists shared folders on the system and who is currently connected to them.
+    Local Users and Groups: Manages users and groups (as seen in lusrmgr.msc).
+    
+    - Performance Monitor (perfmon): Allows real-time performance monitoring and logging.
+    
+    - Device Manager: Lets users configure or disable hardware components.
+    Storage: Includes Disk Management, which lets you manage disk partitions, assign drive letters, etc.
+    
+    - Services and Applications: Manages background services and includes WMI Control for configuring Windows Management Instrumentation (WMI), used for remote and local system management.
+    
+    - Questions:
+      - Command to open Computer Management: compmgmt.msc
+      - Open Task Scheduler:
+      Press Windows + R to open the Run dialog box, type taskschd.msc, and hit Enter.
+
+    - To check the hidden folder that is shared in Windows, you can use the Computer Management tool. Here's how you can do it:
+
+    Open Computer Management:
+
+    - Press Windows + R to open the Run dialog box, type compmgmt.msc, and hit Enter.
+    
+    - Navigate to Shared Folders:
+    In the left pane, under System Tools, expand Shared Folders and click on Shares.
+    
+    - View the List of Shared Folders:
+    In the middle pane, you'll see a list of shared folders, including hidden shares.
+    Hidden shared folders usually end with a $ (e.g., C$, ADMIN$), which indicates they are hidden.
+    
+    - Identify the Hidden Share:
+    Look for folders with names ending in $ to find the hidden shares.
+---
+
+#### System Information
+  - Command to open System Information: msinfo32.exe
+  - System Name listed: THM-WINFUN2
+  - Value for ComSpec under Environment Variables: %SystemRoot%\system32\cmd.exe
+---
+
+
+#### The command to open Resource Monitor is:
+Command: resmon.exe
+
+
+#### regedit
+What is the command to open the Registry Editor? (The answer is the name of  the .exe file, not the full path)
+regedt32.exe
+---
+
+
+### Windows Fundamental 3
+
+#### Windows Updates
+  - You can access Windows Update through the Run dialog box or Command Prompt by entering the following command:
+    control /name Microsoft.WindowsUpdate
+
+#### Windows Security
+
+#### Virus & threat protection
+
+#### Firewall & Network Protection
+Tip: Command to open the Windows Defender Firewall is WF.msc. 
+
+#### App & Browser Control
+
+#### Device Security
+What is the Trusted Platform Module (TPM)?
+
+Per Microsoft, "Trusted Platform Module (TPM) technology is designed to provide hardware-based, security-related functions. A TPM chip is a secure crypto-processor that is designed to carry out cryptographic operations. The chip includes multiple physical security mechanisms to make it tamper-resistant, and malicious software is unable to tamper with the security functions of the TPM".
+
+#### BitLocker
+  BitLocker is a data protection feature developed by Microsoft to safeguard data from theft or exposure, especially in cases where a computer is lost, stolen, or improperly decommissioned.
+
+  - Key points about BitLocker:
+
+    - Encrypts entire drives: BitLocker encrypts the contents of entire hard drives to protect sensitive information.
+    
+    - TPM (Trusted Platform Module) integration: BitLocker provides optimal security when used with a TPM, a hardware component found in many newer computers. TPM ensures the integrity of the system and prevents tampering while the system is offline.
+   
+    - Protection from unauthorized access: Even if the drive is removed, BitLocker ensures that the data remains inaccessible without proper decryption.
+   
+    BitLocker is not available on all systems, and devices without TPM may have reduced protection.
+
+  What must a user insert on computers that DO NOT have a TPM version 1.2 or later?
+  USB startup key
+
+  ---
+
+#### Volume Shadow Copy Service
+
+Volume Shadow Copy Service VSS
+
+
+
+
+
+### Active Directory Basics
+/workspaces/development_public/tutorials/security/THM/presecurity/5 Windows Fundamentals/Windows Fundamentals.txt
+
+YouTube
+https://www.youtube.com/watch?v=T55AcTV_m7E
+
+# Task1 Introduction
+    - Microsoft’s Active Directory (AD) helps manage users and devices in a company. Key parts include:
+
+        - What AD Is: Manages and authenticates users and resources.
+        - AD Domain: Where users and devices are registered for easy control.
+        - AD Components: Includes domain controllers, groups, and policies.
+        - Forests and Trusts: Connects multiple domains for secure sharing.
+
+# Task2 Windows Domain
+  - Imagine managing a small network with five computers.
+    It's easy to handle each one manually.
+    But, if the business grows to 157 computers and 320 users across multiple offices, 
+    manual management becomes impossible.
+
+    A Windows Domain helps here by grouping all users and computers under one administration system. 
+    It uses Active Directory (AD) to centralize management, and the Domain Controller (DC) runs these AD services.
+
+  - Key Benefits:
+    - Centralized User Management: AD allows managing all users with minimal effort.
+    - Security Policies: Policies are set in AD and applied across the network as needed.
+    
+    - Real-World Example: In school or work, your login works on any network computer. 
+    AD manages your credentials and applies policies that might limit your access to settings, like blocking the control panel.
+
+    Answers:
+    The central repository for credentials: Active Directory
+    The server running AD services: Domain Controller
+
+    
+
+# Task3 Active Directory
+    - Active Directory Domain Service (AD DS) is the main component of any Windows Domain, 
+      acting as a catalog for network "objects" like users, machines, and printers. 
+      
+    - Here’s a quick look at some key objects:
+
+      - Users: Represent people or services. They are security principals, meaning they can access resources on the network with specific permissions.
+      - Machines: Every computer joining the domain gets a machine account (like TOM-PC$). These accounts are security principals and can act within the network.
+      - Security Groups: Groups organize permissions. They include users and machines and are used for setting resource access (e.g., file or printer access) across the network.
+    
+    - Key Groups:
+      - Domain Admins: Control the whole domain.
+      - Server Operators: Manage Domain Controllers but not admin groups.
+      - Backup Operators: Can access all files for backup purposes.
+      - Domain Users/Computers: All users and computers in the domain.
+    
+    - Organizational Units (OUs) organize users and computers, usually by department, 
+      like IT or Marketing. OUs are used to apply policies to similar groups of users. 
+      Security Groups provide access to resources, while OUs apply configurations.
+
+    Answers:
+    Administers all computers and resources: Domain Admins
+    Machine account for TOM-PC: TOM-PC$
+    Container for consistent policy application (like a new department): Organizational Units
+---
+
+
+
+
+
+
+
+
+
