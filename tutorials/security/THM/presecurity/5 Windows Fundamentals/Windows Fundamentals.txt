@@ -189,3 +189,28 @@ Update the AD structure per the organizational chart.
 **Answers**:
 - **Flag on Sophie’s desktop**: `THM{thanks_for_contacting_support}`
 - **Process of granting privileges**: Delegation
+
+
+### Task 5: Managing Computers in Active Directory (AD)
+    When computers join a domain, they are placed in the "Computers" container by default, except for Domain Controllers (DCs). However, organizing devices in this single container is inefficient, as different types of devices (workstations, servers, etc.) usually need distinct policies.
+
+    Recommended Device Categories:
+
+    Workstations: Used by individual users for everyday tasks and should not have privileged accounts logged in.
+    Servers: Provide services to users or other servers and often need different configurations and policies.
+    Domain Controllers (DCs): Critical devices used to manage the AD domain and store hashed passwords. They are automatically placed in a separate OU.
+    Organizing OUs:
+
+    Create two new OUs under the main domain:
+    Workstations: Move all personal computers and laptops here.
+    Servers: Move all servers here.
+    With these OUs, you can apply tailored policies to each category as needed.
+    Answers:
+
+    Computers in the Workstations OU: 7
+    Is it advisable to create separate OUs for Servers and Workstations? yay
+
+    both PCs (desktops) and LPTs (laptops) can be considered workstation computers in most business environments.
+
+    Workstations generally refer to computers used by individual users for everyday tasks, whether they're desktops or laptops.
+    In an Active Directory (AD) environment, workstations (both PCs and LPTs) are often organized under a Workstations OU to apply appropriate policies distinct from servers or other devices.
