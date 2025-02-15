@@ -6,11 +6,11 @@
 *4. invoice (n)  
 *5. quarter (n)  
 *6. landlord (n)  
-7. property (n)  
+*7. property (n)  
 *8. recognize (v)  
 *9. various (adj)  
 *10. appreciate (v)  
-11. accommodation (n)  
+*11. accommodation (n)  
 *12. reschedule (v)  
 *13. accounting (n)  
 *14. (-years of) service (n)  
@@ -24,7 +24,7 @@
 *22. tip (n/v)  
 *23. individual (n/adj)  
 *24. transfer (n/v)  
-25. regarding (prep)  
+*25. regarding (prep)  
 *26. occupy (v)  
 *27. investment (n)  
 *28. architect (n)  
@@ -32,13 +32,13 @@
 *30. shortly (adv)  
 *31. original (adj)  
 *32. forecast (n/v)  
-33. exception (n)  
+*33. exception (n)  
 *34. aim (n/v)  
-35. paycheck (n)  
+*35. paycheck (n)  
 *36. refund (n/v)  
 37. policy (n)  
 *38. generate (v)  
-39. overtime (n/adv)  
+*39. overtime (n/adv)  
 *40. domestic (adj)  
 41. contribute (v)  
 *42. elementary (adj)  
@@ -103,122 +103,203 @@
 
 101. inquire (v)  
 102. impress (v)  
-103. suit (v/n)  
-104. permit (v/n)  
-105. concentrate (v)  
-106. supervise (v)  
-107. respond (v)  
+*103. suit (v/n)  
+*104. permit (v/n)  
+*105. concentrate (v)  
+*106. supervise (v)  
+*107. respond (v)  
 108. appropriate (adj)  
-109. opportunity (n)  
+*109. opportunity (n)  
 110. encounter (v/n)  
 111. impressive (adj)  
-112. suitable (adj)  
+*112. suitable (adj)  
 113. permission (n)  
-114. inquiry (n)  
-115. supervisor (n)  
-116. renovate (v)  
-117. estimate (n/v)  
-118. revise (v)  
-119. renew (v)  
-120. accountant (n)  
+*114. inquiry (n)  
+*115. supervisor (n)  
+*116. renovate (v)  
+*117. estimate (n/v)  
+*118. revise (v)  
+*119. renew (v)  
+*120. accountant (n)  
 121. reward (n/v)  
-122. propose (v)  
-123. represent (v)  
+*122. propose (v)  
+*123. represent (v)  
 124. representative (n)  
-125. benefit (n/v)  
-126. detergent (n)  
+*125. benefit (n/v)  
+*126. detergent (n)  
 127. wage (n)  
-128. approve (v)  
-129. visible (adj)  
-130. pharmacy (n)  
-131. proposal (n)  
-132. specific (adj)  
-133. steady (adj)  
+*128. approve (v)  
+*129. visible (adj)  
+*130. pharmacy (n)  
+*131. proposal (n)  
+*132. specific (adj)  
+*133. steady (adj)  
 134. imply (v)  
 135. minutes (n)  
-136. procedure (n)  
-137. hesitate (v)  
-138. round-trip (adj/n)  
-139. brief (adj)  
+*136. procedure (n)  
+*137. hesitate (v)  
+*138. round-trip (adj/n)  
+*139. brief (adj)  
 140. nevertheless (adv)  
-141. competitor (n)  
-142. competitive (adj)  
-143. present (v/n/adj)  
-144. presence (n)  
-145. establish (v)  
-146. establishment (n)  
+*141. competitor (n)  
+*142. competitive (adj)  
+*143. present (v/n/adj)  
+*144. presence (n)  
+*145. establish (v)  
+*146. establishment (n)  
 147. exact (adj)  
-148. certificate (n)  
-149. previous (adj)  
+*148. certificate (n)  
+*149. previous (adj)  
 150. fundraiser (n)  
-151. shortage (n)  
-152. confidential (adj)  
-153. storage (n)  
-154. equip (v)  
-155. invest (v)  
+*151. shortage (n)  
+*152. confidential (adj)  
+*153. storage (n)  
+*154. equip (v)  
+*155. invest (v)  
 156. moreover (adv)  
-157. valuable (adj)  
-158. generally (adv)  
+*157. valuable (adj)  
+*158. generally (adv)  
 159. acquire (v)  
-160. rely on (phr v)  
-161. variety (n)  
-162. merchandise (n)  
-163. retailer (n)  
+*160. rely on (phr v)  
+*161. variety (n)  
+*162. merchandise (n)  
+*163. retailer (n)  
 164. tenant (n)  
 165. inform (v)  
-166. inspire (v)  
-167. disappointing (adj)  
-168. frequently (adv)  
-169. examine (v)  
+*166. inspire (v)  
+*167. disappointing (adj)  
+*168. frequently (adv)  
+*169. examine (v)  
 170. considerable (adj)  
 171. evaluate (v)  
 172. practical (adj)  
 173. conclusion (n)  
-174. translate (v)  
-175. ancient (adj)  
-176. population (n)  
-177. generous (adj)  
+*174. translate (v)  
+*175. ancient (adj)  
+*176. population (n)  
+*177. generous (adj)  
 178. apparently (adv)  
-179. demonstrate (v)  
-180. prevent (v)  
-181. warranty (n)  
+*179. demonstrate (v)  
+*180. prevent (v)  
+*181. warranty (n)  
 182. advanced (adj)  
 183. rearrange (v)  
 184. assignment (n)  
-185. dairy (n)  
-186. enthusiastic (adj)  
-187. postpone (v)  
+*185. dairy (n)  
+*186. enthusiastic (adj)  
+*187. postpone (v)  
 188. protective (adj)  
-189. slight (adj)  
+*189. slight (adj)  
 190. feature (n/v)  
-191. assembly (n)  
+*191. assembly (n)  
 192. address (n/v)  
 193. detour (n/v)  
-194. destination (n)  
-195. alternative (n/adj)  
-196. manner (n)  
-197. demand (n/v)  
-198. owe (v)  
-199. efficient (adj)  
-200. headquarters (n)  
-201. sculpture (n)  
+*194. destination (n)  
+*195. alternative (n/adj)  
+*196. manner (n)  
+*197. demand (n/v)  
+*198. owe (v)  
+*199. efficient (adj)  
+*200. headquarters (n)  
+*201. sculpture (n)  
 202. urgent (adj)  
-203. insurance (n)  
-204. leak (n/v)  
-205. occur (v)  
-206. paid (adj)  
-207. accompany (v)  
-208. permanent (adj)  
+*203. insurance (n)  
+*204. leak (n/v)  
+*205. occur (v)  
+*206. paid (adj)  
+*207. accompany (v)  
+*208. permanent (adj)  
 209. eligible (adj)  
-210. eventually (adv)  
+*210. eventually (adv)  
 211. deposit (n/v)  
 212. farewell (n)  
-213. entire (adj)  
-214. immediately (adv)  
-215. tend to do (phr v)  
+*213. entire (adj)  
+*214. immediately (adv)  
+*215. tend to do (phr v)  
 216. advantage (n)  
 217. inspect (v)  
 218. appeal to (phr v)  
 219. venue (n)  
-220. resident (n)  
+*220. resident (n)  
 
+
+
+### Unmarked Words List (Plain Text)**
+
+
+**41. contribute (v) - 貢献する、寄付する、提供する**  
+- **Example 1:** **She contributed to the success of the project.**  
+  （彼女はプロジェクトの成功に貢献した。）  
+- **Example 2:** **He contributed $100 to the charity.**  
+  （彼はその慈善団体に100ドル寄付した。）  
+
+
+1. property (n) - 財産、不動産  
+2. accommodation (n) - 宿泊施設、住居  
+3. exception (n) - 例外  
+4. paycheck (n) - 給料、給与支払い小切手  
+5. policy (n) - 方針、規則、保険契約  
+6. overtime (n/adv) - 残業、時間外労働  
+7. regional (adj) - 地域の、地方の  
+8. complimentary (adj) - 無料の、称賛の  
+9. admit (v) - 認める、入場を許可する  
+10. secure (v/adj) - 確保する、安全な
+
+11. signature (n) - 署名  
+12. preserve (v) - 保護する、保存する  
+13. regard (v/n) - みなす、尊重する  
+14. concerning (prep) - 〜に関して  
+15. forward (adv/v) - 前方に、転送する  
+16. prior (adj) - 以前の、優先の  
+17. prior to (prep) - 〜より前に  
+18. reference (n) - 参照、推薦状  
+19. intend (v) - 意図する、予定する  
+20. proper (adj) - 適切な、ふさわしい  
+21. attempt (n/v) - 試みる、挑戦する  
+22. ordinary (adj) - 普通の、平凡な  
+23. accommodate (v) - 宿泊させる、対応する  
+24. prescription (n) - 処方箋  
+25. promotional (adj) - 宣伝の、販促の  
+26. significant (adj) - 重要な、意味のある  
+27. relocate (v) - 移転する、引っ越す  
+28. enclose (v) - 同封する、囲む  
+29. diet (n) - 食事、食習慣  
+30. malfunction (n/v) - 故障、機能不全  
+31. caterer (n) - ケータリング業者  
+32. appropriate (adj) - 適切な、ふさわしい  
+33. encounter (v/n) - 遭遇する、出会う  
+34. impressive (adj) - 印象的な、素晴らしい  
+35. permission (n) - 許可  
+36. reward (n/v) - 報酬、褒美  
+37. representative (n) - 代表者、代理人  
+38. wage (n) - 賃金、給料  
+39. imply (v) - 暗示する、ほのめかす  
+40. minutes (n) - 議事録、分（時間の単位）  
+41. exact (adj) - 正確な、厳密な  
+42. fundraiser (n) - 資金調達イベント  
+43. moreover (adv) - さらに、その上  
+44. acquire (v) - 習得する、獲得する  
+45. retailer (n) - 小売業者  
+46. tenant (n) - 賃借人、借家人  
+47. inform (v) - 知らせる、通知する  
+48. considerable (adj) - かなりの、相当な  
+49. evaluate (v) - 評価する、査定する  
+50. practical (adj) - 実用的な、実際的な  
+51. conclusion (n) - 結論、終結  
+52. apparently (adv) - どうやら、見たところ  
+53. advanced (adj) - 進んだ、上級の  
+54. rearrange (v) - 配置を変える、並び替える  
+55. assignment (n) - 課題、宿題、任務  
+56. protective (adj) - 保護する、防護の  
+57. feature (n/v) - 特徴、特集する  
+58. address (n/v) - 住所、対応する  
+59. detour (n/v) - 迂回（する）  
+60. urgent (adj) - 緊急の、差し迫った  
+61. eligible (adj) - 適格な、資格のある  
+62. deposit (n/v) - 預金、頭金、預ける  
+63. farewell (n) - 別れの挨拶、送別会  
+64. advantage (n) - 有利な点、利点  
+65. inspect (v) - 検査する、点検する  
+66. venue (n) - 開催地、会場  
+
+---
