@@ -1,0 +1,205 @@
+GCP区間の開発
+
+# プロジェクト設定
+PROJECT_ID="gcp-sftp-transfer"
+gcloud config set project $PROJECT_ID
+
+確かに、Eventarc や Cloud Functions の SA にはもっと多くの権限を付与しました。  
+必要な権限を **網羅的に整理** したうえで、**ワンライナーで管理しやすい形** に修正します。  
+
+---
+
+### ✅ **GCP: Cloud Functions & Eventarc 設定手順（最終版）**
+📌 **職場のジュニアエンジニア向けの手順書**
+
+---
+
+## **📌 1️⃣ GCP プロジェクトを設定**
+```sh
+PROJECT_ID="gcp-sftp-transfer"
+gcloud config set project $PROJECT_ID
+```
+📌 **作業するプロジェクトを GCP に設定**
+
+---
+
+## **📌 2️⃣ 必要な API を有効化**
+```sh
+gcloud services enable cloudfunctions.googleapis.com \
+    eventarc.googleapis.com \
+    storage.googleapis.com \
+    pubsub.googleapis.com \
+    cloudbuild.googleapis.com \
+    run.googleapis.com \
+    iam.googleapis.com
+```
+📌 **Cloud Functions, Eventarc, Cloud Storage, Pub/Sub など必要な API を有効化**
+
+---
+
+## **📌 3️⃣ GCS バケットを作成**
+```sh
+gcloud storage buckets create gs://gcp-gcs-bucket --location=asia-northeast1
+```
+📌 **Cloud Storage にデータを保存するためのバケットを作成（東京リージョン）**
+
+---
+
+## **📌 4️⃣ Cloud Functions のコードを準備**
+### **作業ディレクトリを作成**
+```sh
+mkdir -p ~/gcp-cf-sftp-transfer && cd ~/gcp-cf-sftp-transfer
+```
+📌 **`gcp-cf-sftp-transfer` ディレクトリを作成し、そこに移動**
+
+### **`main.py` を作成**
+```sh
+cat <<EOF > main.py
+import os
+import paramiko
+from google.cloud import storage
+
+# 環境変数から SFTP 接続情報を取得
+SFTP_HOST = os.getenv("SFTP_HOST")
+SFTP_PORT = int(os.getenv("SFTP_PORT", 22))
+SFTP_USER = os.getenv("SFTP_USER")
+SFTP_PASSWORD = os.getenv("SFTP_PASSWORD")
+SFTP_REMOTE_PATH = os.getenv("SFTP_REMOTE_PATH", "/upload/")
+
+def upload_to_sftp(file_name, file_content):
+    """SFTP に CSV を転送"""
+    transport = paramiko.Transport((SFTP_HOST, SFTP_PORT))
+    transport.connect(username=SFTP_USER, password=SFTP_PASSWORD)
+    sftp = paramiko.SFTPClient.from_transport(transport)
+
+    remote_file = f"{SFTP_REMOTE_PATH}/{file_name}"
+    with sftp.open(remote_file, 'wb') as f:
+        f.write(file_content.encode())
+
+    sftp.close()
+    transport.close()
+    print(f"✅ {file_name} を SFTP にアップロード完了")
+
+def gcs_to_sftp(event, context):
+    """GCS の新規 CSV ファイルを SFTP に転送"""
+    bucket_name = event.get('bucket')
+    file_name = event.get('name')
+
+    if not file_name.endswith(".csv"):
+        print(f"⚠️ スキップ: {file_name} は CSV ではありません")
+        return
+
+    storage_client = storage.Client()
+    bucket = storage_client.bucket(bucket_name)
+    blob = bucket.blob(file_name)
+
+    file_content = blob.download_as_text()
+    upload_to_sftp(file_name, file_content)
+EOF
+```
+📌 **GCS にアップロードされた CSV を SFTP に転送する Cloud Function を作成**
+
+### **`requirements.txt` を作成**
+```sh
+cat <<EOF > requirements.txt
+paramiko
+google-cloud-storage
+EOF
+```
+📌 **必要なライブラリを指定**
+
+---
+
+## **📌 5️⃣ Cloud Functions をデプロイ**
+```sh
+gcloud functions deploy gcp-cf-sftp-transfer \
+    --gen2 \
+    --runtime python310 \
+    --region asia-northeast1 \
+    --source . \
+    --entry-point gcs_to_sftp \
+    --trigger-event-filters="type=google.cloud.storage.object.v1.finalized" \
+    --trigger-event-filters="bucket=gcp-gcs-bucket" \
+    --allow-unauthenticated \
+    --set-env-vars SFTP_HOST="your_sftp_host",SFTP_PORT="22",SFTP_USER="your_user",SFTP_PASSWORD="your_password",SFTP_REMOTE_PATH="/upload/"
+```
+📌 **Cloud Functions をデプロイし、環境変数を設定**
+
+---
+
+## **📌 6️⃣ Cloud Functions のサービスアカウントを取得**
+```sh
+CF_SA=$(gcloud functions describe gcp-cf-sftp-transfer --region=asia-northeast1 --format="value(serviceConfig.serviceAccountEmail)")
+echo "Cloud Functions SA: $CF_SA"
+```
+📌 **後で権限を付与するためにメモ**
+
+---
+
+## **📌 7️⃣ Eventarc のサービスアカウントを取得**
+```sh
+EVENTARC_SA=$(gcloud projects get-iam-policy $PROJECT_ID \
+    --flatten="bindings[].members" \
+    --format="value(bindings.members)" \
+    --filter="bindings.role:roles/eventarc.serviceAgent")
+echo "Eventarc SA: $EVENTARC_SA"
+```
+📌 **Eventarc が GCS のイベントを受け取れるようにするために取得**
+
+---
+
+## **📌 8️⃣ IAM 権限を付与**
+```sh
+CLOUD_BUILD_SA="705919400451@cloudbuild.gserviceaccount.com"
+GCS_SA="service-705919400451@gs-project-accounts.iam.gserviceaccount.com"
+
+for SA in "$CF_SA" "$EVENTARC_SA"; do
+    gcloud projects add-iam-policy-binding $PROJECT_ID --member="serviceAccount:$SA" --role="roles/eventarc.admin"
+    gcloud projects add-iam-policy-binding $PROJECT_ID --member="serviceAccount:$SA" --role="roles/eventarc.serviceAgent"
+    gcloud projects add-iam-policy-binding $PROJECT_ID --member="serviceAccount:$SA" --role="roles/iam.serviceAccountTokenCreator"
+    gcloud projects add-iam-policy-binding $PROJECT_ID --member="serviceAccount:$SA" --role="roles/pubsub.publisher"
+    gcloud projects add-iam-policy-binding $PROJECT_ID --member="serviceAccount:$SA" --role="roles/storage.objectViewer"
+    gcloud projects add-iam-policy-binding $PROJECT_ID --member="serviceAccount:$SA" --role="roles/eventarc.eventReceiver"
+    gcloud projects add-iam-policy-binding $PROJECT_ID --member="serviceAccount:$SA" --role="roles/run.invoker"
+done
+
+# Cloud Build SA に Storage Admin を付与
+gcloud projects add-iam-policy-binding $PROJECT_ID --member="serviceAccount:$CLOUD_BUILD_SA" --role="roles/storage.admin"
+
+# GCS SA に Pub/Sub Publisher を付与
+gcloud projects add-iam-policy-binding $PROJECT_ID --member="serviceAccount:$GCS_SA" --role="roles/pubsub.publisher"
+```
+📌 **必要な IAM 権限を付与**
+
+---
+
+## **📌 9️⃣ Eventarc トリガー作成**
+```sh
+gcloud eventarc triggers create gcs-trigger \
+    --location=asia-northeast1 \
+    --destination-run-service=gcp-cf-sftp-transfer \
+    --destination-run-region=asia-northeast1 \
+    --event-filters="type=google.cloud.storage.object.v1.finalized" \
+    --event-filters="bucket=gcp-gcs-bucket" \
+    --service-account=$CF_SA
+```
+📌 **Eventarc が GCS のイベントを Cloud Functions に通知できるようにする**
+
+---
+
+## **📌 🔥 10️⃣ 動作テスト**
+```sh
+echo "test,data" > test.csv
+gcloud storage cp test.csv gs://gcp-gcs-bucket
+```
+📌 **GCS に `test.csv` をアップロード → Cloud Functions が発火して SFTP へ転送**
+
+### **ログを確認**
+```sh
+gcloud functions logs read gcp-cf-sftp-transfer --region=asia-northeast1 --limit=10
+```
+📌 **エラーがないか確認**
+
+---
+
+🚀 **この手順を順番に実行すれば、GCP の Cloud Functions & Eventarc の設定が完了！**
