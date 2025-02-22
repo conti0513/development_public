@@ -1,0 +1,147 @@
+### **GCP VPC上にSFTPサーバーを構築する手順（汎用版）**  
+※この手順では、GCP上にVPCを作成し、インターネット経由でSFTPを受信できる環境を構築します。  
+
+---
+
+## **1. VPCとサブネットの作成**
+```bash
+gcloud compute networks create my-vpc --subnet-mode=custom
+```
+```bash
+gcloud compute networks subnets create my-subnet \
+    --network=my-vpc \
+    --range=10.10.0.0/24 \
+    --region=<リージョン>
+```
+
+---
+了解しました！GCS → Cloud Functions → 基幹FTPサーバー（SFTP）のデータ転送を **最短** で構築するための手順を提案します。
+
+---
+
+## **最短の構築手順**
+### **1. GCE（SFTPサーバー）を作成**
+```sh
+gcloud compute instances create core-ftp-server \
+    --zone=asia-northeast1-a \
+    --machine-type=e2-medium \
+    --image-family=debian-11 \
+    --image-project=debian-cloud \
+    --scopes=storage-ro,cloud-platform \
+    --metadata=enable-oslogin=TRUE \
+    --tags=sftp-server \
+    --boot-disk-size=20GB
+```
+> - `--metadata=enable-oslogin=TRUE` を設定し、Google アカウントの SSH 認証を使用する  
+> - 必要に応じて `--tags=sftp-server` を使いFWルールを設定  
+
+---
+
+### **2. SFTP用ユーザーを作成**
+```sh
+sudo useradd -m -s /bin/bash sftpuser && \
+sudo mkdir -p /home/sftpuser/.ssh && \
+sudo chmod 700 /home/sftpuser/.ssh
+```
+
+---
+
+### **3. ローカルから公開鍵を設定**
+ローカル（Mac/PC）で **公開鍵をサーバーにコピー**
+```sh
+ssh-keygen -t rsa -b 4096 -f ~/.ssh/sftp_key
+ssh-copy-id -i ~/.ssh/sftp_key.pub sftpuser@YOUR_SFTP_SERVER_IP
+```
+
+---
+
+### **4. SSHの設定**
+```sh
+echo "PubkeyAuthentication yes
+PasswordAuthentication no
+Subsystem sftp internal-sftp
+Match User sftpuser
+    ChrootDirectory /home/sftpuser
+    ForceCommand internal-sftp
+    AllowTcpForwarding no
+    X11Forwarding no" | sudo tee -a /etc/ssh/sshd_config
+```
+> - **公開鍵認証を有効化**  
+> - **パスワード認証は無効化**  
+> - **SFTP専用ユーザーのChroot設定**
+
+---
+
+### **5. SSHサービスを再起動**
+```sh
+sudo systemctl restart sshd
+```
+
+---
+
+### **6. Firewallルールの設定**
+```sh
+gcloud compute firewall-rules create allow-sftp \
+    --allow=tcp:22 \
+    --target-tags=sftp-server
+```
+
+---
+
+### **7. SFTP接続テスト**
+ローカルPCから
+```sh
+sftp -i ~/.ssh/sftp_key sftpuser@YOUR_SFTP_SERVER_IP
+```
+
+---
+
+### **8. GCSからSFTPにファイルを転送（Cloud Functions）**
+Cloud Functions で SFTP にファイルを転送する **Python スクリプト**
+```python
+import paramiko
+from google.cloud import storage
+
+SFTP_HOST = "YOUR_SFTP_SERVER_IP"
+SFTP_PORT = 22
+SFTP_USER = "sftpuser"
+SFTP_KEY_PATH = "/path/to/sftp_key"  # Cloud FunctionsのSecret Managerに保存推奨
+
+GCS_BUCKET_NAME = "gcp-gcs-bucket"
+GCS_FILE_NAME = "test.txt"
+SFTP_DEST_PATH = "/home/sftpuser/uploaded_test.txt"
+
+def transfer_file(event, context):
+    storage_client = storage.Client()
+    bucket = storage_client.bucket(GCS_BUCKET_NAME)
+    blob = bucket.blob(GCS_FILE_NAME)
+    
+    local_temp_file = f"/tmp/{GCS_FILE_NAME}"
+    blob.download_to_filename(local_temp_file)
+    
+    # SFTP転送
+    key = paramiko.RSAKey(filename=SFTP_KEY_PATH)
+    transport = paramiko.Transport((SFTP_HOST, SFTP_PORT))
+    transport.connect(username=SFTP_USER, pkey=key)
+    sftp = transport.open_sftp()
+    sftp.put(local_temp_file, SFTP_DEST_PATH)
+    sftp.close()
+    transport.close()
+```
+
+> - `paramiko` を使用して **GCSのファイルをSFTPに転送**  
+> - `gcloud functions deploy transfer_file --runtime python39 --trigger-event google.storage.object.finalize --trigger-resource gcp-gcs-bucket`
+
+---
+
+## **まとめ**
+1. **GCE（SFTPサーバー）を作成**
+2. **SFTPユーザー作成**
+3. **公開鍵認証を設定**
+4. **SSH/SFTPを有効化**
+5. **Cloud FunctionsでGCS → SFTPにファイル転送**
+
+---
+
+### **これで最短でSFTP構築 → GCS連携が可能です！**
+💡 **あと1時間で完成させるぞ！💪**
