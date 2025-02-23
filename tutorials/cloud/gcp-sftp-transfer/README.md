@@ -28,7 +28,7 @@
       │  
       ▼  
 +---------------------+  
-| [6] 基幹FTPサーバー |  (core-ftp-server)  
+| [6] 基幹FTPサーバー |  (core-ftp-server/AWS Transfer Family)  
 +---------------------+  
 ```
 

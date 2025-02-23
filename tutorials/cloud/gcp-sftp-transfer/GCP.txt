@@ -1,79 +1,75 @@
-GCP区間の開発
+以下に **個人用の作業手順（README_personal.md）** を作成しました。  
+このファイルを `README_personal.md` として `gcp-sftp-transfer` リポジトリに保存すれば、今後の作業がスムーズになります。  
 
-# プロジェクト設定
-PROJECT_ID="gcp-sftp-transfer"
-gcloud config set project $PROJECT_ID
+```markdown
+# GCP → AWS SFTP 転送: 個人用作業手順
 
-確かに、Eventarc や Cloud Functions の SA にはもっと多くの権限を付与しました。  
-必要な権限を **網羅的に整理** したうえで、**ワンライナーで管理しやすい形** に修正します。  
-
----
-
-### ✅ **GCP: Cloud Functions & Eventarc 設定手順（最終版）**
-📌 **職場のジュニアエンジニア向けの手順書**
+このドキュメントは **GCP Cloud Functions** を使用して **Google Cloud Storage (GCS) のファイルを AWS SFTP に自動転送** する作業手順をまとめたものです。
 
 ---
 
-## **📌 1️⃣ GCP プロジェクトを設定**
+## **1. 環境セットアップ**
+### **1.1 必要なツールのインストール**
 ```sh
-PROJECT_ID="gcp-sftp-transfer"
-gcloud config set project $PROJECT_ID
+# Google Cloud SDK（gcloud コマンド）
+curl https://sdk.cloud.google.com | bash
+exec -l $SHELL
+gcloud auth login
+gcloud config set project gcp-sftp-transfer
+
+# Python & 必要ライブラリ
+sudo apt update && sudo apt install -y python3-pip
+pip3 install --upgrade google-cloud-storage paramiko
 ```
-📌 **作業するプロジェクトを GCP に設定**
+
+### **1.2 変数の設定（`credentials/credential.json` に保存）**
+```json
+{
+    ＊＊＊
+}
+```
+**🔍 ポイント**
+- `SFTP_PRIVATE_KEY_B64` は **秘密鍵を Base64 に変換** して保存
+  ```sh
+  base64 ~/.ssh/id_rsa > private_key.b64
+  cat private_key.b64
+  ```
+- `credentials/credential.json` は `.gitignore` に追加し、**GITには含めない！**
 
 ---
 
-## **📌 2️⃣ 必要な API を有効化**
-```sh
-gcloud services enable cloudfunctions.googleapis.com \
-    eventarc.googleapis.com \
-    storage.googleapis.com \
-    pubsub.googleapis.com \
-    cloudbuild.googleapis.com \
-    run.googleapis.com \
-    iam.googleapis.com
-```
-📌 **Cloud Functions, Eventarc, Cloud Storage, Pub/Sub など必要な API を有効化**
-
----
-
-## **📌 3️⃣ GCS バケットを作成**
-```sh
-gcloud storage buckets create gs://gcp-gcs-bucket --location=asia-northeast1
-```
-📌 **Cloud Storage にデータを保存するためのバケットを作成（東京リージョン）**
-
----
-
-## **📌 4️⃣ Cloud Functions のコードを準備**
-### **作業ディレクトリを作成**
-```sh
-mkdir -p ~/gcp-cf-sftp-transfer && cd ~/gcp-cf-sftp-transfer
-```
-📌 **`gcp-cf-sftp-transfer` ディレクトリを作成し、そこに移動**
-
-### **`main.py` を作成**
-```sh
-cat <<EOF > main.py
+## **2. Cloud Functions のデプロイ**
+### **2.1 GCP Cloud Functions のソースコード**
+`src/main.py`
+```python
 import os
+import io
+import json
+import base64
 import paramiko
 from google.cloud import storage
 
-# 環境変数から SFTP 接続情報を取得
-SFTP_HOST = os.getenv("SFTP_HOST")
-SFTP_PORT = int(os.getenv("SFTP_PORT", 22))
-SFTP_USER = os.getenv("SFTP_USER")
-SFTP_PASSWORD = os.getenv("SFTP_PASSWORD")
-SFTP_REMOTE_PATH = os.getenv("SFTP_REMOTE_PATH", "/upload/")
+# 認証情報の読み込み
+with open("credentials/credential.json") as f:
+    config = json.load(f)
+
+SFTP_HOST = config["SFTP_HOST"]
+SFTP_PORT = int(config["SFTP_PORT"])
+SFTP_USER = config["SFTP_USER"]
+SFTP_PRIVATE_KEY_B64 = config["SFTP_PRIVATE_KEY_B64"]
+SFTP_REMOTE_PATH = config["SFTP_REMOTE_PATH"]
+GCS_BUCKET_NAME = config["GCS_BUCKET_NAME"]
 
 def upload_to_sftp(file_name, file_content):
-    """SFTP に CSV を転送"""
+    private_key_data = base64.b64decode(SFTP_PRIVATE_KEY_B64)
+    private_key = paramiko.RSAKey(file_obj=io.BytesIO(private_key_data))
+
     transport = paramiko.Transport((SFTP_HOST, SFTP_PORT))
-    transport.connect(username=SFTP_USER, password=SFTP_PASSWORD)
+    transport.connect(username=SFTP_USER, pkey=private_key)
     sftp = paramiko.SFTPClient.from_transport(transport)
 
     remote_file = f"{SFTP_REMOTE_PATH}/{file_name}"
-    with sftp.open(remote_file, 'wb') as f:
+    with sftp.open(remote_file, "wb") as f:
         f.write(file_content.encode())
 
     sftp.close()
@@ -81,125 +77,301 @@ def upload_to_sftp(file_name, file_content):
     print(f"✅ {file_name} を SFTP にアップロード完了")
 
 def gcs_to_sftp(event, context):
-    """GCS の新規 CSV ファイルを SFTP に転送"""
-    bucket_name = event.get('bucket')
-    file_name = event.get('name')
-
-    if not file_name.endswith(".csv"):
-        print(f"⚠️ スキップ: {file_name} は CSV ではありません")
-        return
-
     storage_client = storage.Client()
-    bucket = storage_client.bucket(bucket_name)
-    blob = bucket.blob(file_name)
-
+    bucket = storage_client.bucket(GCS_BUCKET_NAME)
+    blob = bucket.blob(event["name"])
     file_content = blob.download_as_text()
-    upload_to_sftp(file_name, file_content)
-EOF
+    
+    upload_to_sftp(event["name"], file_content)
 ```
-📌 **GCS にアップロードされた CSV を SFTP に転送する Cloud Function を作成**
 
-### **`requirements.txt` を作成**
-```sh
-cat <<EOF > requirements.txt
-paramiko
-google-cloud-storage
-EOF
-```
-📌 **必要なライブラリを指定**
-
----
-
-## **📌 5️⃣ Cloud Functions をデプロイ**
+### **2.2 デプロイ**
 ```sh
 gcloud functions deploy gcp-cf-sftp-transfer \
     --gen2 \
     --runtime python310 \
     --region asia-northeast1 \
-    --source . \
+    --source src/ \
     --entry-point gcs_to_sftp \
     --trigger-event-filters="type=google.cloud.storage.object.v1.finalized" \
     --trigger-event-filters="bucket=gcp-gcs-bucket" \
-    --allow-unauthenticated \
-    --set-env-vars SFTP_HOST="your_sftp_host",SFTP_PORT="22",SFTP_USER="your_user",SFTP_PASSWORD="your_password",SFTP_REMOTE_PATH="/upload/"
+    --allow-unauthenticated
 ```
-📌 **Cloud Functions をデプロイし、環境変数を設定**
 
 ---
 
-## **📌 6️⃣ Cloud Functions のサービスアカウントを取得**
+## **3. 動作確認**
+### **3.1 SFTP 接続テスト**
 ```sh
-CF_SA=$(gcloud functions describe gcp-cf-sftp-transfer --region=asia-northeast1 --format="value(serviceConfig.serviceAccountEmail)")
-echo "Cloud Functions SA: $CF_SA"
+sftp -i ~/.ssh/id_rsa core-sftp-user@s-xxxxxxxxxxxx.server.transfer.ap-northeast-1.amazonaws.com
 ```
-📌 **後で権限を付与するためにメモ**
+```sftp
+sftp> pwd
+Remote working directory: /core-system-sftp-bucket/core-sftp-user
+sftp> ls
+（ファイル一覧が表示される）
+sftp> exit
+```
+
+### **3.2 GCS → SFTP 転送テスト**
+```sh
+echo "col1,col2,col3\nvalue1,value2,value3" > test_file.csv
+gsutil cp test_file.csv gs://gcp-gcs-bucket/
+sleep 10
+gcloud functions logs read gcp-cf-sftp-transfer --region=asia-northeast1 --limit=10
+sftp -i ~/.ssh/id_rsa core-sftp-user@s-xxxxxxxxxxxx.server.transfer.ap-northeast-1.amazonaws.com <<< $'ls /core-system-sftp-bucket/core-sftp-user'
+```
+**✅ 成功時の出力**
+```
+Copying file://test_file.csv [Content-Type=text/csv]...
+Operation completed over 1 objects/37.0 B.
+
+LEVEL: 
+NAME: gcp-cf-sftp-transfer
+EXECUTION_ID: x7dhnISxMaSk
+TIME_UTC: 2025-02-23 00:00:08.189
+LOG: ✅ test_file.csv を SFTP にアップロード完了
+
+sftp> ls /core-system-sftp-bucket/core-sftp-user
+test_file.csv
+```
 
 ---
 
-## **📌 7️⃣ Eventarc のサービスアカウントを取得**
-```sh
-EVENTARC_SA=$(gcloud projects get-iam-policy $PROJECT_ID \
-    --flatten="bindings[].members" \
-    --format="value(bindings.members)" \
-    --filter="bindings.role:roles/eventarc.serviceAgent")
-echo "Eventarc SA: $EVENTARC_SA"
-```
-📌 **Eventarc が GCS のイベントを受け取れるようにするために取得**
+## **4. トラブルシューティング**
+| **エラー** | **原因** | **解決策** |
+|------------|----------|-------------|
+| `TypeError: argument should be a bytes-like object or ASCII string, not 'NoneType'` | `SFTP_PRIVATE_KEY_B64` の値が `None` になっている | `.env` を再設定し、関数を再デプロイ |
+| `cannot use a string pattern on a bytes-like object` | Base64 デコード後の `private_key_data` を `bytes` に変換していない | `private_key_data.encode()` を削除 |
+| `Permission denied (publickey).` | SFTP の鍵が間違っている | `~/.ssh/id_rsa` を確認し、正しい鍵を使用 |
+| `Error: Not Found` | GCS でファイルが見つからない | `gsutil ls gs://gcp-gcs-bucket/` でファイルを確認 |
 
 ---
 
-## **📌 8️⃣ IAM 権限を付与**
-```sh
-CLOUD_BUILD_SA="705919400451@cloudbuild.gserviceaccount.com"
-GCS_SA="service-705919400451@gs-project-accounts.iam.gserviceaccount.com"
-
-for SA in "$CF_SA" "$EVENTARC_SA"; do
-    gcloud projects add-iam-policy-binding $PROJECT_ID --member="serviceAccount:$SA" --role="roles/eventarc.admin"
-    gcloud projects add-iam-policy-binding $PROJECT_ID --member="serviceAccount:$SA" --role="roles/eventarc.serviceAgent"
-    gcloud projects add-iam-policy-binding $PROJECT_ID --member="serviceAccount:$SA" --role="roles/iam.serviceAccountTokenCreator"
-    gcloud projects add-iam-policy-binding $PROJECT_ID --member="serviceAccount:$SA" --role="roles/pubsub.publisher"
-    gcloud projects add-iam-policy-binding $PROJECT_ID --member="serviceAccount:$SA" --role="roles/storage.objectViewer"
-    gcloud projects add-iam-policy-binding $PROJECT_ID --member="serviceAccount:$SA" --role="roles/eventarc.eventReceiver"
-    gcloud projects add-iam-policy-binding $PROJECT_ID --member="serviceAccount:$SA" --role="roles/run.invoker"
-done
-
-# Cloud Build SA に Storage Admin を付与
-gcloud projects add-iam-policy-binding $PROJECT_ID --member="serviceAccount:$CLOUD_BUILD_SA" --role="roles/storage.admin"
-
-# GCS SA に Pub/Sub Publisher を付与
-gcloud projects add-iam-policy-binding $PROJECT_ID --member="serviceAccount:$GCS_SA" --role="roles/pubsub.publisher"
+## **5. GitHub への保存**
+### **5.1 `.gitignore` の設定**
+```gitignore
+# 認証情報はGit管理しない
+credentials/
+.env
+*.pem
+*.json
 ```
-📌 **必要な IAM 権限を付与**
+
+### **5.2 コミット & プッシュ**
+```sh
+git add .
+git commit -m "GCP SFTP transfer function initial commit"
+git push origin main
+```
 
 ---
 
-## **📌 9️⃣ Eventarc トリガー作成**
-```sh
-gcloud eventarc triggers create gcs-trigger \
-    --location=asia-northeast1 \
-    --destination-run-service=gcp-cf-sftp-transfer \
-    --destination-run-region=asia-northeast1 \
-    --event-filters="type=google.cloud.storage.object.v1.finalized" \
-    --event-filters="bucket=gcp-gcs-bucket" \
-    --service-account=$CF_SA
-```
-📌 **Eventarc が GCS のイベントを Cloud Functions に通知できるようにする**
+## **6. 今後の改善点**
+✅ AWS SFTP 側のアクセス制御設定  
+✅ AWS Transfer Family のロール権限確認  
+✅ GCP Cloud Function のエラーハンドリング追加
 
 ---
 
-## **📌 🔥 10️⃣ 動作テスト**
-```sh
-echo "test,data" > test.csv
-gcloud storage cp test.csv gs://gcp-gcs-bucket
+これで **個人用の作業手順** は完了！  
+次に **職場用** にクリデンシャルを抜いたバージョンを作成するよ。  
 ```
-📌 **GCS に `test.csv` をアップロード → Cloud Functions が発火して SFTP へ転送**
 
-### **ログを確認**
+---
+
+
+
+
+# GCP → AWS SFTP 転送: 職場用作業手順（パスワード認証パターン）
+
+このドキュメントは **Google Cloud Functions** を利用して、  
+**Google Cloud Storage (GCS) にアップロードされたファイルを AWS SFTP に転送する仕組み（パスワード認証パターン）** を構築するための手順をまとめたものです。
+
+---
+
+## **1. 環境セットアップ**
+### **1.1 必要なツール**
+以下のツールがインストールされていることを確認してください。
+
+- **Google Cloud SDK** (`gcloud` コマンド)
+- **Python 3.x** (`python3` コマンド)
+- **pip** (`pip3` コマンド)
+- **Git** (`git` コマンド)
+
 ```sh
+# Google Cloud SDK インストール（必要に応じて）
+curl https://sdk.cloud.google.com | bash
+exec -l $SHELL
+gcloud auth login
+gcloud config set project <PROJECT_ID>
+
+# 必要なライブラリのインストール
+sudo apt update && sudo apt install -y python3-pip
+pip3 install --upgrade google-cloud-storage paramiko
+
+
+
+**✅ AWS 側が未完成の場合の発火テストについて**
+
+### **1. GCP 側の関数発火は可能か？**
+✔ **結論：AWS 側が未完成でも、Cloud Functions の発火テストは可能**  
+Cloud Functions は **GCS にファイルがアップロードされたことをトリガー** にして実行されるため、AWS 側の SFTP が未完成でも、  
+**GCS にテストファイルをアップロードすれば、関数が発火するかどうかは検証できる。**
+
+### **2. AWS への転送部分をスキップする方法**
+もし AWS 側が準備できていない場合、関数の SFTP アップロード部分をコメントアウトして、  
+**関数の発火と GCS からのデータ取得が正常に行われるかだけを確認するテストが可能。**
+
+例: `main.py` の `upload_to_sftp` を一時的に無効化
+```python
+def gcs_to_sftp(event, context):
+    storage_client = storage.Client()
+    bucket = storage_client.bucket(GCS_BUCKET_NAME)
+    blob = bucket.blob(event["name"])
+    file_content = blob.download_as_text()
+
+    print(f"✅ GCSからファイル取得成功: {event['name']}")
+    print(f"📄 ファイル内容:\n{file_content}")
+
+    # AWS SFTP 転送部分を一時的に無効化
+    # upload_to_sftp(event["name"], file_content)
+```
+✔ **この状態で GCS にファイルをアップロードすると、Cloud Functions が発火し、ログにファイルの内容が表示されるか確認可能。**
+
+### **3. 発火テストの手順**
+```sh
+# 1. テスト用のファイルを作成
+echo "col1,col2,col3\nvalue1,value2,value3" > test_file.csv
+
+# 2. GCS にアップロード
+gsutil cp test_file.csv gs://<GCS_BUCKET_NAME>/
+
+# 3. Cloud Functions のログを確認（関数が発火したか）
 gcloud functions logs read gcp-cf-sftp-transfer --region=asia-northeast1 --limit=10
 ```
-📌 **エラーがないか確認**
+
+✔ **ログに `✅ GCSからファイル取得成功` と `📄 ファイル内容` が表示されれば、発火テスト成功！**  
+AWS 側が未完成でも、GCP 側の設定・Cloud Functions の動作確認は進められる。
+
+
+
+
+
+
+Cloud Functions（CF）から **固定IP（Static IP）を使用してAWS SFTPに接続** するには、 **Cloud NAT** を利用するのが一般的だね。
 
 ---
 
-🚀 **この手順を順番に実行すれば、GCP の Cloud Functions & Eventarc の設定が完了！**
+## **GCPでCloud Functionsに固定IPを割り当てる方法**
+### **1. 概要**
+GCPでは、**Cloud Functions** はデフォルトで **動的な外部IPを使用** している。そのため、**固定IPを使用するにはCloud NATを設定する必要がある**。
+
+#### **手順の概要**
+1. **VPC ネットワークの作成**（または既存のものを使用）
+2. **Cloud Router の作成**
+3. **Cloud NAT の作成**
+4. **Cloud Functions の VPC コネクタ設定**
+
+---
+
+## **2. 実装時間の見積もり**
+各ステップにかかる目安時間は以下のとおり。
+
+| ステップ | 作業内容 | 目安時間 |
+|----------|--------|----------|
+| ① VPC ネットワークの作成 | 新規で作成（既存があればスキップ） | **10分** |
+| ② Cloud Router の作成 | VPC 内に作成 | **5分** |
+| ③ Cloud NAT の作成 | Cloud Router 経由でNATを設定 | **10分** |
+| ④ Cloud Functions にVPC コネクタを追加 | Cloud Functions をVPCに接続 | **15~20分** |
+| **合計** | **約30～45分**（既存VPCがある場合は20～30分） |
+
+---
+
+## **3. 手順**
+### **① VPC ネットワークの作成**
+（既存のVPCがある場合はスキップ）
+
+```sh
+gcloud compute networks create my-vpc \
+    --subnet-mode=custom
+```
+
+✅ **確認コマンド**
+```sh
+gcloud compute networks list
+```
+
+---
+
+### **② Cloud Router の作成**
+Cloud Router はCloud NATに必要なコンポーネント。
+
+```sh
+gcloud compute routers create my-router \
+    --network=my-vpc \
+    --region=asia-northeast1
+```
+
+✅ **確認コマンド**
+```sh
+gcloud compute routers list
+```
+
+---
+
+### **③ Cloud NAT の作成**
+固定IPでNATを設定する。
+
+```sh
+gcloud compute routers nats create my-nat \
+    --router=my-router \
+    --region=asia-northeast1 \
+    --nat-custom-subnet-ip-ranges=my-subnet
+```
+
+✅ **確認コマンド**
+```sh
+gcloud compute routers nats list
+```
+
+---
+
+### **④ Cloud Functions に VPC コネクタを追加**
+Cloud Functions がVPC内で動作するようにする。
+
+```sh
+gcloud compute networks vpc-access connectors create my-vpc-connector \
+    --network=my-vpc \
+    --region=asia-northeast1 \
+    --range=10.8.0.0/28
+```
+
+✅ **確認コマンド**
+```sh
+gcloud compute networks vpc-access connectors list
+```
+
+#### **Cloud Function のデプロイ時にVPCコネクタを指定**
+```sh
+gcloud functions deploy gcp-cf-sftp-transfer \
+    --region=asia-northeast1 \
+    --vpc-connector=my-vpc-connector \
+    --egress-settings=all
+```
+
+✅ **確認コマンド**
+```sh
+gcloud functions describe gcp-cf-sftp-transfer
+```
+
+---
+
+## **4. 結論**
+- **新規でVPCを作るなら** → **約45分**
+- **既存VPCがあるなら** → **約30分**
+- **トラブルシューティング込みで1時間程度を見ておくと安心** ✅
+
+もしVPCを作る必要がないなら、**30分以内に完了** すると思うよ！🚀
+
+
