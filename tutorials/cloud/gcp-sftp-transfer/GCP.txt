@@ -1,3 +1,162 @@
+＃aws-gcp-file-sync
+
+## 構成
+　[1] PC (手動アップロード)
+      │
+      ▼  
++------------------------+
+| [2] AWS-1 SFTP        |  (aws-sftp)  
+| (AWS Transfer Family)  |  *既存のSFTPサーバー*
++------------------------+
+      │  (定期転送)  ✅ **AWS S3に自動アップロード**
+      ▼  
++------------------------+
+| [3] AWS-1 S3          |  (aws-s3-bucket)  
+| (S3バケット / 保管領域) |
++------------------------+
+      │  (CFがポーリング) ✅ **GCSへ転送**
+      ▼  
+==================【AWS → GCP】==================
+      │  
+      ▼  
++------------------------+
+| [4] GCS (ストレージ)   |  (gcp-gcs-bucket)  
+| *S3からデータ受信*     |
++------------------------+
+
+
+## 手順の概要
+
+### ✅ **AWS からもらう情報**
+- **アクセスキー**（`AWS_ACCESS_KEY`）  
+- **シークレットキー**（`AWS_SECRET_KEY`）  
+- **S3 バケット名**（`AWS_S3_BUCKET`）  
+- **AWS リージョン**（例: `ap-northeast-1`）
+
+**管理者に依頼する内容:**
+```
+AWS S3 から GCS へデータ転送するため、IAM ユーザーのアクセスキーを発行してください。
+- ユーザー名: gcp-s3-access
+- 必要ポリシー: AmazonS3ReadOnlyAccess
+- 対象 S3 バケット: (AWS_S3_BUCKET 名)
+- AWS リージョン: (使用するリージョン)
+```
+
+---
+
+### ✅ **手順**
+#### **1️⃣ Cloud Functions の環境変数設定**
+```sh
+export AWS_ACCESS_KEY="xxx"
+export AWS_SECRET_KEY="yyy"
+export AWS_S3_BUCKET="aws-s3-bucket"
+export GCP_GCS_BUCKET="gcp-gcs-bucket"
+export REGION="asia-northeast1"
+
+
+echo $AWS_ACCESS_KEY
+echo $AWS_SECRET_KEY
+echo $AWS_S3_BUCKET
+echo $GCP_GCS_BUCKET
+echo $REGION
+
+```
+
+#### **2️⃣ Cloud Functions のデプロイ**
+
+＜あとで汎用的にまとめるよ＞
+    dev@cloudshell:~ (gcp-sftp-transfer)$ cat <<EOF > main.py
+    import os
+    import boto3
+    from google.cloud import storage
+
+    def s3_to_gcs(request):
+        """AWS S3 から GCS へファイルを転送"""
+        aws_access_key = os.getenv('AWS_ACCESS_KEY')
+        aws_secret_key = os.getenv('AWS_SECRET_KEY')
+        s3_bucket = os.getenv('AWS_S3_BUCKET')
+        gcs_bucket = os.getenv('GCP_GCS_BUCKET')
+
+        # S3 クライアントを作成
+        s3_client = boto3.client(
+            's3',
+            aws_access_key_id=aws_access_key,
+            aws_secret_access_key=aws_secret_key
+        )
+
+        # GCS クライアントを作成
+        gcs_client = storage.Client()
+        gcs_bucket = gcs_client.bucket(gcs_bucket)
+
+        # S3 のオブジェクト一覧を取得
+        s3_objects = s3_client.list_objects_v2(Bucket=s3_bucket)
+        
+        if 'Contents' not in s3_objects:
+            return "No files in S3 bucket", 200
+
+    EOF return "File transfer complete", 200_data)ket=s3_bucket, Key=file_name)
+    dev@cloudshell:~ (gcp-sftp-transfer)$ 
+    dev@cloudshell:~ (gcp-sftp-transfer)$ 
+    dev@cloudshell:~ (gcp-sftp-transfer)$ cat <<EOF > requirements.txt
+    boto3
+    google-cloud-storage
+    EOF
+    dev@cloudshell:~ (gcp-sftp-transfer)$ 
+    dev@cloudshell:~ (gcp-sftp-transfer)$ 
+    dev@cloudshell:~ (gcp-sftp-transfer)$ 
+    dev@cloudshell:~ (gcp-sftp-transfer)$ 
+    dev@cloudshell:~ (gcp-sftp-transfer)$ ls -l main.py requirements.txt
+    -rw-rw-r-- 1 dev dev 1175 Feb 24 00:40 main.py
+    -rw-rw-r-- 1 dev dev   27 Feb 24 00:41 requirements.txt
+    dev@cloudshell:~ (gcp-sftp-transfer)$ 
+    dev@cloudshell:~ (gcp-sftp-transfer)$ 
+    dev@cloudshell:~ (gcp-sftp-transfer)$ 
+    dev@cloudshell:~ (gcp-sftp-transfer)$ gcloud functions deploy s3-to-gcs \
+        --gen2 \
+        --runtime python310 \
+        --region "$REGION" \
+        --source . \
+        --entry-point s3_to_gcs \
+        --trigger-http \
+        --allow-unauthenticated \
+        --set-env-vars AWS_ACCESS_KEY="$AWS_ACCESS_KEY",AWS_SECRET_KEY="$AWS_SECRET_KEY",AWS_S3_BUCKET="$AWS_S3_BUCKET",GCP_GCS_BUCKET="$GCP_GCS_BUCKET"
+
+＜デプロイ後の確認＞
+gcloud functions describe s3-to-gcs --region="asia-northeast1" && \
+gcloud functions call s3-to-gcs --region="asia-northeast1" && \
+gsutil ls gs://$GCP_GCS_BUCKET && \
+gcloud functions logs read s3-to-gcs --region="asia-northeast1" --limit=10
+
+
+
+#### **4️⃣ GCS にファイルがあるか確認**
+```sh
+gsutil ls gs://$GCP_GCS_BUCKET
+```
+
+#### **5️⃣ Cloud Functions のログ確認**
+```sh
+gcloud functions logs read s3-to-gcs --region=$REGION --limit=10
+```
+
+🔥 **AWS の情報をもらったら、この手順で実行！** 🚀
+---
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 以下に **個人用の作業手順（README_personal.md）** を作成しました。  
 このファイルを `README_personal.md` として `gcp-sftp-transfer` リポジトリに保存すれば、今後の作業がスムーズになります。  
 
