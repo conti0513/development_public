@@ -9,23 +9,27 @@ current_date=$(date +%Y-%m-%d)
 directory="./entries/$current_year/$current_month"
 
 # Create the directory if it doesn't exist
-mkdir -p $directory
+mkdir -p "$directory"
 
-# Define the file path
+# Define the target file path for today
 file_path="$directory/$current_date.md"
 
-# Define the header template file path
-header_template="header.txt"
+# 前回のTILを探す関数
+find_latest_til() {
+    # `find` コマンドで最新のTILを検索
+    latest_til=$(find ./entries -type f -name "*.md" | sort | tail -n 1)
+    echo "$latest_til"
+}
 
-# Create the file with the header template if it doesn't already exist
-if [ ! -f $file_path ]; then
-    if [ -f $header_template ]; then
-        # Replace the placeholder with the current date
-        sed "s/\$current_date/$current_date/" $header_template > $file_path
-        echo "File $file_path created successfully with content from $header_template."
-    else
-        echo "Error: $header_template not found."
-    fi
+# 最新のTILを取得
+latest_file=$(find_latest_til)
+
+# 強制的に前回のTILをコピー
+if [ -n "$latest_file" ]; then
+    cp "$latest_file" "$file_path"
+    echo "✅ $file_path を作成しました（$latest_file をコピー）"
 else
-    echo "File $file_path already exists."
+    echo "❌ エラー: 前回のTILが見つかりません"
+    exit 1
 fi
+
