@@ -1,0 +1,37 @@
+{
+  "gcp_project": "pjt-gcp",
+  "gcs_bucket": "pjt-cra-bucket",
+  "gcs_trigger_folder": "input-csv/",
+  "cloud_run": {
+    "service_name": "pjt-cra-file",
+    "region": "asia-northeast1",
+    "ip_check_endpoint": "/ip-check"
+  },
+  "network": {
+    "vpc_a_name": "pjt-vpc-a",
+    "vpc_b_name": "pjt-vpc-b",
+    "vpc_connector": "pjt-vpc-connector",
+    "cloud_router": "pjt-cloud-router",
+    "cloud_nat": "pjt-cloud-nat",
+    "nat_ip": "35.200.XXX.XXX",
+    "private_subnet": "10.128.0.0/20"
+  },
+  "ftps": {
+    "server_ip": "34.85.XXX.XXX",  // deploy_ftps.sh で取得した外部 IP に変更
+    "port": 21,
+    "passive_ports": "50000-51000",
+    "username": "ftps_user",
+    "password": "securepassword",
+    "upload_path": "/ftps-data/",
+    "protocol": "FTPS",
+    "mode": "passive"
+  },
+  "encoding": {
+    "source_charset": "utf-8",
+    "target_charset": "shift_jis"
+  },
+  "logging": {
+    "pubsub_topic": "pjt-cra-log"
+  }
+}
+
