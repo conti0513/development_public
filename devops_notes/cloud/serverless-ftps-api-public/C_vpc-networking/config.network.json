@@ -1,0 +1,18 @@
+{
+  "project_id": "your-gcp-project",
+  "region": "asia-northeast1",
+  "network": {
+    "name": "vpc-ftps-network",
+    "subnet": {
+      "name": "subnet-ftps",
+      "ip_range": "10.0.0.0/24"
+    }
+  },
+  "vpc_connector": {
+    "name": "vpc-ftps-connector"
+  },
+  "nat": {
+    "router_name": "ftps-nat-router",
+    "nat_name": "ftps-cloud-nat"
+  }
+}

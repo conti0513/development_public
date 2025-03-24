@@ -1,0 +1,19 @@
+{
+  "pjt_id": "your-gcp-project",
+  "gcp_project": "your-gcp-project",
+  "region": "asia-northeast1",
+  "cloud_run": {
+    "service_name": "your-service",
+    "trigger_bucket": "your-trigger-bucket",
+    "vpc_connector": "vpc-ftps-connector"
+  },
+  "ftps": {
+    "host": "your.ftps.server",
+    "port": 21,
+    "username": "your_username",
+    "password": "your_password",
+    "protocol": "FTPS",
+    "mode": "passive"
+  }
+}
+
