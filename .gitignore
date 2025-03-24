@@ -1,15 +1,23 @@
+# 仮想環境
 venv/
+
+# TIL関連の除外
 TIL/English/*
 TIL/kali-linux/*
-tutorials/cloud/gcp-sftp-transfer/credentials.json
-tutorials/cloud/gcp-sftp-transfer/cloud-data-transfer-project.md
-tutorials/cloud/cloudrun-FTPS/cra_ftps_setup/v0.1/current/config.json
-tutorials/cloud/cloudrun-FTPS/ZENN_concept
+
+# devops_notes 配下の機密ファイルを除外
+devops_notes/cloud/gcp-sftp-transfer/credentials.json
+devops_notes/cloud/gcp-sftp-transfer/cloud-data-transfer-project.md
+devops_notes/cloud/cloudrun-FTPS/cra_ftps_setup/v0.1/current/config.json
+devops_notes/cloud/cloudrun-FTPS/ZENN_concept
+devops_notes/cloud/cloudrun-FTPS_bkup_202503240730
+
 
 # serverless-ftps-api-public 内は原則 ignore
-tutorials/cloud/serverless-ftps-api-public/*
+devops_notes/cloud/serverless-ftps-api-public/*
 
 # ただし README は除外（Git に含める）
-!tutorials/cloud/serverless-ftps-api-public/README.md
-!tutorials/cloud/serverless-ftps-api-public/README.en.md
+!devops_notes/cloud/serverless-ftps-api-public/README.md
+!devops_notes/cloud/serverless-ftps-api-public/README.en.md
 
+venv/
