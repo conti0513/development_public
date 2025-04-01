@@ -78,3 +78,25 @@ git push origin main
 ```
 
 ---
+
+---
+
+## 🧰 補足ディレクトリ / Supplementary Directories
+
+### 📁 devops_notes/
+
+このフォルダには、個人開発や検証で使用したコード・設定ファイルを保管しています。  
+TILと並行して、クラウドアーキテクチャ・自動化スクリプト・CI/CDの設計などを記録。
+
+This directory contains development and test artifacts, such as cloud architecture samples, automation scripts, and CI/CD prototypes.  
+Used in parallel with TIL entries for deeper experimentation and system design.
+
+```bash
+devops_notes/
+├── cloud/
+│   ├── gcp-sftp-transfer/      # GCP ↔ AWS のデータ連携PoC
+│   ├── cloudrun-ftps/          # Cloud Run + FTPS のサーバーレス構成
+│   └── serverless-ftps-api/    # 本番を想定したAPI構成
+├── projects/
+│   └── infra_pjt/              # ポートフォリオ用のインフラ構築プロジェクト
+└── ...
