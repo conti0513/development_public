@@ -1,14 +1,3 @@
-# GCP Associate Cloud Engineer (ACE)
-
-## 📘 Overview
-Studying for the ACE exam to enhance my cloud architecture and operations capability in a global context.
-
-## 🧩 Key Concepts & Cheat Sheets
-
-Perfect! Here's a clear and concise TIL-style summary based on NIST definitions and GCP ACE requirements — bilingual format, ready to paste into your `TIL/categories/gcpace.md`:
-
----
-
 ## 📘 Cloud Concepts Summary (Based on NIST & GCP ACE)
 
 ### ☁️ What is Cloud Computing?
