@@ -50,3 +50,7 @@
    Use overseas experience to join English-based or global projects in Japan.  
 
 ---
+
+I combined walking and listening to TOEIC content today.
+It was a small step, but it felt good to stay on track.
+---
