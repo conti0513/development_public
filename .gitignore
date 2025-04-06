@@ -1,9 +1,13 @@
 # 仮想環境
 venv/
 
+# roadmap
+roadmap/
+
 # TIL関連の除外
 TIL/English/*
 TIL/kali-linux/*
+
 
 # devops_notes 配下の機密ファイルを除外
 devops_notes/cloud/gcp-sftp-transfer/credentials.json
@@ -20,4 +24,3 @@ devops_notes/cloud/serverless-ftps-api-public/*
 !devops_notes/cloud/serverless-ftps-api-public/README.md
 !devops_notes/cloud/serverless-ftps-api-public/README.en.md
 
-venv/
