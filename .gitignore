@@ -1,28 +1,39 @@
-# 仮想環境
+# ========================
+# ✅ 仮想環境・テンポラリ除外
+# ========================
 venv/
 
-# roadmap
+# ========================
+# ✅ ロードマップ・設計資料除外
+# ========================
 roadmap/
 
-# TIL関連の除外
+# ========================
+# ✅ TIL関連の一部を除外
+# ========================
 TIL/English/*
 TIL/kali-linux/*
 TIL/global-client-strategy.md
 
+# ========================
+# ✅ プロジェクト：gift-bot は非公開
+# ========================
+project_examples/gift-bot/*
 
-
-# devops_notes 配下の機密ファイルを除外
+# ========================
+# ✅ devops_notes 配下の機密ファイル除外
+# ========================
 devops_notes/cloud/gcp-sftp-transfer/credentials.json
 devops_notes/cloud/gcp-sftp-transfer/cloud-data-transfer-project.md
 devops_notes/cloud/cloudrun-FTPS/cra_ftps_setup/v0.1/current/config.json
 devops_notes/cloud/cloudrun-FTPS/ZENN_concept
-devops_notes/cloud/cloudrun-FTPS_bkup_202503240730
 
-
-# serverless-ftps-api-public 内は原則 ignore
+# ========================
+# ✅ serverless-ftps-api-public は原則非公開
+# ========================
 devops_notes/cloud/serverless-ftps-api-public/*
 
-# ただし README は除外（Git に含める）
+# 👉 ただしREADMEは含める（明示的に除外解除）
 !devops_notes/cloud/serverless-ftps-api-public/README.md
 !devops_notes/cloud/serverless-ftps-api-public/README.en.md
 
