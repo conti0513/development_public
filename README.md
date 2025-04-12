@@ -1,103 +1,96 @@
+# 📘 Today I Learned (TIL)
 
-# Today I Learned (TIL)
+## 📌 Overview / 概要
 
-## 📘 概要 / Overview
+This repository is a daily log for **technical growth, project experience, and hands-on knowledge**.  
+It helps track small discoveries and build a cumulative portfolio, especially for **global and remote work**.
 
-このリポジトリは、日々の学び・業務経験を簡潔に記録する **Today I Learned（TIL）ログ**です。  
-自分のスキルや成果を整理し、グローバル案件や英語対応のポートフォリオとして活用しています。
-
-This repository is a personal **Today I Learned (TIL)** log.  
-It helps me organize my skills and experiences, and serves as a portfolio for global/remote projects.
-
----
-
-## 🛠️ 運用方針 / Workflow
-
-- 毎日数分でTILを書く（1日1ファイル or 数行でもOK）
-- 自分の得意分野をタグ（カテゴリ）で整理
-- 実績・成果は冒頭で強調して見せ方を意識
-
-📌 日次エントリ → `entries/YYYY/MM/DD.md`  
-📌 カテゴリ別整理 → `categories/` フォルダに記録を分散管理
+このリポジトリは、日々の学びや実務経験を記録する "Today I Learned" ログです。  
+継続的なインプット・アウトプットを通じて、スキルの可視化と国際案件への活用を目的としています。
 
 ---
 
-## 🧩 カテゴリ定義 / Category Tags
+## 🛠️ Workflow / 運用ルール
 
-- `Cloud & Automation`：GCP, AWS, IaC, API連携, スクリプト
-- `Internal IT & SaaS Ops`：Microsoft 365, GWS, Entra ID, SaaS管理
-- `Network & Security`：VPC, VPN, Firewall, セキュリティ設定
-- `Cross-functional Ops`：情シス, ヘルプデスク, 監査, 複数領域対応
-- `English & Global Work`：英語学習, 英語アウトプット, 海外案件対応
+- Write TIL entries daily or weekly (even a few lines is OK)
+- Keep both English and Japanese as needed
+- Use tags and folders to classify experiences
+
+📍 Entry by date → `entries/YYYY/MM/DD.md`  
+📍 Categorized output → `project_examples/` and `devops_notes/`
 
 ---
 
-## 📂 ディレクトリ構成 / Directory Structure
+## 🧱 Directory Structure / ディレクトリ構成
 
 ```bash
-TIL/
-├── entries/               # 日次ログ
-│   └── 2025/04/2025-04-02.md
-├── categories/            # カテゴリ別アウトプット（※随時更新）
-├── archive/               # 過去ログ・旧ファイル
-├── til_git_push.sh        # Git push 自動化スクリプト
-└── README.md              # このファイル
+.
+├── TIL/
+│   ├── entries/             # 日次・週次ログ（技術・仕事メモ）
+│   └── categories/          # （旧）カテゴリ別整理（現在は非推奨）
+├── devops_notes/            # 設計メモ・スクリプトなどの技術資料
+├── project_examples/        # 再利用可能なミニPJ・スクリプト・PoC集
+└── README.md                # このファイル
 ```
 
 ---
 
-## 💬 Motivation
+## 🔁 TIL Example Topics
 
-- 自分の経験・成長を「伝わる形」で見える化
-- 英語と日本語で記録し、海外PJにも対応
-- 小さく続けて、大きな武器に
+- Automating CSV workflows with Google Apps Script  
+- SaaS cleanup operations for internal IT  
+- Shell scripts for Windows provisioning  
+- Cloud Run + FTPS integration with static IP  
+- Linux one-liners for structure checks  
+- Global-friendly career documents and GitHub Actions workflows
 
-Make your progress visible.  
-Keep it simple. Keep it daily. Keep it global.
+---
+
+## ✍️ Motivation / 背景と狙い
+
+- Build technical confidence through micro-logging  
+- Translate real work into reusable assets (scripts, docs)  
+- Develop bilingual habits for international communication  
+- Reflect consistently without pressure
 
 ---
 
-## 🔗 今後の拡張予定（Future Plans）
+## 📂 Supplementary Areas / 補足領域
 
-- Zenn / Note / ブログ記事化
-- 英語ポートフォリオとの統合
+### `project_examples/`  
+実務や個人開発で使える **自作スクリプトや構成例** を再利用可能な形で整理。
+
+```bash
+project_examples/
+├── gmailcsv_to_gcs_uploader/       # Gmail CSV to GCS with GAS
+├── windows_setup_automation/       # PowerShellでのPC自動セットアップ
+├── unit_data_csv_automation/       # ユニット単位の集計処理（Apps Script）
+└── ... 他にも随時追加予定
+```
+
+### `devops_notes/`  
+Cloud Run・GCP・SFTP連携など、PoCや構成検証の記録。
+
+```bash
+devops_notes/cloud/
+├── cloudrun-ftps/          # Cloud Run + FTPS 実験構成
+├── gcp-sftp-transfer/      # GCP ↔ AWS連携のPoC
+└── serverless-ftps-api/    # 本番構成を意識したサーバーレス実装
+```
+---
+
+## 🤝 Author
+
+A bilingual IT engineer managing both internal systems and cloud automation.  
+Focused on building **quietly reliable systems** and growing as a global contributor.
 
 ---
+
+Make your learning visible.  
+Keep it lightweight.  
+Keep it bilingual.  
+Keep it real.
+
 ```
 
 ---
-
-## ✅ 適用手順
-
-1. 上記の内容を `TIL/README.md` にペースト
-2. コミットして push するだけで OK！
-
-```bash
-git add TIL/README.md
-git commit -m "Redesign TIL README as repo landing page"
-git push origin main
-```
-
----
-
----
-
-## 🧰 補足ディレクトリ / Supplementary Directories
-
-### 📁 devops_notes/
-
-このフォルダには、個人開発や検証で使用したコード・設定ファイルを保管しています。  
-TILと並行して、クラウドアーキテクチャ・自動化スクリプト・CI/CDの設計などを記録。
-
-This directory contains development and test artifacts, such as cloud architecture samples, automation scripts, and CI/CD prototypes.  
-Used in parallel with TIL entries for deeper experimentation and system design.
-
-```bash
-devops_notes/
-├── cloud/
-│   ├── gcp-sftp-transfer/      # GCP ↔ AWS のデータ連携PoC
-│   ├── cloudrun-ftps/          # Cloud Run + FTPS のサーバーレス構成
-│   └── serverless-ftps-api/    # 本番を想定したAPI構成
-├── projects/
-│   └── infra_pjt/              # ポートフォリオ用のインフラ構築プロジェクト
-└── ...
