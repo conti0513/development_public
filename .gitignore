@@ -7,6 +7,8 @@ roadmap/
 # TIL関連の除外
 TIL/English/*
 TIL/kali-linux/*
+TIL/global-client-strategy.md
+
 
 
 # devops_notes 配下の機密ファイルを除外
