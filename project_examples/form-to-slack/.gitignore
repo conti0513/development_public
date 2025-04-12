@@ -1,0 +1,18 @@
+# OS / Editor files
+.DS_Store
+Thumbs.db
+
+# Google Apps Script (if using clasp in the future)
+.clasp.json
+node_modules/
+
+# Secrets / Local settings
+.env
+*.secret
+*.key
+
+# Private assets (if you take any screenshots with sensitive info)
+assets/private/
+
+# Internal notes (if you don’t want to publish them yet)
+notes/*.md

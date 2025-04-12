@@ -7,4 +7,11 @@ Useful for structure checks and quick batch reviews.
 
 find . -type f -exec echo "===== {} =====" \; -exec cat {} \;
 
+
+
+find . -type f \
+  ! -path "*/.git/*" \
+  ! -iname "*.png" ! -iname "*.jpg" ! -iname "*.jpeg" \
+  -exec echo "===== {} =====" \; -exec cat {} \;
+
 ---
