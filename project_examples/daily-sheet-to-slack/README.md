@@ -1,95 +1,119 @@
-## ✅ `README.md` for `daily-sheet-to-slack`
+## ✅ `README.md` for `daily-sheet-to-slack`（共有・公開用）
 
-# 📊 Daily Sheet Summary Notifier (Google Apps Script → Slack)
+```markdown
+# 📊 Daily Sheet → Slack Notifier (GAS)
 
-This script automatically sends the **latest entries** from a Google Sheet to a specified Slack channel on a **daily schedule**.
+This Google Apps Script project automatically posts the **latest rows** from a Google Spreadsheet to a **Slack channel** at a scheduled time.
 
 Ideal for:
-- 📝 Daily task or incident reports
-- ✅ Status sharing across teams
-- 🧑‍💻 Simple automations without external servers
+- 📝 Daily task or incident sharing
+- ✅ Lightweight team reporting
+- 🧑‍💻 No server needed, just GAS + Slack Webhook
 
 ---
 
 ## ✅ Features
 
-- 📅 Daily Slack notification at scheduled time (e.g., 09:00 JST)
-- 🔍 Sends the latest **N rows** from a specified sheet
-- 🔒 Uses Slack Incoming Webhooks (no bot token required)
-- 🛠 Configurable via script properties
+- ⏰ Scheduled daily Slack notifications (e.g., 09:00 JST)
+- 📄 Automatically sends the last N rows from a specific sheet
+- 🔒 Slack Incoming Webhook based (no token or app installation required)
+- 🛠 Easy configuration via Script Properties
 
 ---
 
-## ⚙️ Configuration
+## 🧩 Example Inputs & Outputs
 
-### 1. Setup Script Properties
+### 🔹 Google Sheet (Input)
 
-Open **Apps Script Editor** → `File → Project Properties → Script Properties`  
-Add the following:
+The script reads the latest N rows from the sheet:
 
-| Key | Value | Description |
-|-----|-------|-------------|
-| `SLACK_WEBHOOK_URL` | `https://hooks.slack.com/services/xxxx/yyyy/zzzz` | Slack Incoming Webhook |
-| `SHEET_ID` | `xxxxxxxxxxxxxxxxxxxx` | Google Sheet ID |
-| `SHEET_NAME` | `Sheet1` (or your custom name) | Target sheet name |
-| `ROW_LIMIT` | `5` | Number of rows to notify (default is 5) |
+![Spreadsheet Example](assets/sample_spreadsheet_daily_report.png)
 
 ---
 
-### 2. Paste the Script
+### 🔹 Slack Notification (Output)
 
-Paste the script into `main.gs`:
+Resulting message posted to Slack:
 
-```javascript
-const SLACK_WEBHOOK_KEY = "SLACK_WEBHOOK_URL";
-const SHEET_ID_KEY = "SHEET_ID";
-const SHEET_NAME_KEY = "SHEET_NAME";
-const ROW_LIMIT_KEY = "ROW_LIMIT";
-
-// main function (to be implemented)
-function sendDailySheetSummary() {
-  // Read config & send data
-}
-```
-
-> ⚠ You will implement the actual logic in `sendDailySheetSummary()` later.
+![Slack Notification Example](assets/sample_slack_notification_result.png)
 
 ---
 
-### 3. Set Up Trigger
+## ⚙️ Setup Guide
 
-- Go to Apps Script Editor → Triggers (⏰ icon)
-- Add new trigger:
-  - Function: `sendDailySheetSummary`
-  - Event source: `Time-driven`
-  - Type: `Day timer` → Select time (e.g., 09:00)
-
----
-
-## 🧪 Expected Slack Message Example
-
-```
-📊 Daily Report (last 5 entries):
-
-1. [2025-04-13] John Doe | Task A | ✅
-2. [2025-04-13] Jane Smith | Task B | 🕒
-3. ...
-```
-
----
-
-## 🗂 Project Structure
+### 1. 📁 Project Structure
 
 ```
 daily-sheet-to-slack/
 ├── main.gs                # GAS main script
 ├── README.md              # This guide
-├── assets/                # Setup screenshots
+└── assets/                # Screenshots and visual examples
+```
+
+---
+
+### 2. 🧑‍💻 Script Properties Setup
+
+In the Apps Script editor:
+- Go to: `File` → `Project properties` → `Script properties`
+- Add these keys:
+
+| Key | Example Value | Description |
+|-----|---------------|-------------|
+| `SHEET_ID` | `xxxxxxxxxxxxxxxxxxxx` | Your spreadsheet ID |
+| `SHEET_NAME` | `DailyReport` | The name of the tab |
+| `ROW_LIMIT` | `5` | Number of rows to send |
+| `SLACK_WEBHOOK_URL` | `https://hooks.slack.com/services/XXX/YYY/ZZZ` | Slack Incoming Webhook URL |
+
+---
+
+### 3. 🧠 Script Entry Point
+
+Paste the contents of `main.gs`.  
+Example function:
+
+```javascript
+function sendDailyUpdate() {
+  // Fetch rows & send message (see main.gs for full code)
+}
+```
+
+---
+
+### 4. 🔁 Set Daily Trigger
+
+- Open Apps Script editor
+- Click the "clock" icon (⏰) → Triggers
+- Add:
+  - Function: `sendDailyUpdate`
+  - Source: `Time-driven`
+  - Type: `Day timer` → `9:00 AM` (or any time)
+
+---
+
+## 💬 Example Slack Message
+
+```
+📊 Daily Report – Last 5 Entries:
+1. [2025-04-13] User A | Submit report | ✅ Done
+2. [2025-04-13] User B | Review documents | ℹ️
+3. [2025-04-14] User A | Update client info | 🕒 In progress
+...
+```
 
 ---
 
 ## 📄 License
 
-MIT License — feel free to fork, reuse, or customize this!
+MIT License  
+Feel free to fork, improve, and share this script!
+
+---
+
+## 🙌 Author
+
+Developed by [@conti0513](https://github.com/conti0513)  
+Feel free to open issues or PRs!
+```
 
 ---
