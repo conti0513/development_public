@@ -1,95 +1,109 @@
+素晴らしい内容です！構成も整理されていて、グローバル向けポートフォリオとしてとても良いです。以下に、**英語と日本語の流れをよりスムーズに整えつつ、印象を高めた修正版**を提案します。
+
+---
+
+```markdown
 # 📘 Today I Learned (TIL)
 
 ## 📌 Overview / 概要
 
-This repository is a daily log for **technical growth, project experience, and hands-on knowledge**.  
-It helps track small discoveries and build a cumulative portfolio, especially for **global and remote work**.
+This repository documents daily technical insights, project experiences, and reusable tools.  
+Designed as a personal knowledge base and global portfolio, especially useful for **remote and international roles**.
 
-このリポジトリは、日々の学びや実務経験を記録する "Today I Learned" ログです。  
-継続的なインプット・アウトプットを通じて、スキルの可視化と国際案件への活用を目的としています。
-
----
-
-## 🛠️ Workflow / 運用ルール
-
-- Write TIL entries daily or weekly (even a few lines is OK)
-- Keep both English and Japanese as needed
-- Use tags and folders to classify experiences
-
-📍 Entry by date → `entries/YYYY/MM/DD.md`  
-📍 Categorized output → `project_examples/` and `devops_notes/`
+このリポジトリは、日々の技術的な気づきや実務経験、再利用可能なツールを記録する "Today I Learned" ログです。  
+継続的な積み上げにより、**グローバル案件対応力**と**技術的自信**を育てます。
 
 ---
 
-## 🧱 Directory Structure / ディレクトリ構成
+## 🛠️ Workflow / 運用方針
+
+- Log entries daily or weekly – even short notes are valuable  
+- Use both English and Japanese as needed  
+- Organize by date (`entries/`) and by example (`project_examples/`)
+
+📍 日次ログ → `entries/YYYY/MM/DD.md`  
+📍 技術スニペットや再利用PJ → `project_examples/`, `devops_notes/`
+
+---
+
+## 📁 Directory Structure / ディレクトリ構成
 
 ```bash
 .
 ├── TIL/
-│   ├── entries/             # 日次・週次ログ（技術・仕事メモ）
-│   └── categories/          # （旧）カテゴリ別整理（現在は非推奨）
-├── devops_notes/            # 設計メモ・スクリプトなどの技術資料
-├── project_examples/        # 再利用可能なミニPJ・スクリプト・PoC集
+│   ├── entries/             # 日々の学び・実務ログ
+│   └── categories/          # （旧）カテゴリ整理（非推奨）
+├── devops_notes/            # クラウド構成やCI/CDなどの構成メモ
+├── project_examples/        # 自作スクリプト・PoC・自動化サンプル
 └── README.md                # このファイル
 ```
 
 ---
 
-## 🔁 TIL Example Topics
+## 🔁 Sample Topics / TILトピック例
 
-- Automating CSV workflows with Google Apps Script  
-- SaaS cleanup operations for internal IT  
-- Shell scripts for Windows provisioning  
-- Cloud Run + FTPS integration with static IP  
-- Linux one-liners for structure checks  
-- Global-friendly career documents and GitHub Actions workflows
-
----
-
-## ✍️ Motivation / 背景と狙い
-
-- Build technical confidence through micro-logging  
-- Translate real work into reusable assets (scripts, docs)  
-- Develop bilingual habits for international communication  
-- Reflect consistently without pressure
+- Automating Gmail → GCS file handling with Google Apps Script  
+- Slack通知付きの日報スクリプト（GAS）  
+- Shell scripting for Windows PC provisioning  
+- Cloud Run × FTPS with static IP (secure transfer PoC)  
+- Linux one-liner for directory-wide file inspection  
+- Resume and career history for bilingual/global job search
 
 ---
 
-## 📂 Supplementary Areas / 補足領域
+## ✍️ Motivation / この活動の目的
 
-### `project_examples/`  
-実務や個人開発で使える **自作スクリプトや構成例** を再利用可能な形で整理。
+- Make small efforts visible and reviewable  
+- Convert experience into practical assets (scripts, docs, tools)  
+- Strengthen bilingual output for global communication  
+- Create without pressure – keep it daily and lightweight
 
-```bash
-project_examples/
-├── gmailcsv_to_gcs_uploader/       # Gmail CSV to GCS with GAS
-├── windows_setup_automation/       # PowerShellでのPC自動セットアップ
-├── unit_data_csv_automation/       # ユニット単位の集計処理（Apps Script）
-└── ... 他にも随時追加予定
-```
+---
 
-### `devops_notes/`  
-Cloud Run・GCP・SFTP連携など、PoCや構成検証の記録。
+## 📦 `Featured Project Examples
+
+These are hands-on automation and integration examples I’ve built and documented as part of my daily learning (TIL).  
+Each is designed to solve real-world problems with minimal cost and high reusability.
+
+| Project | Description |
+|--------|-------------|
+| [daily-sheet-to-slack](./project_examples/daily-sheet-to-slack/) | Automatically post daily rows from Google Sheets to Slack |
+| [form-to-slack](./project_examples/form-to-slack/) | Notify Slack when a Google Form is submitted |
+| [gmailcsv_to_gcs_uploader](./project_examples/gmailcsv_to_gcs_uploader/) | Extract Gmail CSV attachments and upload to GCS |
+| [unit_data_csv_automation](./project_examples/unit_data_csv_automation/) | Aggregate CSVs by unit with GAS |
+| [gift-bot](./project_examples/gift-bot/) | Simple Slack bot to send randomized thank-you messages |
+| [zapier_form_notify_logger](./project_examples/zapier_form_notify_logger/) | Webhook-based Google Sheets logging and Slack notification |
+
+
+---
+
+## ☁️ `devops_notes/` – 検証・構成メモ
+
+PoCや構成検証を行ったクラウド構築・CI/CDなどの技術ログ。
 
 ```bash
 devops_notes/cloud/
-├── cloudrun-ftps/          # Cloud Run + FTPS 実験構成
-├── gcp-sftp-transfer/      # GCP ↔ AWS連携のPoC
-└── serverless-ftps-api/    # 本番構成を意識したサーバーレス実装
+├── cloudrun-ftps/          # Cloud Run + FTPS の安全転送構成
+├── gcp-sftp-transfer/      # GCP ↔ AWS のSFTP連携PoC
+└── serverless-ftps-api/    # サーバーレス × 固定IP対応構成例
 ```
----
-
-## 🤝 Author
-
-A bilingual IT engineer managing both internal systems and cloud automation.  
-Focused on building **quietly reliable systems** and growing as a global contributor.
 
 ---
 
-Make your learning visible.  
-Keep it lightweight.  
-Keep it bilingual.  
-Keep it real.
+## 👨‍💻 Author
+
+A bilingual IT engineer focused on infrastructure, automation, and cross-domain collaboration.  
+I build **quiet, robust systems** that reduce operational noise and increase business value.
+
+インフラ・自動化・越境案件に強いバイリンガルITエンジニア。  
+**目立たないが壊れない仕組み**を設計・構築し、運用負荷を削減するのが得意です。
+
+---
+
+> Make your learning visible.  
+> Keep it lightweight.  
+> Keep it bilingual.  
+> Keep it real.
 
 ```
 
