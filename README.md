@@ -6,7 +6,7 @@ This repository documents daily technical insights, project experiences, and reu
 Designed as a personal knowledge base and global portfolio, especially useful for **remote and international roles**.
 
 このリポジトリは、日々の技術的な気づきや実務経験、再利用可能なツールを記録する "Today I Learned" ログです。  
-継続的な積み上げにより、**グローバル案件対応力**と**技術的自信**を育てます。
+継続的な積み上げで対応力を可視化します。
 
 ---
 

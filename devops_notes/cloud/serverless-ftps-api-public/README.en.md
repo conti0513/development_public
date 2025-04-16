@@ -1,79 +1,84 @@
-# serverless-ftps-api-public (English)
+# 📡 Serverless FTPS Transfer API on GCP
 
-This is a sample infrastructure setup to build a **serverless file transfer API** on GCP using Cloud Run and an external FTPS server. The project is divided into three modules, all implemented using shell scripts, enabling easy deployment, testing, and teardown.
+## 📌 Overview / 概要
+
+This project demonstrates how to build a **serverless FTPS integration** on Google Cloud using Cloud Run, VPC networking, and an external FTPS server.  
+（Cloud Run + 固定IP + FTPS 接続の構成サンプル）
+
+It is modular, fully script-based, and designed for quick deployment, testing, and teardown.  
+（スクリプトで簡単にデプロイ・削除できる構成）
 
 ---
 
-## 🔧 Project Structure
+## 🧱 Project Structure / プロジェクト構成
 
-```
+```bash
 serverless-ftps-api-public/
-├── A_cloudrun-api/      # Cloud Run API deployment and testing
-├── B_ftps-server/       # FTPS server creation and connectivity check
-└── C_vpc-networking/    # Network components (VPC, NAT, Connector)
+├── A_cloudrun-api/       # Cloud Run FTPS API (GCS Triggered)
+├── B_ftps-server/        # GCE-based FTPS Server (Testing Target)
+└── C_vpc-networking/     # Fixed IP Networking (VPC + NAT)
 ```
 
 ---
 
-## 🏗️ System Architecture
+## 🏗️ Architecture / システム構成
 
+```text
+[GCS] ──> [Cloud Run API] ──> [FTPS Server (GCE)]
+              │
+   (VPC Connector + NAT)
+              │
+          [Internet]
 ```
-[GCS] ---> [Cloud Run API] ---> [FTPS Server (GCE)]
-                 │
-        (VPC Connector + NAT)
-                 │
-             [Internet]
-```
 
-- When a file is uploaded to a GCS bucket, Cloud Run is triggered.
-- Cloud Run connects to an external FTPS server using a fixed IP.
-- Fixed IP is made possible by routing through a VPC Connector and Cloud NAT.
+- Upload to GCS triggers Cloud Run  
+- Cloud Run uploads file to FTPS server using fixed IP  
+- Static IP is achieved via VPC Connector + Cloud NAT  
 
 ---
 
-## A. Cloud Run API Module (`A_cloudrun-api/`)
+## 🔧 A. Cloud Run API Module
 
-Handles the API endpoint executed by Cloud Run, triggered by GCS uploads.
+GCS トリガーで起動される Cloud Run API の構成
 
-### 📁 Key Files
-- `main.py`: Cloud Run entry point
-- `config.api.json`: API config (project ID, bucket, FTPS credentials)
-- `01_deploy_cloud_run.sh`: Deploys the Cloud Run service
-- `03_test_cloud_run.sh`: Uploads a test file to GCS to trigger the API
-- `99_delete_cloud_run.sh`: Cleanup script
-
----
-
-## B. FTPS Server Module (`B_ftps-server/`)
-
-Creates a simple FTPS server on GCE for testing Cloud Run FTPS uploads.
-
-### 📁 Key Files
-- `config.json`: FTP username, password, and other settings
-- `01_create_ftps_server.sh`: Create the GCE instance
-- `03_create_ftps_user.sh`: Create a user on the FTPS server
-- `05_test_ftps_login.sh`: Test FTPS login
-- `09_delete_ftps_server.sh`: Cleanup script
+### 📁 Files
+- `main.py`: Cloud Run main script  
+- `config.api.json`: API設定（バケットや認証情報）  
+- `01_deploy_cloud_run.sh`: Cloud Run のデプロイ  
+- `03_test_cloud_run.sh`: テストファイルアップロード  
+- `99_delete_cloud_run.sh`: リソース削除スクリプト  
 
 ---
 
-## C. Networking Module (`C_vpc-networking/`)
+## 📦 B. FTPS Server Module
 
-Builds a private networking environment that enables Cloud Run to use a fixed IP.
+GCE上にシンプルなFTPSサーバーを構築するモジュール
 
-### 📁 Key Files
-- `config.network.json`: Contains project ID and resource names
-- `01_create_network.sh`: Create the VPC
-- `04_create_nat.sh`: Set up Cloud NAT
-- `05_create_connector.sh`: Create a VPC Access Connector
-- `06_check_network_status.sh`: Verifies the network components
-- `09_delete_network.sh`: Cleanup script
+### 📁 Files
+- `config.json`: 認証・接続設定  
+- `01_create_ftps_server.sh`: GCEインスタンス作成  
+- `03_create_ftps_user.sh`: ユーザー作成  
+- `05_test_ftps_login.sh`: ログインテスト  
+- `09_delete_ftps_server.sh`: 削除スクリプト  
 
 ---
 
-## 🚀 Execution Steps (Recommended Order)
+## 🌐 C. Networking Module
 
-### 1. Create the Network
+Cloud Run 用に固定IPを提供するためのネットワーク構成
+
+### 📁 Files
+- `config.network.json`: VPC・NATなどの設定  
+- `01_create_network.sh`: VPC作成  
+- `04_create_nat.sh`: Cloud NAT作成  
+- `05_create_connector.sh`: VPC Connector作成  
+- `09_delete_network.sh`: クリーンアップスクリプト  
+
+---
+
+## 🚀 How to Run / 実行手順
+
+### 1️⃣ Setup Network
 ```bash
 cd C_vpc-networking
 bash 01_create_network.sh
@@ -83,7 +88,7 @@ bash 04_create_nat.sh
 bash 05_create_connector.sh
 ```
 
-### 2. Set Up the FTPS Server
+### 2️⃣ Setup FTPS Server
 ```bash
 cd B_ftps-server
 bash 01_create_ftps_server.sh
@@ -91,14 +96,14 @@ bash 02_setup_ftps_env.sh
 bash 03_create_ftps_user.sh
 ```
 
-### 3. Deploy and Test the Cloud Run API
+### 3️⃣ Deploy Cloud Run API
 ```bash
 cd A_cloudrun-api
 bash 01_deploy_cloud_run.sh
 bash 03_test_cloud_run.sh
 ```
 
-### 4. Clean Up Resources
+### 4️⃣ Clean Up All Resources
 ```bash
 bash A_cloudrun-api/99_delete_cloud_run.sh
 bash B_ftps-server/09_delete_ftps_server.sh
@@ -107,7 +112,8 @@ bash C_vpc-networking/09_delete_network.sh
 
 ---
 
-## 🧪 Example Output (Upload → FTPS Transfer)
+## 🧪 Output Sample / 実行例
+
 ```bash
 $ bash 03_test_cloud_run.sh
 
@@ -121,14 +127,17 @@ upload_test_20250323050140.txt -> /home/your_username/upload_test_20250323050140
 
 ---
 
-## ✅ Notes
-- All credentials and IDs in this repository are masked.
-- Please update your own `config.*.json` files accordingly.
-- Make sure billing is enabled and your IAM account has required permissions.
+## 📝 Notes / 補足
+
+- All `config.*.json` files contain dummy values – replace with your own.  
+- Enable billing and grant necessary IAM permissions beforehand.  
+- Project modules are isolated and can be tested individually.
 
 ---
 
 ## 📄 License
+
 MIT License
 
-
+---
+```
