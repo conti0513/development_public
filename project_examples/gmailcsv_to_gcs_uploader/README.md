@@ -1,56 +1,88 @@
-# 📦 Gmail CSV to GCS Uploader  
-# 📦 GmailのCSVをGCSにアップロードする自動化ツール
+# 📦 Gmail CSV to Google Cloud Storage Uploader
 
-This project automatically extracts the latest `.csv` attachment from Gmail, uploads it to Google Cloud Storage (GCS), and optionally stores a history copy to Google Drive.  
-このプロジェクトは、GmailのCSV添付ファイルを自動的に抽出し、Google Cloud Storageにアップロード、必要に応じてGoogle Driveにも保存します。
+This project automatically extracts the **latest `.csv` attachment** from Gmail and uploads it to **Google Cloud Storage (GCS)**. Optionally, it can also store a backup in Google Drive.
+
+A clean, serverless solution built with Google Apps Script.
 
 ---
 
-## 🔧 Technologies Used / 使用技術
+## ✅ Key Features
+
+- 📥 Filters `.csv` attachments based on **email subject** and **filename keywords**
+- 📤 Uploads only the **latest file** to GCS, replacing old ones
+- 🧹 Automatically deletes older files in GCS to reduce storage usage
+- 📁 Optionally saves a backup copy to Google Drive
+- ⏰ Runs hourly using a time-based trigger (e.g., every hour at xx:05)
+
+---
+
+## 🧑‍💻 Tech Stack
+
 - Google Apps Script (GAS)
 - Gmail API
-- Google Cloud Storage (GCS)
+- Google Cloud Storage (GCS) API
 - Google Drive API
 
 ---
 
-## 🧩 Key Features / 主な特徴
-- Filters `.csv` attachments using subject and filename keywords  
-  件名やファイル名のキーワードに基づいてCSVファイルを抽出
-- Uploads only the **latest** file to GCS  
-  最新のCSVファイルのみをGCSにアップロード
-- Deletes old files from GCS, keeping only the most recent  
-  GCS上の古いファイルは自動削除
-- Supports backup to Google Drive (optional)  
-  Driveへの履歴保存も可能（任意）
-- Runs hourly via time-based trigger  
-  毎時（例: xx:05）に自動実行（時間トリガー）
+## 📁 Project Structure
+
+```
+gmailcsv_to_gcs_uploader/
+├── README.md                        # This guide
+├── docs/
+│   └── summary.md                  # Optional: use-case documentation
+└── scripts/
+    ├── saveLatestCsvToGCSAndDrive.js   # Core script
+    ├── uploadToGCS.js                  # GCS upload logic
+    ├── deleteOldFilesInGCS.js         # GCS cleanup logic
+    ├── saveToDrive.js                 # Optional: Drive backup
+    └── authorizeStorageAccess.js      # Initial authorization script
+```
 
 ---
 
-## 📁 Directory Structure / ディレクトリ構成
+## 🔐 Security Considerations
 
-gmailcsv_to_gcs_uploader/ ├── README.md # Project overview / プロジェクト概要 ├── docs/ │ └── summary.md # Detailed use-case summary / ユースケースまとめ └── scripts/ ├── saveLatestCsvToGCSAndDrive.js # Main logic to extract/upload CSV ├── uploadToGCS.js # GCS upload logic ├── deleteOldFilesInGCS.js # Delete old files in GCS ├── saveToDrive.js # Optional: Save to Drive └── authorizeStorageAccess.js # Auth trigger (for first-time use)
-
-yaml
-コピーする
-編集する
+- Utilizes **OAuth 2.0** via Google Apps Script for access to Gmail, GCS, and Drive
+- Only uploads and stores **CSV** files explicitly matching filters
+- Deletes outdated files in GCS to avoid unnecessary storage costs
 
 ---
 
-## 🔐 Security Notes / セキュリティについて
-- Uses Google OAuth for GCS and Drive access  
-  GCS・DriveへのアクセスにはOAuthを使用
-- Deletes older files to reduce unnecessary storage  
-  古いファイルは自動削除され、ストレージコストを節約
+## 💡 Use Cases
+
+- Automated upload of sales or inventory CSVs from vendors
+- Replaces manual download → upload workflows
+- Reduces human error and increases reliability
+- Ideal for recurring data feeds into BigQuery or data pipelines
 
 ---
 
-## 📌 Use Cases / 想定ユースケース
-- Automated ingestion of vendor sales/inventory data  
-  ベンダーからの売上・在庫データ自動取り込み
-- Replaces manual CSV download/upload process  
-  CSVの手動ダウンロードやアップロード作業の代替
-- Improves reliability and reduces human error  
-  信頼性向上とヒューマンエラーの削減
+## 🧠 Why This Project Helps
 
+- ✅ Easy to set up, no external servers or cron jobs needed
+- 🌐 Fully cloud-native, works inside Google Workspace
+- ⚡ Can be customized for any Gmail label, sender, filename pattern, or storage location
+
+---
+
+## 🧰 Need Customization?
+
+This project is ideal for clients who:
+
+- Need automation for repetitive Gmail-based file flows
+- Want to centralize CSV intake into GCS
+- Prefer low-maintenance, serverless solutions
+
+If you’d like to customize this for your team or connect it to another system (e.g., BigQuery, Cloud Run, Slack), feel free to reach out via [GitHub](https://github.com/conti0513) or [Upwork](https://www.upwork.com/) 💼
+
+---
+
+## 📄 License
+
+MIT License  
+Free to use, modify, and share with attribution.
+```
+
+---
