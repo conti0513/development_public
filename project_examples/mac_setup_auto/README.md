@@ -1,82 +1,68 @@
-# 🛠️ Mac USB Auto Installer
+# 📦 macOS App Auto Installer
 
-This project provides a USB-based interactive installer script to automate application setup on a freshly initialized macOS system.
+This project provides a simple, interactive script to automate the installation of commonly used macOS applications via USB. It's designed for clean installations and system setups.
 
 ---
 
-## 📁 Directory Structure
+## 📁 Project Structure
 
 ```
-KitUSB/
-├── install.sh           # Main interactive installer script
-├── config.sh            # Configuration: app list and file names
-└── apps/                # Installer files (.pkg / .dmg)
+INSTALL_USB/
+├── install.sh           # Main installer script
+├── config.sh            # Application list and settings
+└── apps/                # Installer files (.pkg or .dmg)
     ├── chrome.dmg
     ├── zoom.pkg
-    ├── slack.dmg
+    └── ...
 ```
 
 ---
 
 ## ✅ Features
 
-- Supports both `.pkg` and `.dmg` installers
-- Interactive Yes/No installation per app
-- Copies files locally before install for stability
-- **All app configuration is centralized in `config.sh`**
+- Supports `.pkg` and `.dmg` installer formats
+- Interactive prompts for each application
+- Handles GUI-based manual installations (e.g., FortiClient, ESET)
+- Supports auto-detection and installation of `.pkg` within `.dmg`
+- Automatically logs all installation activity
 
 ---
 
 ## ▶️ How to Use
 
-1. Insert the USB into the Mac
+1. Insert the USB containing this project into the Mac
 2. Open Terminal and run:
 
 ```bash
-cd /Volumes/NO\ NAME/KitUSB
+cd /Volumes/INSTALL_USB
 sh install.sh
 ```
 
-3. The script will:
-   - Copy itself to `~/KitTemp`
-   - Ask for each app whether to install or skip
+3. Follow the prompts to install each app
 
 ---
 
-## ⚙️ Configuration (`config.sh`)
+## ⚙️ Configuration (config.sh)
 
-Use the `APP_LIST` array to define what gets installed:
+- Set the working directory and USB volume path
+- Define which apps to install and how
+
+Example entry:
 
 ```bash
-APP_LIST=(
-  "Google Chrome|chrome.dmg|d"
-  "Zoom|zoom.pkg|p"
-  "Slack|slack.dmg|d"
-)
-
-APP_PATH="./apps"
-USB_VOLUME="/Volumes/NO NAME/KitUSB"
-WORKDIR="$HOME/KitTemp"
+"Google Chrome|chrome.dmg|d"  # .dmg file
+"Zoom|zoom.pkg|p"             # .pkg file
 ```
 
-- Format: `"App Name|installer_file|d(p)"` → `d` for .dmg, `p` for .pkg
-- Only edit `config.sh` to change install targets
+---
+
+## 🔐 Notes
+
+- Apps requiring special permissions (e.g., FortiClient, ESET) are opened in Finder for manual installation
+- `.dmg` files containing only `.pkg` are handled automatically
+- Terminal will log progress to `~/app_install_temp/install.log`
 
 ---
 
-## 📝 Notes
+This tool is ideal for system administrators, IT teams, or anyone who needs to repeat macOS software setups efficiently.
 
-- `.dmg` must contain a single `.app` at the top level
-- `.pkg` is installed via `sudo installer`
-- Security approval may be required (e.g., for ESET, FortiClient)
-- You can expand this easily by just adding to `APP_LIST`
-
----
-
-## 💬 Optional Extensions
-
-- Logging to `install.log`
-- Multi-language message templates
-- GUI wrapper or MDM integration
-
----
