@@ -103,3 +103,51 @@ I build **quiet, robust systems** that reduce operational noise and increase bus
 ```
 
 ---
+
+# 🌐 THM補完用：英語で学ぶサイバーセキュリティチャンネルまとめ
+
+## 🎧 目的
+
+- 英語音声に触れながら、サイバーセキュリティの基本構造に慣れる
+- CompTIA Security+やTHMの内容と親和性の高いものを中心に構成
+- 聞き流しOK／構造学習OKの“Quiet Hero Boo”向けセレクション
+
+---
+
+## ✅ おすすめYouTubeチャンネル（2025年版）
+
+### 1. [Professor Messer](https://www.youtube.com/professormesser)
+- **対象資格**: CompTIA Security+ (SY0-701)
+- **特徴**: 明快な発音、わかりやすいスライド、全章解説付き
+- **おすすめ動画**: [SY0-701 Security+ Full Course](https://www.youtube.com/playlist?list=PLG49S3nxzAnl4QDVqK-hOnoqcSKEIDDuv)
+
+---
+
+### 2. [CyberSecurity 101](https://www.youtube.com/channel/UCQgL1ZrXfXapZk_eLQLDMJA)
+- **特徴**: 初学者向けに短くシンプルに概念を解説
+- **スタイル**: 聞き流しに最適なテンポと構成
+
+---
+
+### 3. [Simplilearn](https://www.youtube.com/watch?v=njPY7pQTRWg)
+- **内容**: Cybersecurity basics, types of attacks, SOC, etc.
+- **おすすめ動画**: “Cyber Security Full Course for Beginners” など
+
+---
+
+### 4. [Edureka](https://www.youtube.com/playlist?list=PL9ooVrP1hQOGPQVeapGsJCktzIO4DtI4_)
+- **特徴**: エンジニア向けの技術講座チャンネル
+- **内容**: Cybersecurity concepts, infrastructure, penetration testing など
+
+---
+
+## 🧭 Quiet Hero的な学習スタイル（組み合わせ）
+
+| スタイル | 行動例 |
+|----------|--------|
+| 聞き流し学習 | 通勤中や作業中にYouTube再生（3〜5本/週） |
+| メモ＋TIL連携 | 気になった単語や構造をTILに即メモ |
+| TIL＋THM接続 | 聞いた内容がTHMやSecurity+学習と接続したら即記録 |
+
+---
+
