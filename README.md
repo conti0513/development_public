@@ -151,3 +151,8 @@ I build **quiet, robust systems** that reduce operational noise and increase bus
 
 ---
 
+
+
+
+
+
