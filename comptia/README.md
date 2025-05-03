@@ -37,25 +37,145 @@
 以下は、[Professor MesserのYouTube講座（全15時間）](https://www.youtube.com/playlist?list=PLG49S3nxzAnl4QDVqK-hOnoqcSKEIDDuv) の視聴＆TIL進捗表です。  
 各セクションを視聴後、「TILに英語で1メモ」残すことを基本とします。
 
-| No   | セクション              | トピック                                  | 視聴済 | TIL記録 | 備考         |
-|------|-------------------------|-------------------------------------------|--------|----------|--------------|
-| 0.1  | イントロ                | How to Pass Your SY0-701 Exam             | ▪️      | ☐        |              |
-| 1.1  | セキュリティ基礎        | Security Controls                         | ▪️      | ☐        |              |
-| 1.2  | セキュリティ基礎        | CIA Triad                                 | ▪️      | ☐        |              |
-| 1.3  | セキュリティ基礎        | Threat Actors                             | ☐      | ☐        |              |
-| 1.4  | セキュリティ基礎        | Attack Vectors                            | ☐      | ☐        |              |
-| 1.5  | セキュリティ基礎        | Threat Intelligence                       | ☐      | ☐        |              |
-| 2.1  | ネットワークセキュリティ  | Network Security Devices                   | ☐      | ☐        |              |
-| 2.2  | ネットワークセキュリティ  | Secure Network Design                      | ☐      | ☐        |              |
-| 2.3  | ネットワークセキュリティ  | Secure Protocols                           | ☐      | ☐        |              |
-| 3.1  | IAM                    | Authentication Methods                    | ☐      | ☐        |              |
-| 3.2  | IAM                    | Authorization and Access Control          | ☐      | ☐        |              |
-| 4.1  | セキュリティ運用         | Risk Management                           | ☐      | ☐        |              |
-| 4.2  | セキュリティ運用         | Security Policies and Procedures          | ☐      | ☐        |              |
-| 5.1  | 暗号とPKI               | Cryptography Basics                       | ☐      | ☐        |              |
-| 5.2  | 暗号とPKI               | Public Key Infrastructure                 | ☐      | ☐        |              |
+# 📘 Security+ SY0-701 Video Tracker
 
-🗒 ※ 進捗は自分のペースでOK。まずは「すべて見る → TILで1メモずつ」が目標です。
+| No  | Section              | Topic                            | Watched | TIL Logged |
+|-----|----------------------|----------------------------------|---------|------------|
+| 1   | 01_Introduction         | How to Pass Your SY0-701 Exam    | ✅      | ✅         |
+| 2   | 02_Security Basics      | Security Controls                | ✅      | ✅         |
+| 3   | 02_Security Basics      | CIA Triad                        | ✅      | ✅         |
+| 4   | 02_Security Basics      | Threat Actors                    | ✅      | ✅         |
+| 5   | 02_Security Basics      | Attack Vectors                   | ✅      | ✅         |
+| 6   | 02_Security Basics      | Threat Intelligence              | ✅      | ✅         |
+| 7   | 03_Network Security     | Network Security Devices         | ☐       | ☐          |
+| 8   | 03_Network Security     | Secure Network Design            | ☐       | ☐          |
+| 9   | 03_Network Security     | Secure Protocols                 | ☐       | ☐          |
+| 10  | 04_IAM                  | Authentication Methods           | ☐       | ☐          |
+| 11  | 04_IAM                  | Authorization and Access Control | ☐       | ☐          |
+| 12  | 05_Security Operations  | Risk Management                  | ☐       | ☐          |
+| 13  | 05_Security Operations  | Security Policies and Procedures | ☐       | ☐          |
+| 14  | 06_Cryptography and PKI | Cryptography Basics              | ☐       | ☐          |
+| 15  | 06_Cryptography and PKI | Public Key Infrastructure        | ☐       | ☐          |
+| 16  | 07_Security Assessment  | Security Assessment Tools        | ☐       | ☐          |
+| 17  | 07_Security Assessment  | Penetration Testing              | ☐       | ☐          |
+| 18  | 07_Security Assessment  | Vulnerability Scanning           | ☐       | ☐          |
+| 19  | 08_Incident Response    | Incident Response Process        | ☐       | ☐          |
+| 20  | 08_Incident Response    | Digital Forensics                | ☐       | ☐          |
+
+| No  | Section              | Topic                                     | Watched | TIL Logged |
+|-----|----------------------|-------------------------------------------|---------|------------|
+| 21  | 09_Security Controls    | Physical Security Controls                | ☐       | ☐          |
+| 22  | 09_Security Controls    | Logical Security Controls                 | ☐       | ☐          |
+| 23  | 09_Security Controls    | Administrative Security Controls          | ☐       | ☐          |
+| 24  | 10_Identity Concepts    | Identification and Authentication         | ☐       | ☐          |
+| 25  | 10_Identity Concepts    | Multifactor Authentication                | ☐       | ☐          |
+| 26  | 10_Identity Concepts    | Federation and SSO                        | ☐       | ☐          |
+| 27  | 11_Access Control       | Authorization Concepts                    | ☐       | ☐          |
+| 28  | 11_Access Control       | Access Control Models                     | ☐       | ☐          |
+| 29  | 11_Access Control       | Account Management                        | ☐       | ☐          |
+| 30  | 12_Cryptography         | Symmetric and Asymmetric Encryption       | ☐       | ☐          |
+| 31  | 12_Cryptography         | Cryptographic Protocols                   | ☐       | ☐          |
+| 32  | 12_Cryptography         | Hashing and Digital Signatures            | ☐       | ☐          |
+| 33  | 12_Cryptography         | Key Management                            | ☐       | ☐          |
+| 34  | 13_PKI                  | Certificate Authorities                   | ☐       | ☐          |
+| 35  | 13_PKI                  | Certificate Types                         | ☐       | ☐          |
+| 36  | 13_PKI                  | Certificate Management                    | ☐       | ☐          |
+| 37  | 14_Secure Protocols     | Secure Email Protocols                    | ☐       | ☐          |
+| 38  | 14_Secure Protocols     | Secure Web Protocols                      | ☐       | ☐          |
+| 39  | 14_Secure Protocols     | Secure Remote Access Protocols            | ☐       | ☐          |
+| 40  | 14_Secure Protocols     | Network Protocols and Ports               | ☐       | ☐          |
+
+| No  | Section              | Topic                                        | Watched | TIL Logged |
+|-----|----------------------|----------------------------------------------|---------|------------|
+| 41  | Network Security     | Firewalls and Security Zones                 | ☐       | ☐          |
+| 42  | Network Security     | VPNs and Tunnels                             | ☐       | ☐          |
+| 43  | Network Security     | Intrusion Detection and Prevention Systems   | ☐       | ☐          |
+| 44  | Network Security     | Network Segmentation                         | ☐       | ☐          |
+| 45  | Network Security     | Proxy and Content Filters                    | ☐       | ☐          |
+| 46  | Network Security     | Load Balancers and DDoS Protection           | ☐       | ☐          |
+| 47  | Wireless Security    | Wireless Encryption Standards                | ☐       | ☐          |
+| 48  | Wireless Security    | Wireless Authentication                      | ☐       | ☐          |
+| 49  | Wireless Security    | Wireless Attacks                             | ☐       | ☐          |
+| 50  | Wireless Security    | Wireless Security Best Practices             | ☐       | ☐          |
+| 51  | Application Security | Secure Coding Practices                      | ☐       | ☐          |
+| 52  | Application Security | Application Vulnerabilities                  | ☐       | ☐          |
+| 53  | Application Security | Secure Deployment                            | ☐       | ☐          |
+| 54  | Application Security | Web Application Attacks                      | ☐       | ☐          |
+| 55  | Application Security | Secure APIs and Containers                   | ☐       | ☐          |
+| 56  | Threats and Attacks  | Malware Types and Symptoms                   | ☐       | ☐          |
+| 57  | Threats and Attacks  | Social Engineering Attacks                   | ☐       | ☐          |
+| 58  | Threats and Attacks  | Insider Threats and APTs                     | ☐       | ☐          |
+| 59  | Threats and Attacks  | Supply Chain Attacks                         | ☐       | ☐          |
+| 60  | Threats and Attacks  | Zero-Day and Fileless Malware                | ☐       | ☐          |
+
+| No  | Section              | Topic                                         | Watched | TIL Logged |
+|-----|----------------------|-----------------------------------------------|---------|------------|
+| 61  | Security Controls    | Defense in Depth                              | ☐       | ☐          |
+| 62  | Security Controls    | Controls Categories and Functions             | ☐       | ☐          |
+| 63  | Security Controls    | Physical Security                             | ☐       | ☐          |
+| 64  | Risk Management      | Risk Analysis                                 | ☐       | ☐          |
+| 65  | Risk Management      | Business Impact Analysis                      | ☐       | ☐          |
+| 66  | Risk Management      | Risk Mitigation Strategies                    | ☐       | ☐          |
+| 67  | Risk Management      | Risk Register and Reports                     | ☐       | ☐          |
+| 68  | Security Governance  | Regulatory and Legal Compliance               | ☐       | ☐          |
+| 69  | Security Governance  | Privacy Principles and Policies               | ☐       | ☐          |
+| 70  | Security Governance  | Governance Documentation                      | ☐       | ☐          |
+| 71  | Security Frameworks  | NIST, ISO, and Other Frameworks               | ☐       | ☐          |
+| 72  | Security Frameworks  | CIS Controls and Benchmarks                   | ☐       | ☐          |
+| 73  | Security Frameworks  | SOC 2 and Other Audits                        | ☐       | ☐          |
+| 74  | Identity Management  | Identity Federation and SSO                  | ☐       | ☐          |
+| 75  | Identity Management  | Access Control Models                         | ☐       | ☐          |
+| 76  | Identity Management  | Account Management Best Practices             | ☐       | ☐          |
+| 77  | IAM Implementation   | Directory Services and Identity Stores        | ☐       | ☐          |
+| 78  | IAM Implementation   | Credential Policies and Vaulting              | ☐       | ☐          |
+| 79  | IAM Implementation   | Multifactor Authentication                    | ☐       | ☐          |
+| 80  | IAM Implementation   | Biometric and Token-based Authentication      | ☐       | ☐          |
+| No  | Section                   | Topic                                                  | Watched | TIL Logged |
+|-----|---------------------------|--------------------------------------------------------|---------|------------|
+| 81  | IAM Implementation        | Authentication Protocols                               | ☐       | ☐          |
+| 82  | IAM Implementation        | Identity as a Service (IDaaS)                          | ☐       | ☐          |
+| 83  | IAM Implementation        | Privileged Access Management (PAM)                     | ☐       | ☐          |
+| 84  | Secure Network Design     | Security Zones and Segmentation                        | ☐       | ☐          |
+| 85  | Secure Network Design     | Firewall Configurations and Rules                      | ☐       | ☐          |
+| 86  | Secure Network Design     | Intrusion Detection and Prevention Systems             | ☐       | ☐          |
+| 87  | Secure Network Design     | Network Access Control (NAC)                           | ☐       | ☐          |
+| 88  | Secure Protocols          | DNS Security                                           | ☐       | ☐          |
+| 89  | Secure Protocols          | HTTPS, TLS, and Certificates                          | ☐       | ☐          |
+| 90  | Secure Protocols          | Secure Email and Web Communication                     | ☐       | ☐          |
+| 91  | Secure Protocols          | Secure Remote Access                                   | ☐       | ☐          |
+| 92  | Secure Protocols          | VPN and Tunneling Protocols                            | ☐       | ☐          |
+| 93  | Monitoring and Logging    | Logging and Auditing                                   | ☐       | ☐          |
+| 94  | Monitoring and Logging    | SIEM and Event Correlation                             | ☐       | ☐          |
+| 95  | Monitoring and Logging    | Network and Host Monitoring                            | ☐       | ☐          |
+| 96  | Monitoring and Logging    | Performance and Availability Monitoring                | ☐       | ☐          |
+| 97  | Incident Response         | Preparation and Detection                              | ☐       | ☐          |
+| 98  | Incident Response         | Containment, Eradication, and Recovery                 | ☐       | ☐          |
+| 99  | Incident Response         | Post-Incident Activity                                 | ☐       | ☐          |
+| 100 | Forensics and Analysis    | Forensics Process and Evidence Handling                | ☐       | ☐          |
+| No   | Section                   | Topic                                                  | Watched | TIL Logged |
+|------|---------------------------|--------------------------------------------------------|---------|------------|
+| 101  | Forensics and Analysis    | Order of Volatility                                    | ☐       | ☐          |
+| 102  | Forensics and Analysis    | Data Acquisition Methods                               | ☐       | ☐          |
+| 103  | Forensics and Analysis    | Chain of Custody                                       | ☐       | ☐          |
+| 104  | Governance & Compliance   | Governance and Security Frameworks                     | ☐       | ☐          |
+| 105  | Governance & Compliance   | Regulatory and Legal Requirements                      | ☐       | ☐          |
+| 106  | Governance & Compliance   | Privacy and Data Sensitivity                           | ☐       | ☐          |
+| 107  | Governance & Compliance   | Data Retention and Disposal                            | ☐       | ☐          |
+| 108  | Security Awareness        | User Training and Awareness Programs                   | ☐       | ☐          |
+| 109  | Security Awareness        | Social Engineering Prevention                          | ☐       | ☐          |
+| 110  | Security Awareness        | Insider Threats                                        | ☐       | ☐          |
+| 111  | Supply Chain Security     | Risks in Supply Chain                                  | ☐       | ☐          |
+| 112  | Supply Chain Security     | Vendor Risk Management                                 | ☐       | ☐          |
+| 113  | Cloud Security            | Cloud Deployment Models                                | ☐       | ☐          |
+| 114  | Cloud Security            | Shared Responsibility Model                            | ☐       | ☐          |
+| 115  | Cloud Security            | Cloud Security Best Practices                          | ☐       | ☐          |
+| 116  | Final Review              | Practice Questions                                     | ☐       | ☐          |
+| 117  | Final Review              | Exam Readiness Tips                                    | ☐       | ☐          |
+| 118  | Final Review              | Mindset and Exam Strategies                            | ☐       | ☐          |
+| 119  | Final Review              | Professor Messer’s Final Advice                        | ☐       | ☐          |
+| 120  | Bonus Content             | Extra Topics Overview                                  | ☐       | ☐          |
+| 121  | Bonus Content             | Resources and Study Tools                              | ☐       | ☐          |
+
 ---
 
 
