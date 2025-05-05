@@ -70,20 +70,20 @@
 
 | No. | Section | Topic                             | Duration | Keywords                                | Watched | TIL Logged |
 |-----|---------|-----------------------------------|----------|-----------------------------------------|---------|------------|
-| 26  | 02.3    | Memory Injections                 | 2:39     | memory, code injection, heap/shellcode  | ☐       | ☐          |
-| 27  | 02.3    | Buffer Overflows                  | 3:37     | memory overwrite, crash, arbitrary code | ☐       | ☐          |
-| 28  | 02.3    | Race Conditions                   | 4:58     | timing, simultaneous processes          | ☐       | ☐          |
-| 29  | 02.3    | Malicious Updates                 | 5:45     | tampered patch, fake updates            | ☐       | ☐          |
-| 30  | 02.3    | OS Vulnerabilities                | 4:09     | kernel exploits, privilege escalation   | ☐       | ☐          |
-| 31  | 02.3    | SQL Injection                     | 5:09     | database, query injection, authentication bypass | ☐ | ☐ |
-| 32  | 02.3    | Cross-site Scripting (XSS)        | 8:34     | script injection, DOM/stored/reflected  | ☐       | ☐          |
-| 33  | 02.3    | Hardware Vulnerabilities          | 6:27     | firmware, Meltdown, Spectre             | ☐       | ☐          |
-| 34  | 02.3    | Virtualization Vulnerabilities    | 5:25     | hypervisor, escape attack               | ☐       | ☐          |
-| 35  | 02.3    | Cloud-specific Vulnerabilities    | 4:06     | API security, tenant isolation          | ☐       | ☐          |
-| 36  | 02.3    | Supply Chain Vulnerabilities      | 9:12     | vendor trust, hardware/software risk    | ☐       | ☐          |
-| 37  | 02.3    | Misconfiguration Vulnerabilities  | 7:09     | open ports, default creds, bad ACLs     | ☐       | ☐          |
-| 38  | 02.3    | Mobile Device Vulnerabilities     | 3:23     | jailbreaking, untrusted apps, OS flaws  | ☐       | ☐          |
-| 39  | 02.3    | Zero-day Vulnerabilities          | 3:02     | unknown exploit, patch delay            | ☐       | ☐          |
+| 26  | 02.3    | Memory Injections                 | 2:39     | memory, code injection, heap/shellcode  | ✅      | ✅         |
+| 27  | 02.3    | Buffer Overflows                  | 3:37     | memory overwrite, crash, arbitrary code | ✅      | ✅         |
+| 28  | 02.3    | Race Conditions                   | 4:58     | timing, simultaneous processes          | ✅      | ✅         |
+| 29  | 02.3    | Malicious Updates                 | 5:45     | tampered patch, fake updates            | ✅      | ✅         |
+| 30  | 02.3    | OS Vulnerabilities                | 4:09     | kernel exploits, privilege escalation   | ✅      | ✅         |
+| 31  | 02.3    | SQL Injection                     | 5:09     | database, query injection, authentication bypass| ✅      | ✅         |
+| 32  | 02.3    | Cross-site Scripting (XSS)        | 8:34     | script injection, DOM/stored/reflected  | ✅      | ✅         |
+| 33  | 02.3    | Hardware Vulnerabilities          | 6:27     | firmware, Meltdown, Spectre             | ✅      | ✅         |
+| 34  | 02.3    | Virtualization Vulnerabilities    | 5:25     | hypervisor, escape attack               | ✅      | ✅         |
+| 35  | 02.3    | Cloud-specific Vulnerabilities    | 4:06     | API security, tenant isolation          | ✅      | ✅         |
+| 36  | 02.3    | Supply Chain Vulnerabilities      | 9:12     | vendor trust, hardware/software risk    | ✅      | ✅         |
+| 37  | 02.3    | Misconfiguration Vulnerabilities  | 7:09     | open ports, default creds, bad ACLs     | ✅      | ✅         |
+| 38  | 02.3    | Mobile Device Vulnerabilities     | 3:23     | jailbreaking, untrusted apps, OS flaws  | ✅      | ✅         |
+| 39  | 02.3    | Zero-day Vulnerabilities          | 3:02     | unknown exploit, patch delay            | ✅      | ✅         |
 
 
 
