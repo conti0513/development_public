@@ -89,28 +89,32 @@
 
 | No. | Section | Topic                              | Duration | Keywords                              | Watched | TIL Logged |
 |-----|---------|------------------------------------|----------|---------------------------------------|---------|------------|
-| 40  | 02.4    | Overview of Malware                | 6:06     | malware types, delivery methods       | ☐       | ☐          |
-| 41  | 02.4    | Viruses and Worms                  | 5:54     | self-replication, infection methods   | ☐       | ☐          |
-| 42  | 02.4    | Spyware and Bloatware              | 4:21     | tracking, resource hog                | ☐       | ☐          |
-| 43  | 02.4    | Other Malware Types                | 7:32     | ransomware, keyloggers, logic bombs   | ☐       | ☐          |
-| 44  | 02.4    | Physical Attacks                   | 4:04     | hardware theft, skimming, eavesdropping | ☐     | ☐          |
-| 45  | 02.4    | Denial of Service                  | 6:07     | DoS, DDoS, resource exhaustion        | ☐       | ☐          |
-| 46  | 02.4    | DNS Attacks                        | 8:57     | DNS poisoning, hijacking              | ☐       | ☐          |
-| 47  | 02.4    | Wireless Attacks                   | 7:55     | evil twin, deauth attack              | ☐       | ☐          |
-| 48  | 02.4    | On-path Attacks                    | 5:30     | man-in-the-middle, interception       | ☐       | ☐          |
-| 49  | 02.4    | Replay Attacks                     | 5:45     | packet capture, session reuse         | ☐       | ☐          |
-| 50  | 02.4    | Malicious Code                     | 3:40     | injected code, macros, scripts        | ☐       | ☐          |
-| 51  | 02.4    | Application Attacks                | 11:48    | input validation, logic flaws         | ☐       | ☐          |
-| 52  | 02.4    | Cryptographic Attacks              | 9:31     | brute force, downgrade, collisions    | ☐       | ☐          |
-| 53  | 02.4    | Password Attacks                   | 7:16     | dictionary, brute force, credential stuffing | ☐ | ☐ |
-| 54  | 02.4    | Indicators of Compromise           | 10:59    | IOC types, behavioral signs           | ☐       | ☐          |
+| 40  | 02.4    | Overview of Malware                | 6:06     | malware types, delivery methods       | ✅      | ✅         |
+| 41  | 02.4    | Viruses and Worms                  | 5:54     | self-replication, infection methods   | ✅      | ✅         |
+| 42  | 02.4    | Spyware and Bloatware              | 4:21     | tracking, resource hog                | ✅      | ✅         |
+| 43  | 02.4    | Other Malware Types                | 7:32     | ransomware, keyloggers, logic bombs   | ✅      | ✅         |
+| 44  | 02.4    | Physical Attacks                   | 4:04     | hardware theft, skimming, eavesdropping | ✅      | ✅         |
+| 45  | 02.4    | Denial of Service                  | 6:07     | DoS, DDoS, resource exhaustion        | ✅      | ✅         |
+| 46  | 02.4    | DNS Attacks                        | 8:57     | DNS poisoning, hijacking              | ✅      | ✅         |
+| 47  | 02.4    | Wireless Attacks                   | 7:55     | evil twin, deauth attack              | ✅      | ✅         |
+| 48  | 02.4    | On-path Attacks                    | 5:30     | man-in-the-middle, interception       | ✅      | ✅         |
+| 49  | 02.4    | Replay Attacks                     | 5:45     | packet capture, session reuse         | ✅      | ✅         |
+| 50  | 02.4    | Malicious Code                     | 3:40     | injected code, macros, scripts        | ✅      | ✅         |
+| 51  | 02.4    | Application Attacks                | 11:48    | input validation, logic flaws         | ✅      | ✅         |
+| 52  | 02.4    | Cryptographic Attacks              | 9:31     | brute force, downgrade, collisions    | ✅      | ✅         |
+| 53  | 02.4    | Password Attacks                   | 7:16     | dictionary, brute force, credential stuffing | ✅      | ✅         |
+| 54  | 02.4    | Indicators of Compromise           | 10:59    | IOC types, behavioral signs           | ✅      | ✅         |
 
 
-| No. | Section | Topic                             | Duration | Keywords                               | Watched | TIL Logged |
-|-----|---------|-----------------------------------|----------|----------------------------------------|---------|------------|
-| 55  | 02.5    | Segmentation and Access Control   | 6:06     | VLAN, ACLs, NAC                        | ☐       | ☐          |
-| 56  | 02.5    | Mitigation Techniques             | 6:51     | patching, configuration, security tools | ☐      | ☐          |
-| 57  | 02.5    | Hardening Techniques              | 12:11    | disabling services, secure defaults    | ☐       | ☐          |
+| No. | Section | Topic                           | Duration | Keywords                                | Watched | TIL Logged |
+| --- | ------- | ------------------------------- | -------- | --------------------------------------- | ------- | ---------- |
+| 55  | 02.5    | Segmentation and Access Control | 6:06     | VLAN, ACLs, NAC                         | ✅       | ✅          |
+| 56  | 02.5    | Mitigation Techniques           | 6:51     | patching, configuration, security tools | ✅       | ✅          |
+| 57  | 02.5    | Hardening Techniques            | 12:11    | disable services, secure defaults       | ✅       | ✅        
+
+| No. | Section | Topic                           | Duration | Keywords                                | Watched | TIL Logged |
+| --- | ------- | ------------------------------- | -------- | --------------------------------------- | ------- | ---------- |
+
 | 58  | 03.1    | Cloud Infrastructures             | 9:56     | IaaS, PaaS, SaaS, shared responsibility | ☐       | ☐          |
 | 59  | 03.1    | Network Infrastructure Concepts   | 6:56     | routers, switches, segmentation        | ☐       | ☐          |
 | 60  | 03.1    | Other Infrastructure Concepts     | 14:24    | SDN, virtualization, edge computing    | ☐       | ☐          |
