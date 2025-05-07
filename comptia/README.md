@@ -115,10 +115,10 @@
 | No. | Section | Topic                           | Duration | Keywords                                | Watched | TIL Logged |
 | --- | ------- | ------------------------------- | -------- | --------------------------------------- | ------- | ---------- |
 
-| 58  | 03.1    | Cloud Infrastructures             | 9:56     | IaaS, PaaS, SaaS, shared responsibility | ☐       | ☐          |
-| 59  | 03.1    | Network Infrastructure Concepts   | 6:56     | routers, switches, segmentation        | ☐       | ☐          |
-| 60  | 03.1    | Other Infrastructure Concepts     | 14:24    | SDN, virtualization, edge computing    | ☐       | ☐          |
-| 61  | 03.1    | Infrastructure Considerations     | 13:48    | redundancy, availability, architecture | ☐       | ☐          |
+| 58  | 03.1    | Cloud Infrastructures             | 9:56     | IaaS, PaaS, SaaS, shared responsibility | ✅       | ✅          |
+| 59  | 03.1    | Network Infrastructure Concepts   | 6:56     | SDN, SDN data flow, SDN security       | ✅       | ✅          |
+| 60  | 03.1    | Other Infrastructure Concepts     | 14:24    | SDN, virtualization, edge computing    | ✅       | ✅          |
+| 61  | 03.1    | Infrastructure Considerations     | 13:48    | redundancy, availability, architecture | ✅       | ✅          |
 | 62  | 03.2    | Secure Infrastructures            | 5:54     | segmentation, security zones           | ☐       | ☐          |
 | 63  | 03.2    | Intrusion Prevention              | 5:14     | IDS/IPS, detection vs prevention       | ☐       | ☐          |
 | 64  | 03.2    | Network Appliances                | 11:56    | proxies, load balancers, VPN           | ☐       | ☐          |
