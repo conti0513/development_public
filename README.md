@@ -1,23 +1,23 @@
-# 📘 Today I Learned (TIL)
+# 📘 Today I Learned (TIL) – Security Focus
 
 ## 📌 Overview / 概要
 
-This repository documents daily technical insights, project experiences, and reusable tools.  
-Designed as a personal knowledge base and global portfolio, especially useful for **remote and international roles**.
+This repository documents technical insights, hands-on security practices, and automation tools—built from real-world infrastructure experience.
+It serves as both a **daily learning log** and a **portfolio for high-accountability, security-aware roles**, especially in **remote-first environments**.
 
-このリポジトリは、日々の技術的な気づきや実務経験、再利用可能なツールを記録する "Today I Learned" ログです。  
-継続的な積み上げで対応力を可視化します。
+このリポジトリは、監視ネットワークやクラウドセキュリティの設計・運用経験をもとに、日々の学びと再利用可能なスクリプト群を記録した「実務寄りのナレッジベース」です。
+**運用負荷の削減・構成の見える化・監査への耐性**を意識した構成になっています。
 
 ---
 
-## 🛠️ Workflow / 運用方針
+## 🛠️ Workflow / 運用指針
 
-- Log entries daily or weekly – even short notes are valuable  
-- Use both English and Japanese as needed  
-- Organize by date (`entries/`) and by example (`project_examples/`)
+* 日々または週単位でログを記録（短文・単語レベルでもOK）
+* セキュリティ監視／検知ロジックの設計例も積極的に公開
+* `entries/`で日次ログ、`project_examples/`で構成・実装を整理
 
-📍 日次ログ → `entries/YYYY/MM/DD.md`  
-📍 技術スニペットや再利用PJ → `project_examples/`, `devops_notes/`
+📍 ログ → `entries/YYYY/MM/DD.md`
+📍 実装例 → `project_examples/`, `devops_notes/`
 
 ---
 
@@ -27,132 +27,56 @@ Designed as a personal knowledge base and global portfolio, especially useful fo
 .
 ├── TIL/
 │   ├── entries/             # 日々の学び・実務ログ
-│   └── categories/          # （旧）カテゴリ整理（非推奨）
-├── devops_notes/            # クラウド構成やCI/CDなどの構成メモ
-├── project_examples/        # 自作スクリプト・PoC・自動化サンプル
-└── README.md                # このファイル
+├── devops_notes/            # 構成・監視設計メモ
+├── project_examples/        # PoC・通知連携・自動化ツール
+├── 00_sample_web_server/    # 死活監視用軽量サーバー（Flask）
+└── README.md
 ```
 
 ---
 
-## 🔁 Sample Topics / TILトピック例
+## 🔐 Sample Topics / 実装・学習トピック例
 
-- Automating Gmail → GCS file handling with Google Apps Script  
-- Slack通知付きの日報スクリプト（GAS）  
-- Shell scripting for Windows PC provisioning  
-- Cloud Run × FTPS with static IP (secure transfer PoC)  
-- Linux one-liner for directory-wide file inspection  
-- Resume and career history for bilingual/global job search
-
----
-
-## ✍️ Motivation / この活動の目的
-
-- Make small efforts visible and reviewable  
-- Convert experience into practical assets (scripts, docs, tools)  
-- Strengthen bilingual output for global communication  
-- Create without pressure – keep it daily and lightweight
+* GCP Logging → Cloud Function → Slack 通知（軽量SIEM構成）
+* 死活監視（ローカル or Cloud）＋Webhook連携スクリプト
+* 802.1XやNGFWの要点整理（Security+対策含む）
+* Cloud Run + 固定IP接続によるFTPSセキュア転送構成
+* TILとCompTIAの学習接続ログ（EN⇔JP対応）
 
 ---
 
-## 📦 `Featured Project Examples
-
-These are hands-on automation and integration examples I’ve built and documented as part of my daily learning (TIL).  
-Each is designed to solve real-world problems with minimal cost and high reusability.
-
-| Project | Description |
-|--------|-------------|
-| [daily-sheet-to-slack](./project_examples/daily-sheet-to-slack/) | Automatically post daily rows from Google Sheets to Slack |
-| [form-to-slack](./project_examples/form-to-slack/) | Notify Slack when a Google Form is submitted |
-| [gmailcsv_to_gcs_uploader](./project_examples/gmailcsv_to_gcs_uploader/) | Extract Gmail CSV attachments and upload to GCS |
-| [unit_data_csv_automation](./project_examples/unit_data_csv_automation/) | Aggregate CSVs by unit with GAS |
-| [gift-bot](./project_examples/gift-bot/) | Simple Slack bot to send randomized thank-you messages |
-| [zapier_form_notify_logger](./project_examples/zapier_form_notify_logger/) | Webhook-based Google Sheets logging and Slack notification |
-
+## 🎯 Motivation / 目的と戦略
+* 「派手ではないが壊れない」構成力・検知力を見せる
+* 文書管理中心のISMSではなく、**現場に寄り添うセキュリティ**を実践
+* グローバル・リモート案件を視野に入れた**バイリンガル対応**と**実装力の可視化**
 
 ---
 
-## ☁️ `devops_notes/` – 検証・構成メモ
+## 💡 Featured Project Examples
 
-PoCや構成検証を行ったクラウド構築・CI/CDなどの技術ログ。
-
-```bash
-devops_notes/cloud/
-├── cloudrun-ftps/          # Cloud Run + FTPS の安全転送構成
-├── gcp-sftp-transfer/      # GCP ↔ AWS のSFTP連携PoC
-└── serverless-ftps-api/    # サーバーレス × 固定IP対応構成例
-```
+| Project                                                                     | Description                |
+| --------------------------------------------------------------------------- | -------------------------- |
+| [daily-sheet-to-slack](./project_examples/daily-sheet-to-slack/)            | GASで日報をSlack通知             |
+| [gmailcsv\_to\_gcs\_uploader](./project_examples/gmailcsv_to_gcs_uploader/) | GmailからCSV抽出 → GCS自動アップロード |
+| [cloudrun-ftps](./devops_notes/cloud/cloudrun-ftps/)                        | Cloud Run + FTPS 転送構成      |
+| [unit\_data\_csv\_automation](./project_examples/unit_data_csv_automation/) | CSV自動集計ツール（GAS）            |
+| [sample\_web\_server](./00_sample_web_server/)                              | `/health`を返す軽量監視用Flaskサーバー |
 
 ---
 
 ## 👨‍💻 Author
 
-A bilingual IT engineer focused on infrastructure, automation, and cross-domain collaboration.  
-I build **quiet, robust systems** that reduce operational noise and increase business value.
+A bilingual IT engineer specializing in infrastructure, cloud operations, and secure monitoring systems.
+I design **quiet, failure-resistant systems** that support high-accountability environments.
 
-インフラ・自動化・越境案件に強いバイリンガルITエンジニア。  
-**目立たないが壊れない仕組み**を設計・構築し、運用負荷を削減するのが得意です。
-
+インフラ／監視／自動化をベースに、**運用負荷を下げる静かな構成設計**を得意とするエンジニアです。
 ---
 
-> Make your learning visible.  
-> Keep it lightweight.  
-> Keep it bilingual.  
-> Keep it real.
-
-```
+> Reduce noise.
+> Monitor smart.
+> Design quietly, deploy with confidence.
 
 ---
-
-# 🌐 THM補完用：英語で学ぶサイバーセキュリティチャンネルまとめ
-
-## 🎧 目的
-
-- 英語音声に触れながら、サイバーセキュリティの基本構造に慣れる
-- CompTIA Security+やTHMの内容と親和性の高いものを中心に構成
-- 聞き流しOK／構造学習OKの“Quiet Hero Boo”向けセレクション
-
----
-
-## ✅ おすすめYouTubeチャンネル（2025年版）
-
-### 1. [Professor Messer](https://www.youtube.com/professormesser)
-- **対象資格**: CompTIA Security+ (SY0-701)
-- **特徴**: 明快な発音、わかりやすいスライド、全章解説付き
-- **おすすめ動画**: [SY0-701 Security+ Full Course](https://www.youtube.com/playlist?list=PLG49S3nxzAnl4QDVqK-hOnoqcSKEIDDuv)
-
----
-
-### 2. [CyberSecurity 101](https://www.youtube.com/channel/UCQgL1ZrXfXapZk_eLQLDMJA)
-- **特徴**: 初学者向けに短くシンプルに概念を解説
-- **スタイル**: 聞き流しに最適なテンポと構成
-
----
-
-### 3. [Simplilearn](https://www.youtube.com/watch?v=njPY7pQTRWg)
-- **内容**: Cybersecurity basics, types of attacks, SOC, etc.
-- **おすすめ動画**: “Cyber Security Full Course for Beginners” など
-
----
-
-### 4. [Edureka](https://www.youtube.com/playlist?list=PL9ooVrP1hQOGPQVeapGsJCktzIO4DtI4_)
-- **特徴**: エンジニア向けの技術講座チャンネル
-- **内容**: Cybersecurity concepts, infrastructure, penetration testing など
-
----
-
-## 🧭 Quiet Hero的な学習スタイル（組み合わせ）
-
-| スタイル | 行動例 |
-|----------|--------|
-| 聞き流し学習 | 通勤中や作業中にYouTube再生（3〜5本/週） |
-| メモ＋TIL連携 | 気になった単語や構造をTILに即メモ |
-| TIL＋THM接続 | 聞いた内容がTHMやSecurity+学習と接続したら即記録 |
-
----
-
-
-
 
 
 

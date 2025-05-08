@@ -1,49 +1,95 @@
-# 🛡️ CompTIA Security+ 学習ログ（TIL）
+# 🛡️ CompTIA Security+ Knowledge Base (SY0-701)
 
-このフォルダは、2025年7月受験予定の Security+ に向けた学習・アウトプット記録です。
+This directory documents a structured, implementation-aware summary of the **CompTIA Security+ (SY0-701)** syllabus.
+Its goal is not mere certification, but the **practical refinement of security language and architectural thinking** used in real-world system design.
+
+このフォルダは、Security+ の学習内容をベースに、実務実装へ応用できるよう整理・構造化された技術ナレッジ集です。
+試験対策を越えて、**現場で使える設計視点・検知思考・構成判断の言語化**にフォーカスしています。
+
+---
+
+## 🎯 Purpose / 学習の軸
+
+* 単なる暗記ではなく、「なぜその構成・制御・対策が必要なのか」を理解し、**設計に転用できる言葉で残す**
+* TILやポートフォリオと連携し、**再現可能なセキュリティ実装の裏付け**として機能させる
+* 各ドメインの知識を、自身のインフラ／クラウド構成・アラート設計・運用監視に繋げて考察
+
+---
+
+## 📂 Directory Overview
+
+```bash
+comptia/
+├── 01.x.md    # Threats, Vulnerabilities, Attacks
+├── 02.x.md    # Architecture & Design
+├── 03.x.md    # Secure Networking
+├── 04.x.md    # Identity & Access Management
+├── 05.x.md    # Risk, Governance, Incident Response
+└── README.md  # Index and learning tracker
+```
+
+---
+
+## 📚 Core Materials (2025)
+
+| Type         | Title                                                                                                  | Notes                   |
+| ------------ | ------------------------------------------------------------------------------------------------------ | ----------------------- |
+| 🎥 YouTube   | [Professor Messer – SY0-701](https://www.youtube.com/playlist?list=PLG49S3nxzAnl4QDVqK-hOnoqcSKEIDDuv) | 全セクション網羅 / 音声明瞭 / 無料    |
+| 🧪 Udemy     | Jason Dion – Practice Tests                                                                            | 模試5セット＋詳細解説 / 英語の実戦演習向け |
+| 💻 TryHackMe | [Security+ Path](https://tryhackme.com/path/outline/comptia)                                           | 実践で学ぶドメイン別のハンズオンルーム     |
+
+---
+
+## 🔗 Integration with My Work
+
+Security+ knowledge is actively reflected in:
+
+* `TIL/`: Concept refinement, term mapping, bilingual phrasing
+* `project_examples/`: Slack alert design, webhook auth, monitoring PoC
+* `devops_notes/`: FTPS, Cloud NAT, segmentation logic, alert surfaces
+
+---
+
+## 📘 Tracker: Professor Messer Video Series
+
+学習ごとに「英語で1フレーズTIL」を記録し、用語定着・設計観点・応用アイデアに繋げています。
+全一覧は本README後半に掲載済みです。
+
+---
+
+## 🎧 ADHD × 非ネイティブの学習最適化戦略（Boo式）
+
+英語講義や資格学習を「完璧に理解しよう」とすると失速しがちです。
+Boo式では、**目的の絞り込み → 流し聞き → 記憶残りの1点に集中**することを重視します。
+
+| フェーズ          | 主体ツール           | スタイル                |
+| ------------- | --------------- | ------------------- |
+| フェーズ1：視聴・要点拾い | TIL（公開・構造化）     | 要点だけ拾って「残す」         |
+| フェーズ2：反復記録    | GoodNotes（自由記録） | 感覚的に暴れて記憶に焼きつける     |
+| フェーズ3：公開整理    | TIL/ブログ         | 知識を再構成し他者に伝えるアウトプット |
+
+> 「全部理解しない」ことが、長期定着と自分の言葉で話せる力につながります。
+
+---
+
+## 👨‍💻 Author
+
+Security-oriented infrastructure & cloud engineer.
+Documenting the **intersection between certification frameworks and deployable designs**.
 
 ---
 
 
-# 📚 Security+ 学習教材リスト（2025年最新版）
+## 📘 Learning Tracker – Professor Messer Series
 
-## 🧠 ① メイン教材
+Each video is followed by a written TIL memo in English.
+Focus is placed on *conceptual clarity*, *terminology usage*, and *how it connects to actual system design*.
 
-| 種類         | 教材名                                                  | 備考                                        |
-|--------------|----------------------------------------------------------|---------------------------------------------|
-| 📺 YouTube   | [Professor Messer Security+ Series](https://www.youtube.com/playlist?list=PLG49S3nxzAnl4QDVqK-hOnoqcSKEIDDuv) | 英語学習兼ねて流し聞き／無料／声が聞き取りやすい |
-
----
-
-## 🎯 ② 模擬試験・問題集
-
-| 種類       | 教材名                                                   | 備考                                       |
-|------------|----------------------------------------------------------|--------------------------------------------|
-| 🧪 Udemy   | **Jason Dion Security+ Practice Tests**                  | 英語模試。模試5セット／解説付き／超定番          |
-
----
-
-## 🌐 ③ 実践・ハンズオン（THMや演習系）
-
-| 種類      | 教材名                                                                    | 備考                                |
-|-----------|---------------------------------------------------------------------------|-------------------------------------|
-| 💻 THM    | [PreSecurity Room](https://tryhackme.com/room/presecurity)               | 初学者向けの基本。答えを見ながらでもOK         |
-| 💻 THM    | [Security+ Path](https://tryhackme.com/path/outline/comptia)             | 試験のドメイン別に対応あり                   |
-
----
-
-## 🎥 視聴ログ：Professor Messer Security+ SY0-701
-
-以下は、[Professor MesserのYouTube講座（全15時間）](https://www.youtube.com/playlist?list=PLG49S3nxzAnl4QDVqK-hOnoqcSKEIDDuv) の視聴＆TIL進捗表です。  
-各セクションを視聴後、「TILに英語で1メモ」残すことを基本とします。
-
-
-# 📘 Security+ SY0-701 Structured Video Tracker (Professor Messer)
-
-| No. | Section | Topic                                       | Duration | Watched | TIL Logged |
-|-----|---------|---------------------------------------------|----------|---------|------------|
-| 1   | 01_Intro | How to Pass Your SY0-701 Security+ Exam     | 10:07    | ✅      | ✅         |
-| 2   | 01.1     | Security Controls                           | 11:49    | ✅      | ✅         |
+| No. | Section   | Topic               | Duration | Watched | TIL Logged |
+| --- | --------- | ------------------- | -------- | ------- | ---------- |
+| 1   | 01\_Intro | How to Pass SY0-701 | 10:07    | ✅       | ✅          |
+| 2   | 01.1      | Security Controls   | 11:49    | ✅       | ✅          |
+| 3   | 01.2      | CIA Triad           | ...      | ✅       | ✅          |
 | 3   | 01.2     | CIA Triad                                   | 5:18     | ✅      | ✅         |
 | 4   | 01.2     | Non-repudiation                             | 7:58     | ✅      | ✅         |
 | 5   | 01.2     | Authentication, Authorization, Accounting   | 9:04     | ✅      | ✅         |
@@ -119,12 +165,11 @@
 | 59  | 03.1    | Network Infrastructure Concepts   | 6:56     | SDN, SDN data flow, SDN security       | ✅       | ✅          |
 | 60  | 03.1    | Other Infrastructure Concepts     | 14:24    | SDN, virtualization, edge computing    | ✅       | ✅          |
 | 61  | 03.1    | Infrastructure Considerations     | 13:48    | redundancy, availability, architecture | ✅       | ✅          |
-| 62  | 03.2    | Secure Infrastructures            | 5:54     | segmentation, security zones           | ☐       | ☐          |
-| 63  | 03.2    | Intrusion Prevention              | 5:14     | IDS/IPS, detection vs prevention       | ☐       | ☐          |
-| 64  | 03.2    | Network Appliances                | 11:56    | proxies, load balancers, VPN           | ☐       | ☐          |
-| 65  | 03.2    | Port Security                     | 3:50     | MAC filtering, 802.1X, disable unused  | ☐       | ☐          |
-| 66  | 03.2    | Firewall Types                    | 8:00     | stateless, stateful, NGFW              | ☐       | ☐          |
-| 67  | 03.2    | Secure Communication              | 9:55     | VPN, TLS, IPsec                        | ☐       | ☐          |
+| 62  | 03.2    | Secure Infrastructures            | 5:54     | segmentation, security zones           | ✅       | ✅          |
+| 63  | 03.2    | Intrusion Prevention              | 5:14     | IDS/IPS, detection vs prevention       | ✅       | ✅          |
+| 64  | 03.2    | Network Appliances                | 11:56    | proxies, load balancers, VPN           | ✅       | ✅          |
+| 66  | 03.2    | Firewall Types                    | 8:00     | stateless, stateful, NGFW              | ✅       | ✅          |
+| 67  | 03.2    | Secure Communication              | 9:55     | VPN, TLS, IPsec                        | ✅       | ✅          |
 | 68  | 03.3    | Data Types and Classifications    | 5:54     | PII, PHI, classification levels        | ☐       | ☐          |
 | 69  | 03.3    | States of Data                    | 6:07     | data at rest, in transit, in use       | ☐       | ☐          |
 | 70  | 03.3    | Protecting Data                   | 14:28    | encryption, masking, retention         | ☐       | ☐          |
