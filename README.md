@@ -2,12 +2,17 @@
 
 ## 📌 Overview / 概要
 
-This repository documents technical insights, hands-on security practices, and automation tools—built from real-world infrastructure experience.
-It serves as both a **daily learning log** and a **portfolio for high-accountability, security-aware roles**, especially in **remote-first environments**.
+> 📘 This repository is a public-facing log of my ongoing learning and secure architecture practices,
+> designed to support global collaboration and remote-first operations with traceable documentation.
 
-このリポジトリは、監視ネットワークやクラウドセキュリティの設計・運用経験をもとに、日々の学びと再利用可能なスクリプト群を記録した「実務寄りのナレッジベース」です。
-**運用負荷の削減・構成の見える化・監査への耐性**を意識した構成になっています。
+This repository captures technical insights, security-aware automation, and reusable design patterns—built from practical infrastructure and monitoring experience.
+It serves as both a **daily engineering log** and a **portfolio for roles requiring high accountability, minimal operational noise, and audit-readiness**.
 
+⚙️ This repository also functions as a technical portfolio for Security+ preparation, detection logic design, and cloud-based security architecture.
+---
+
+このリポジトリは、**監視ネットワーク・クラウドセキュリティ・自動化設計**に関する日々の学びと実装例を記録した「構造化されたナレッジベース」です。
+**再現性ある構成・運用負荷の削減・構成の透明性**を重視し、**リモート・非同期でも意思決定を支援できるドキュメント構成**を意識しています。
 ---
 
 ## 🛠️ Workflow / 運用指針
@@ -78,5 +83,25 @@ I design **quiet, failure-resistant systems** that support high-accountability e
 
 ---
 
+## ✅ 技術ログ公開に関する説明文
+### 🇯🇵 日本語版（説明用）
+
+> これは私個人の**自己学習とスキル証明**を目的とした技術ブログです。
+> 記録内容は**抽象化された構成設計・設計思想・学習ログ**であり、
+> **社内情報・顧客名・個人情報・脆弱性などは一切含まれていません**。
+>
+> また、日本的な「様式美」を重視し、**構造の見える化・再現性・非属人化**を意識しています。
+
+---
+
+### 🇺🇸 English Version (For Global Transparency)
+
+> This is a **technical blog for personal learning and skill demonstration**.
+> All contents are based on **abstracted architecture, design reasoning, and daily learning logs**.
+> No internal data, credentials, customer identifiers, or vulnerabilities are included.
+>
+> Inspired by the Japanese value of **yōshiki-bi (様式美)**—aesthetic structure—
+> the content is designed for **clarity, reproducibility, and de-personalized operations**.
+---
 
 
