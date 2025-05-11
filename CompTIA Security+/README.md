@@ -170,9 +170,9 @@ Focus is placed on *conceptual clarity*, *terminology usage*, and *how it connec
 | 64  | 03.2    | Network Appliances                | 11:56    | proxies, load balancers, VPN           | ✅       | ✅          |
 | 66  | 03.2    | Firewall Types                    | 8:00     | stateless, stateful, NGFW              | ✅       | ✅          |
 | 67  | 03.2    | Secure Communication              | 9:55     | VPN, TLS, IPsec                        | ✅       | ✅          |
-| 68  | 03.3    | Data Types and Classifications    | 5:54     | PII, PHI, classification levels        | ☐       | ☐          |
-| 69  | 03.3    | States of Data                    | 6:07     | data at rest, in transit, in use       | ☐       | ☐          |
-| 70  | 03.3    | Protecting Data                   | 14:28    | encryption, masking, retention         | ☐       | ☐          |
+| 68  | 03.3    | Data Types and Classifications    | 5:54     | PII, PHI, classification levels        | ✅       | ✅          |
+| 69  | 03.3    | States of Data                    | 6:07     | data at rest, in transit, in use       | ✅       | ✅          |
+| 70  | 03.3    | Protecting Data                   | 14:28    | encryption, masking, retention         | ✅       | ✅          |
 | 71  | 03.4    | Resiliency                        | 9:42     | HA, fault tolerance, redundancy        | ☐       | ☐          |
 | 72  | 03.4    | Capacity Planning                 | 3:53     | forecasting, scalability               | ☐       | ☐          |
 | 73  | 03.4    | Recovery Testing                  | 5:18     | backup verification, DR drills         | ☐       | ☐          |
