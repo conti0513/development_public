@@ -1,28 +1,42 @@
-# 📘 Today I Learned (TIL) – Security Focus
+# 📘 Today I Learned (TIL) – Security & Infrastructure Focus
 
 ## 📌 Overview / 概要
 
-> 📘 This repository is a public-facing log of my ongoing learning and secure architecture practices,
-> designed to support global collaboration and remote-first operations with traceable documentation.
+> 📘 This repository is a **bilingual, structure-oriented portfolio**,
+> focusing on **secure system design, infrastructure automation, and Zero Trust architecture**,
+> optimized for remote-first operations and quiet, failure-resistant environments.
 
-This repository captures technical insights, security-aware automation, and reusable design patterns—built from practical infrastructure and monitoring experience.
-It serves as both a **daily engineering log** and a **portfolio for roles requiring high accountability, minimal operational noise, and audit-readiness**.
+このリポジトリは、**セキュアな構成設計、クラウドインフラ運用、自動化、ゼロトラスト構成**を中心に、
+**静かに壊れず、属人性のない構成の実装知見**を蓄積・共有するナレッジベースです。
 
-⚙️ This repository also functions as a technical portfolio for Security+ preparation, detection logic design, and cloud-based security architecture.
+**実装・構成・監視・運用をコード化／ドキュメント化し、リモート・非同期でも耐えうるセキュリティエンジニア像を体現**しています。
+
 ---
 
-このリポジトリは、**監視ネットワーク・クラウドセキュリティ・自動化設計**に関する日々の学びと実装例を記録した「構造化されたナレッジベース」です。
-**再現性ある構成・運用負荷の削減・構成の透明性**を重視し、**リモート・非同期でも意思決定を支援できるドキュメント構成**を意識しています。
+## 🔐 Featured: Zero Trust & Security Architecture Glossary
+
+This repository also includes a **Zero Trust and Security Architecture glossary (EN/JP)**,
+mapping **key security terms to my real-world project experience** in infrastructure, operations, and cloud services.
+
+📍 [View the glossary (EN/JP) here](./zero_trust_terms_enjp.md)
+
+---
+
+このリポジトリには、\*\*ゼロトラスト・セキュリティ構造カタログ（英日対応）\*\*も収録しています。
+**商談・履歴書・構成提案など、幅広い用途に対応する“静かな説得力”を備えたナレッジカタログ**です。
+
+📍 [グロッサリーを見る（EN/JP）](./zero_trust_terms_enjp.md)
+
 ---
 
 ## 🛠️ Workflow / 運用指針
 
-* 日々または週単位でログを記録（短文・単語レベルでもOK）
-* セキュリティ監視／検知ロジックの設計例も積極的に公開
-* `entries/`で日次ログ、`project_examples/`で構成・実装を整理
+* **日々または週単位で短時間でも積み上げ（TIL）**
+* **Security+対策と、実務に基づく検知ロジック・構成例を並行公開**
+* **構成・運用は「静か・再現性・非属人化」を重視**
 
-📍 ログ → `entries/YYYY/MM/DD.md`
-📍 実装例 → `project_examples/`, `devops_notes/`
+📍 日次ログ → `entries/YYYY/MM/DD.md`
+📍 構成例 → `project_examples/`, `devops_notes/`
 
 ---
 
@@ -35,6 +49,7 @@ It serves as both a **daily engineering log** and a **portfolio for roles requir
 ├── devops_notes/            # 構成・監視設計メモ
 ├── project_examples/        # PoC・通知連携・自動化ツール
 ├── 00_sample_web_server/    # 死活監視用軽量サーバー（Flask）
+├── zero_trust_terms_enjp.md # ゼロトラスト×構成ナレッジカタログ（EN/JP）
 └── README.md
 ```
 
@@ -47,13 +62,15 @@ It serves as both a **daily engineering log** and a **portfolio for roles requir
 * 802.1XやNGFWの要点整理（Security+対策含む）
 * Cloud Run + 固定IP接続によるFTPSセキュア転送構成
 * TILとCompTIAの学習接続ログ（EN⇔JP対応）
+* Zero Trust / Quiet Engineer Handbook（商談用）
 
 ---
 
 ## 🎯 Motivation / 目的と戦略
-* 「派手ではないが壊れない」構成力・検知力を見せる
-* 文書管理中心のISMSではなく、**現場に寄り添うセキュリティ**を実践
-* グローバル・リモート案件を視野に入れた**バイリンガル対応**と**実装力の可視化**
+
+* 「派手ではないが壊れない」構成力・検知力を静かに示す
+* 文書管理型ISMSではなく、**実装型・現場対応型セキュリティを実践**
+* グローバル・リモート案件向けに、**バイリンガル対応×静かな構成力**を可視化
 
 ---
 
@@ -71,37 +88,38 @@ It serves as both a **daily engineering log** and a **portfolio for roles requir
 
 ## 👨‍💻 Author
 
-A bilingual IT engineer specializing in infrastructure, cloud operations, and secure monitoring systems.
-I design **quiet, failure-resistant systems** that support high-accountability environments.
+A bilingual IT engineer specializing in **infrastructure, security operations, and secure monitoring systems.**
+I design **quiet, failure-resistant systems** that support **high-accountability, remote-first environments.**
 
-インフラ／監視／自動化をベースに、**運用負荷を下げる静かな構成設計**を得意とするエンジニアです。
+インフラ／監視／自動化／ゼロトラスト構成をベースに、**静かで壊れない、属人性のない構成設計**を得意とするエンジニアです。
+
 ---
 
-> Reduce noise.
+> **Reduce noise.
 > Monitor smart.
-> Design quietly, deploy with confidence.
+> Design quietly, deploy with confidence.**
 
 ---
 
 ## ✅ 技術ログ公開に関する説明文
+
 ### 🇯🇵 日本語版（説明用）
 
 > これは私個人の**自己学習とスキル証明**を目的とした技術ブログです。
 > 記録内容は**抽象化された構成設計・設計思想・学習ログ**であり、
-> **社内情報・顧客名・個人情報・脆弱性などは一切含まれていません**。
+> **社内情報・顧客名・個人情報・脆弱性などは一切含まれていません。**
 >
-> また、日本的な「様式美」を重視し、**構造の見える化・再現性・非属人化**を意識しています。
+> 日本的な「様式美」を重視し、**構造の見える化・再現性・非属人化**を意識したナレッジ整理を行っています。
 
 ---
 
 ### 🇺🇸 English Version (For Global Transparency)
 
-> This is a **technical blog for personal learning and skill demonstration**.
-> All contents are based on **abstracted architecture, design reasoning, and daily learning logs**.
+> This is a **technical blog for personal learning and skill demonstration.**
+> All contents are based on **abstracted architecture, design reasoning, and daily learning logs.**
 > No internal data, credentials, customer identifiers, or vulnerabilities are included.
 >
 > Inspired by the Japanese value of **yōshiki-bi (様式美)**—aesthetic structure—
-> the content is designed for **clarity, reproducibility, and de-personalized operations**.
+> the content is designed for **clarity, reproducibility, and de-personalized operations.**
+
 ---
-
-
