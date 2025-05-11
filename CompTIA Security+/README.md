@@ -173,11 +173,11 @@ Focus is placed on *conceptual clarity*, *terminology usage*, and *how it connec
 | 68  | 03.3    | Data Types and Classifications    | 5:54     | PII, PHI, classification levels        | ✅       | ✅          |
 | 69  | 03.3    | States of Data                    | 6:07     | data at rest, in transit, in use       | ✅       | ✅          |
 | 70  | 03.3    | Protecting Data                   | 14:28    | encryption, masking, retention         | ✅       | ✅          |
-| 71  | 03.4    | Resiliency                        | 9:42     | HA, fault tolerance, redundancy        | ☐       | ☐          |
-| 72  | 03.4    | Capacity Planning                 | 3:53     | forecasting, scalability               | ☐       | ☐          |
-| 73  | 03.4    | Recovery Testing                  | 5:18     | backup verification, DR drills         | ☐       | ☐          |
-| 74  | 03.4    | Backups                           | 12:16    | full, incremental, snapshot            | ☐       | ☐          |
-| 75  | 03.4    | Power Resiliency                  | 4:02     | UPS, generators, dual power supplies   | ☐       | ☐          |
+| 71  | 03.4    | Resiliency                        | 9:42     | HA, fault tolerance, redundancy        | ✅       | ✅          |
+| 72  | 03.4    | Capacity Planning                 | 3:53     | forecasting, scalability               | ✅       | ✅          |
+| 73  | 03.4    | Recovery Testing                  | 5:18     | backup verification, DR drills         | ✅       | ✅          |
+| 74  | 03.4    | Backups                           | 12:16    | full, incremental, snapshot            | ✅       | ✅          |
+| 75  | 03.4    | Power Resiliency                  | 4:02     | UPS, generators, dual power supplies   | ✅       | ✅          |
 
 
 | No. | Section | Topic                             | Duration | Keywords                               | Watched | TIL Logged |
