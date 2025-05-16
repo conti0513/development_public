@@ -182,12 +182,15 @@ Focus is placed on *conceptual clarity*, *terminology usage*, and *how it connec
 
 | No. | Section | Topic                             | Duration | Keywords                               | Watched | TIL Logged |
 |-----|---------|-----------------------------------|----------|----------------------------------------|---------|------------|
-| 76  | 04.1    | Secure Baselines                  | 4:11     | config standards, image templates      | ☐       | ☐          |
-| 77  | 04.1    | Hardening Targets                 | 10:11    | reduce attack surface, disable services | ☐      | ☐          |
-| 78  | 04.1    | Securing Wireless and Mobile      | 8:58     | WPA3, mobile security policies         | ☐       | ☐          |
-| 79  | 04.1    | Wireless Security Settings        | 10:55    | WPA2, EAP, SSID management             | ☐       | ☐          |
-| 80  | 04.1    | Application Security              | 8:26     | input validation, sandboxing           | ☐       | ☐          |
-| 81  | 04.2    | Asset Management                  | 8:37     | inventory, lifecycle, tagging          | ☐       | ☐          |
+| 76  | 04.1    | Secure Baselines                  | 4:11     | config standards, image templates      | ✅       | ✅          |
+| 77  | 04.1    | Hardening Targets                 | 10:11    | reduce attack surface, disable services | ✅      | ✅          |
+| 78  | 04.1    | Securing Wireless and Mobile      | 8:58     | WPA3, mobile security policies         | ✅       | ✅          |
+| 79  | 04.1    | Wireless Security Settings        | 10:55    | WPA2, EAP, SSID management             | ✅       | ✅          |
+| 80  | 04.1    | Application Security              | 8:26     | input validation, sandboxing           | ✅       | ✅          |
+| 81  | 04.2    | Asset Management                  | 8:37     | inventory, lifecycle, tagging          | ✅       | ✅          |
+
+| No. | Section | Topic                             | Duration | Keywords                               | Watched | TIL Logged |
+|-----|---------|-----------------------------------|----------|----------------------------------------|---------|------------|
 | 82  | 04.3    | Vulnerability Scanning            | 7:45     | scanners, authenticated/unauthenticated | ☐      | ☐          |
 | 83  | 04.3    | Threat Intelligence               | 4:46     | threat feeds, indicators, IOC          | ☐       | ☐          |
 | 84  | 04.3    | Penetration Testing               | 6:21     | red team, exploit simulation           | ☐       | ☐          |
