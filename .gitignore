@@ -34,6 +34,12 @@ devops_notes/cloud/cloudrun-FTPS/ZENN_concept
 # ========================
 devops_notes/cloud/serverless-ftps-api-public/*
 
+# ========================
+# ✅ ebay-pjt
+# ========================
+ebay-pjt/karakuri.md
+!ebay-pjt/README.md
+
 # 👉 ただしREADMEは含める（明示的に除外解除）
 !devops_notes/cloud/serverless-ftps-api-public/README.md
 !devops_notes/cloud/serverless-ftps-api-public/README.en.md
