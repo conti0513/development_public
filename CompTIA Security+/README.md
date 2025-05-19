@@ -196,10 +196,9 @@ Focus is placed on *conceptual clarity*, *terminology usage*, and *how it connec
 | 84  | 04.3    | Penetration Testing               | 6:21     | red team, exploit simulation           | ✅        | ✅       |
 | 85  | 04.3    | Analyzing Vulnerabilities         | 10:29    | CVSS, false positives, context         | ✅        | ✅       |
 | 86  | 04.3    | Vulnerability Remediation         | 8:45     | patching, mitigation, acceptance       | ✅        | ✅       |
+| 87  | 04.4    | Security Monitoring               | 10:27    | log analysis, SIEM, alerting           | ✅        | ✅       |
+| 88  | 04.4    | Security Tools                    | 14:06    | Nmap, Wireshark, forensic tools        | ✅        | ✅       |
 
-
-| 87  | 04.4    | Security Monitoring               | 10:27    | log analysis, SIEM, alerting           | ☐       | ☐          |
-| 88  | 04.4    | Security Tools                    | 14:06    | Nmap, Wireshark, forensic tools        | ☐       | ☐          |
 | 89  | 04.5    | Firewalls                         | 11:31    | stateless, stateful, NGFW              | ☐       | ☐          |
 | 90  | 04.5    | Web Filtering                     | 10:00    | URL filtering, DNS filtering           | ☐       | ☐          |
 | 91  | 04.5    | Operating System Security         | 3:22     | patching, access control, secure boot  | ☐       | ☐          |
