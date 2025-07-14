@@ -40,6 +40,7 @@ devops_notes/cloud/serverless-ftps-api-public/*
 ebay-pjt/karakuri.md
 ebay-pjt/schedule.md
 ebay-pjt/photo.md
+ebay-pjt/loans.md
 !ebay-pjt/README.md
 
 # 👉 ただしREADMEは含める（明示的に除外解除）
