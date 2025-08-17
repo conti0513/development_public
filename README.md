@@ -63,7 +63,9 @@ project_examples/
   ├── unit_data_csv_automation/    # CSV automation scripts
   ├── windows_setup_automation/    # Windows IT automation
   └── zapier_form_notify_logger/   # Zapier + GCS logger
+```
 ---
+
 
 ## 🎯 運用方針 / Usage Policy
 - 学習ログを最優先：粗いアウトプットでもまず残す  
