@@ -1,0 +1,137 @@
+
+Mac Support FAQ Topics
+
+1. System Performance & Maintenance
+-----------------------------------
+macOS Slow Performance
+- Check storage space, clear cache, manage startup items, reset SMC/PRAM.
+
+How to Manage macOS Storage Space
+- Use Optimize Storage, empty Trash, use Disk Utility to check and repair disks.
+
+How to Use Time Machine for Backups
+- Set up Time Machine in System Settings, connect external hard drive, and restore files when needed.
+
+How to Perform a Clean Install of macOS
+- Backup data, restart in Recovery Mode, erase the disk using Disk Utility, and reinstall macOS.
+
+2. User & Account Management
+-----------------------------
+How to Reset macOS Password
+- Reset via Apple ID, Recovery Mode, or another admin account.
+
+How to Manage macOS User Accounts
+- Add, modify, or delete accounts in System Settings, assign privileges, use parental controls.
+
+3. Connectivity & Network Issues
+---------------------------------
+Connecting to Wi-Fi and Troubleshooting Network Issues
+- Check network settings, restart router, reset Wi-Fi settings, run Wireless Diagnostics.
+
+How to Connect to a Printer
+- Add printer via System Settings, check network or USB connection, update drivers.
+
+How to Troubleshoot macOS Bluetooth Issues
+- Reset Bluetooth module, unpair and re-pair devices, ensure system is updated.
+
+How to Share Files Between macOS and Windows
+- Enable File Sharing, configure permissions, access shared folders via the local network.
+
+4. Security & Privacy
+----------------------
+How to Configure macOS Security Settings
+- Enable FileVault, turn on firewall, and set Gatekeeper for app installations.
+
+How to Reset macOS Password
+- Reset via Apple ID or Recovery Mode, ensure admin access.
+
+5. Applications & Software
+---------------------------
+Installing and Uninstalling Applications
+- Install via App Store or from external sources, uninstall by dragging to Trash or using AppCleaner.
+
+Managing macOS Software Updates for Enterprise Users
+- Enable automatic updates, manage deployment via MDM.
+
+6. Troubleshooting Common Issues
+---------------------------------
+macOS Startup Issues (Black Screen, Boot Loop)
+- Boot in Safe Mode, reset PRAM and SMC, use Disk Utility in Recovery Mode, reinstall macOS.
+
+Troubleshooting macOS Display Issues
+- Check cable connections, adjust display settings, reset NVRAM/PRAM.
+
+How to Use Disk Utility for Troubleshooting
+- Open Disk Utility, use First Aid to repair disk, partition or format drives if needed.
+
+7. Email & Collaboration Tools
+-------------------------------
+How to Connect macOS to Microsoft 365 or Google Workspace
+- Set up email, calendar, and contacts through Internet Accounts in System Settings.
+
+8. Accessibility & Usability
+-----------------------------
+How to Enable macOS Accessibility Features
+- Enable VoiceOver, Zoom, and other accessibility options in System Settings.
+
+How to Manage macOS Notifications
+- Customize notifications, enable Do Not Disturb.
+
+9. Keyboard & Input Devices
+----------------------------
+How to Fix Keyboard Not Responding
+- Check for debris, restart Mac, reset PRAM/NVRAM, test in Safe Mode.
+
+How to Customize macOS Keyboard Shortcuts
+- Modify or add shortcuts via System Settings > Keyboard > Shortcuts.
+
+How to Fix macOS Trackpad Issues
+- Check settings, restart Mac, clean trackpad, reset SMC.
+
+10. File Management & Data Recovery
+------------------------------------
+How to Recover Deleted Files on macOS
+- Recover from Trash, use Time Machine, or third-party recovery tools.
+
+How to Fix External Hard Drive Not Showing Up
+- Check connections, reformat the drive in Disk Utility, ensure compatibility.
+
+11. macOS Virtualization & Boot Camp
+-------------------------------------
+How to Install Windows on macOS Using Boot Camp
+- Use Boot Camp Assistant to partition the disk and install Windows.
+
+How to Run Virtual Machines on macOS
+- Use Parallels, VMware, or VirtualBox to run virtual machines on macOS.
+
+12. Cloud & Remote Access
+--------------------------
+How to Set Up iCloud Drive on macOS
+- Enable iCloud Drive in System Settings and sync folders with Finder.
+
+How to Remotely Access Another Mac
+- Enable Screen Sharing or use Apple Remote Desktop for remote access.
+
+13. macOS Battery & Power Management
+-------------------------------------
+How to Improve macOS Battery Life
+- Adjust brightness, disable unnecessary apps, use Activity Monitor to check battery drain.
+
+How to Troubleshoot macOS Not Charging
+- Check charger and ports, reset SMC, install software updates.
+
+14. macOS Compatibility & System Requirements
+----------------------------------------------
+How to Check macOS Compatibility for Software
+- Verify system requirements, check specs via About This Mac, keep macOS updated.
+
+How to Install Older Versions of macOS
+- Use Recovery Mode or a bootable USB to install previous macOS versions.
+
+15. macOS Customization & Appearance
+-------------------------------------
+How to Customize the macOS Dock
+- Adjust size, magnification, and position via System Settings.
+
+How to Change the macOS Desktop Background and Screensaver
+- Customize wallpaper and screensaver via System Settings > Desktop & Screen Saver.

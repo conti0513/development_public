@@ -1,0 +1,190 @@
+# Windows 11 自動セットアップ手順
+
+Windows 11 のインストール後に、ユーザー作成やアプリケーションインストール、初期設定を効率化するための PowerShell スクリプトと手順を以下にまとめました。
+
+---
+
+## 1. USB ドライブの準備
+
+以下のファイル構成で USB ドライブを準備してください：
+
+```
+USB ドライブ
+├── create_user.ps1   # ユーザー作成用スクリプト
+├── remove_user.ps1   # ユーザー削除用スクリプト
+├── setup.ps1         # アプリケーションインストール用スクリプト
+├── users.csv         # ユーザー情報を記載した CSV ファイル
+├── apps.csv          # アプリケーション情報を記載した CSV ファイル
+└── installers        # アプリケーションのインストーラーを格納するフォルダ
+```
+
+---
+
+## 2. CSV ファイルの作成
+
+### `users.csv`
+作成するユーザー情報を記載します：
+
+```csv
+username,fullname,password
+user1,User One,Password1
+user2,User Two,Password2
+```
+
+### `apps.csv`
+インストールするアプリケーション情報を記載します：
+
+```csv
+installer_name,description
+app1_installer.exe,App One のインストール
+app2_installer.exe,App Two のインストール
+```
+
+---
+
+## 3. PowerShell スクリプト
+
+### ユーザー作成スクリプト（`create_user.ps1`）
+
+```powershell
+# PowerShell 実行ポリシーを一時的に変更
+Set-ExecutionPolicy -ExecutionPolicy Bypass -Scope Process -Force
+
+# ユーザー作成関数
+function Add-User {
+    param (
+        [string]$username,
+        [string]$fullname,
+        [string]$password
+    )
+    $securePassword = ConvertTo-SecureString $password -AsPlainText -Force
+    New-LocalUser -Name $username -FullName $fullname -Password $securePassword
+    Add-LocalGroupMember -Group "Administrators" -Member $username
+    Write-Host "ユーザー '$username' を作成し、管理者権限を付与しました。"
+}
+
+# ユーザー作成処理
+$UserListFile = ".\users.csv"
+
+if (-Not (Test-Path $UserListFile)) {
+    Write-Host "ユーザーリストファイル '$UserListFile' が見つかりません。"
+    exit
+}
+
+$users = Import-Csv $UserListFile
+foreach ($user in $users) {
+    Add-User -username $user.username -fullname $user.fullname -password $user.password
+}
+```
+
+---
+
+### ユーザー削除スクリプト（`remove_user.ps1`）
+
+```powershell
+Set-ExecutionPolicy -ExecutionPolicy Bypass -Scope Process -Force
+
+function Remove-User {
+    param ([string]$username)
+    Remove-LocalUser -Name $username
+    Write-Host "ユーザー '$username' を削除しました。"
+}
+
+$UserListFile = ".\users.csv"
+
+if (-Not (Test-Path $UserListFile)) {
+    Write-Host "ユーザーリストファイル '$UserListFile' が見つかりません。"
+    exit
+}
+
+$users = Import-Csv $UserListFile
+foreach ($user in $users) {
+    Remove-User -username $user.username
+}
+```
+
+---
+
+### セットアップスクリプト（`setup.ps1`）
+
+```powershell
+Set-ExecutionPolicy -ExecutionPolicy Bypass -Scope Process -Force
+$logFile = "setup_log_$(Get-Date -Format 'yyyyMMdd_HHmmss').txt"
+Start-Transcript -Path $logFile
+
+function Install-Applications {
+    param ([string]$appListFile, [string]$installerPath)
+
+    if (-Not (Test-Path $appListFile)) {
+        Write-Host "アプリケーションリストファイルが見つかりません。"
+        return
+    }
+
+    $apps = Import-Csv $appListFile
+    foreach ($app in $apps) {
+        $installer = Join-Path $installerPath $app.installer_name
+        if (Test-Path $installer) {
+            Write-Host "$($app.description) をインストールしています..."
+            Start-Process -FilePath $installer -ArgumentList "/silent" -Wait
+        } else {
+            Write-Host "インストーラー '$installer' が見つかりません。"
+        }
+    }
+}
+
+function List-InstalledApplications {
+    Write-Host "インストール済みアプリケーション一覧:"
+    Get-ItemProperty HKLM:\Software\Microsoft\Windows\CurrentVersion\Uninstall\* |
+    Select-Object DisplayName, DisplayVersion, Publisher
+}
+
+$AppListFile = ".\apps.csv"
+$InstallerPath = ".\installers"
+
+Install-Applications -appListFile $AppListFile -installerPath $InstallerPath
+List-InstalledApplications
+
+Stop-Transcript
+```
+
+---
+
+## 4. 実行手順
+
+1. **管理者として PowerShell を起動**：
+   スタートメニューで「Windows PowerShell」を右クリックし、「管理者として実行」を選択します。
+
+2. **USB ドライブのディレクトリに移動**：
+   例：USB ドライブが `D:` の場合、以下を実行します：
+   ```powershell
+   cd D:\
+   ```
+
+3. **ユーザー作成スクリプトを実行**：
+   ```powershell
+   .\create_user.ps1
+   ```
+
+4. **ユーザー確認後、必要に応じて削除スクリプトを実行**：
+   ```powershell
+   .\remove_user.ps1
+   ```
+
+5. **新しく作成したユーザーでログインし、セットアップスクリプトを実行**：
+   ```powershell
+   .\setup.ps1
+   ```
+
+---
+
+## 5. 注意事項
+
+- **管理者権限**：全てのスクリプトは管理者権限で実行してください。
+- **インターネット接続**：オンラインインストールを行う場合はインターネット接続が必要です。
+- **インストーラーの配置**：オフラインインストールを行う場合は、`installers` フォルダに全てのインストーラーを事前に格納してください。
+- **CSV の正確な入力**：ファイルフォーマットが正しくないとスクリプトが正常に動作しません。
+
+--- 
+
+
+
