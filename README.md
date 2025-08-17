@@ -63,6 +63,7 @@ project_examples/
   ├── unit_data_csv_automation/    # CSV automation scripts
   ├── windows_setup_automation/    # Windows IT automation
   └── zapier_form_notify_logger/   # Zapier + GCS logger
+---
 
 ## 🎯 運用方針 / Usage Policy
 - 学習ログを最優先：粗いアウトプットでもまず残す  
@@ -84,7 +85,8 @@ project_examples/
 
 - Keep a transparent record of growth  
 - Practice explaining technical work in English  
-- Keep the structure simple to maintain consistency
+- Keep the structure simple to maintain consistency  
+
 ---
 
 ## 💼 キャリア背景 / Career Background
@@ -95,4 +97,3 @@ project_examples/
 - In the last 6 years, my main focus has been on **security operations, cloud, and PMO work**.  
 - Earlier in my career, I worked on **network design and on-prem monitoring infrastructure**,  
 - starting as a **customer engineer** responsible for server and switch maintenance.
----
