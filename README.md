@@ -1,116 +1,79 @@
-# 📘 Today I Learned (TIL) – Security, Automation & Digital Retail
+# 開発・学習ログ（Development Public Repository）
 
-## 📌 Overview / 概要
-
-> 📘 This repository is a **bilingual, structure-oriented portfolio**,  
-> focused on **secure system design, infrastructure automation, and digital retail operations**,  
-> optimized for **remote-first workflows, inventory-driven scripting**, and **quiet, failure-resistant systems**.
-
-このリポジトリは、**セキュアな構成設計、クラウドインフラの自動化、および小売EC業務の最適化**を目的とした  
-**構造的かつ非属人的なナレッジベース**です。  
-**Cloud Run / GAS / GCS / Slack** などのツールを用い、**現実の業務運用に直結した設計知見**を記録しています。
+本リポジトリは **公開用の学習・開発ログ** です。  
+日々の作業ログやメモ、小さな自動化・スクリプトを整理しています。  
+セキュリティ運用やクラウド、PMO領域で得た知見を記録し、再利用できる形で残すことを意識しています。  
+普段の作業は日本語ですが、英語でのアウトプット練習も兼ねています。
 
 ---
 
-## 🔐 Featured: Retail × Security × Automation
+# Development Public Repository
 
-This repository includes:
-
-- ✅ **Zero Trust and Security Architecture glossary (EN/JP)**
-- ✅ **eBay & GAS automation samples** for listing and tracking
-- ✅ **Retail workflow integration scripts** using GCS / Cloud Run / Slack
-- ✅ **Monitoring logic** for real-world operations
+This repository is my **public learning & development log**.  
+It contains daily notes, small automation scripts, and reusable examples.  
+Focus areas include **security operations, cloud, and PMO activities**, where I aim to capture lessons learned and improvements.  
+Mainly written in Japanese, but I also use this space for **English writing practice**.
 
 ---
 
-## 🛠️ Workflow / 運用方針
+## 📝 TILとは / What is TIL?
 
-- 毎日 or 週次で短時間の **構成メモ/TIL** を蓄積
-- 実務に基づいた **eBay業務×自動化×監視構成** の検証と記録
-- クラウド運用は「**静か・再現性・非属人性**」を重視
-- 売上・在庫・パフォーマンス分析をコードで管理
+- **TIL (今日学んだこと)**  
+  1日の学びを軽く記録するための仕組みです。  
+  基本は日本語で書きつつ、英語アウトプットのトレーニングも兼ねています。
 
-📍 日次ログ → `entries/YYYY/MM/DD.md`  
-📍 構成例 → `project_examples/`, `retail_ops/`, `devops_notes/`
+- **TIL (Today I Learned)**  
+  A lightweight way of recording daily learning.  
+  Mostly in Japanese, but with English notes for writing practice.
 
 ---
 
-## 📁 Directory Structure / ディレクトリ構成
+## 📂 リポジトリ構成ツリー / Repository Structure (Tree)
 
 ```bash
-.
-├── TIL/                       # 日々の積み上げ（学び・業務ログ）
-│   └── entries/
-├── retail_ops/               # 小売業務 × 自動化 × 監視の実装例
-│   └── ebay_listing_automation/
-├── devops_notes/             # 構成・監視設計の技術メモ
-├── project_examples/         # PoC・通知連携・インフラツールなど
-├── 00_sample_web_server/     # 軽量死活監視用のFlask Web Server
-├── zero_trust_terms_enjp.md  # ゼロトラスト × インフラ用語カタログ（EN/JP）
-└── README.md
-````
+TIL/
+  ├── entries/2025/...   # Daily logs (JP/EN mixed)
+  ├── create_til_entry.sh
+  └── til_git_push.sh
+
+devops_notes/
+  ├── cloud/             # Infra notes
+  ├── docker/            # Docker env & scripts
+  ├── gas/               # Google Apps Script
+  ├── php/               # PHP snippets
+  ├── powershell/        # PowerShell scripts
+  ├── python/            # Python exercises
+  └── security/          # Security-related notes
+
+project_examples/
+  ├── daily-sheet-to-slack/        # Example GAS project
+  ├── form-to-slack/               # Example GAS project
+  ├── gmailcsv_to_gcs_uploader/    # Node.js uploader
+  ├── gws_auto_py/                 # Python GWS automation
+  ├── mac_setup_auto/              # macOS setup automation
+  ├── unit_data_csv_automation/    # CSV automation scripts
+  ├── windows_setup_automation/    # Windows IT automation
+  └── zapier_form_notify_logger/   # Zapier + GCS logger
+
+## 🎯 運用方針 / Usage Policy
+- 学習ログを最優先：粗いアウトプットでもまず残す  
+- 英語はトレーニング目的：正確さよりも継続を重視  
+- メイン作業は日本語：整理・共有は日本語ベース  
+- アーカイブ運用：古い・ノイズになるものは archive_private/ へ  
+
+- Personal learning first. Logs may be rough, but consistency matters.  
+- English is for training. Focus on habit, not perfection.  
+- Japanese is the main workflow. Notes are primarily in Japanese.  
+- Archiving rule. Old or noisy files → archive_private/  
 
 ---
 
-## 🔧 Sample Topics / 主な実装トピック例
+## 🚀 モチベーション / Motivation
+- 成長の証跡を透明に残す  
+- 技術的なことを英語でも説明する練習  
+- シンプルな構造で続けやすくする  
 
-* Cloud Logging → Cloud Function → Slack通知による軽量SIEM構成
-* GmailからCSVを取得 → GCSへ自動アップロード
-* eBay出品用テンプレート生成（GAS × シート連携）
-* Cloud Run + 固定IP経由FTPS接続（業務連携）
-* 死活監視の設計メモと実装（ローカル/クラウド）
-* セキュリティ資格（Security+）の学習ログと構成整理
-* ECオペレーションにおける在庫同期・価格変更・通知ロジックのPoC
-
+- Keep a transparent record of growth  
+- Practice explaining technical work in English  
+- Keep the structure simple to maintain consistency
 ---
-
-## 🎯 Strategy / 戦略と目的
-
-* **「壊れない×静かな構成」** ＝ 信頼性のある業務運用の支援
-* **ISMS的ドキュメントではなく、実装主体のセキュリティ強化**
-* **小売・EC分野に強いインフラ/セキュリティ技術者像**の可視化
-* 海外バイヤー対応や非対面運用を支える**Quiet DevOps**
-
----
-
-## 💡 Featured Project Examples
-
-| Project                                                                     | Description                 |
-| --------------------------------------------------------------------------- | --------------------------- |
-| [daily-sheet-to-slack](./project_examples/daily-sheet-to-slack/)            | GASによる日報Slack通知             |
-| [gmailcsv\_to\_gcs\_uploader](./project_examples/gmailcsv_to_gcs_uploader/) | Gmail添付CSV → GCSアップロード      |
-| [ebay\_listing\_automation](./retail_ops/ebay_listing_automation/)          | eBay出品・在庫表・価格連携ワークフロー       |
-| [cloudrun-ftps](./devops_notes/cloud/cloudrun-ftps/)                        | Cloud Run × 固定IPによるFTPS転送構成 |
-| [sample\_web\_server](./00_sample_web_server/)                              | `/health` で応答する監視用Flaskサーバー |
-
----
-
-## 👨‍💻 Author
-
-A bilingual IT engineer specializing in **infrastructure, cloud operations, retail automation, and security monitoring**.
-I design **quiet, failure-resistant systems** that support **remote-first and export-driven retail businesses**.
-
----
-
-> **Reduce noise.
-> Monitor smart.
-> Design quietly, sell globally.**
-
----
-
-## ✅ 技術ログ公開に関する説明文
-
-### 🇯🇵 日本語版（説明用）
-
-> これは私個人の**自己学習とスキル証明**を目的とした技術ログです。
-> 内容は**実装検証・構成方針・学習記録**に基づく抽象化情報であり、
-> **社内機密・顧客情報・認証情報・脆弱性等は一切含みません。**
-
----
-
-### 🇺🇸 English Version (For Global Transparency)
-
-> This is a **technical repository for personal skill-building and knowledge sharing**.
-> All content is based on **abstracted architecture, implementation testing, and learning logs**.
-> No proprietary data, credentials, or vulnerabilities are included.
-
