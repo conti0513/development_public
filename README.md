@@ -86,3 +86,13 @@ project_examples/
 - Practice explaining technical work in English  
 - Keep the structure simple to maintain consistency
 ---
+
+## 💼 キャリア背景 / Career Background
+- 直近6年間は **セキュリティ運用・クラウド・PMO領域** を中心に活動しています。  
+- 以前は **ネットワーク設計構築** や **オンプレミス監視インフラ** に従事し、  
+- キャリアのスタートは **カスタマエンジニア** としてサーバー／スイッチの保守から始めました。  
+
+- In the last 6 years, my main focus has been on **security operations, cloud, and PMO work**.  
+- Earlier in my career, I worked on **network design and on-prem monitoring infrastructure**,  
+- starting as a **customer engineer** responsible for server and switch maintenance.
+---
