@@ -1,0 +1,115 @@
+
+### 警報転送ツール
+
+1. PowerShellスクリプトの調整：ホスト名とIPアドレスを扱う
+PowerShellスクリプト (check-hosts.ps1) 更新版
+CSVファイルにホスト名とIPアドレスを含めます。
+
+powershell
+コードをコピーする
+# PowerShell Script: check-hosts.ps1
+# 定義するパス
+$targetFile = "C:\path\to\targets.csv"  # Ping対象のホスト名とIPアドレスを含むCSVファイルのパス
+$deadHostsFile = "C:\path\to\dead_hosts.csv"  # 到達不能ホストを記録するCSVファイルのパス
+
+# CSVファイルからホスト名とIPアドレスを取得
+$targets = Import-Csv -Path $targetFile
+
+# 既存のdead_hosts.csvファイルを削除して初期化
+if (Test-Path $deadHostsFile) {
+    Remove-Item $deadHostsFile
+}
+
+# 各ホスト名とIPアドレスに対してPingを実行
+foreach ($target in $targets) {
+    $hostname = $target.Hostname  # 'targets.csv'のHostnameカラム
+    $ip = $target.IP              # 'targets.csv'のIPカラム
+    $ping = Test-Connection -ComputerName $ip -Count 1 -Quiet  # Ping実行
+    
+    # Pingが失敗した場合、到達不能リストにホスト名とIPアドレスを追加
+    if (-not $ping) {
+        Add-Content -Path $deadHostsFile -Value "$hostname,$ip"
+        Write-Host "$hostname ($ip) is unreachable, added to dead_hosts.csv"
+    }
+}
+
+Write-Host "Ping check completed. Dead hosts saved in dead_hosts.csv"
+CSVファイル (targets.csv) の構造
+csv
+コードをコピーする
+Hostname,IP
+Host1,192.168.1.1
+Host2,192.168.1.2
+Host3,192.168.1.3
+...
+このCSVには、ホスト名（Hostname）とIPアドレス（IP）の両方を含めます。
+2. Google Apps Scriptの調整：ホスト名とIPアドレスを含む警報転送
+Google Apps Scriptでは、dead_hosts.csvからホスト名とIPアドレスを読み込み、Google Chatに通知します。
+
+Google Apps Script (postToGoogleChat.gs) 更新版
+javascript
+コードをコピーする
+function postToGoogleChat() {
+  var fileId = 'your-dead-hosts-file-id';  // Google Drive上のdead_hosts.csvのファイルIDを入力
+  
+  // Google Driveからファイルを取得
+  var file = DriveApp.getFileById(fileId);
+  var csvContent = file.getBlob().getDataAsString();
+  var lines = csvContent.split('\n').filter(Boolean);  // 改行で分割し、空行を除外
+  
+  // 到達不能ホストの情報を配列に変換
+  var deadHosts = lines.map(function(line) {
+    var [hostname, ip] = line.split(',');  // CSVの各行をホスト名とIPアドレスに分割
+    return { hostname: hostname, ip: ip };
+  });
+
+  if (deadHosts.length === 0) {
+    notifyAllHostsAlive();  // すべてのホストが正常稼働の場合
+    return;
+  }
+
+  // Google Chatに送信するメッセージを構築
+  var chatMessage = "Unreachable Hosts:\n" + deadHosts.map(function(host) {
+    return host.hostname + " (" + host.ip + ")";
+  }).join('\n');
+
+  // Google Chat Webhook URL
+  var chatWebhookUrl = "https://chat.googleapis.com/v1/spaces/your-chat-webhook-url";  // Webhook URLを入力
+  
+  // Chatに送信するペイロード
+  var payload = JSON.stringify({
+    text: chatMessage
+  });
+
+  // HTTPリクエストのオプション
+  var options = {
+    method: 'POST',
+    contentType: 'application/json',
+    payload: payload
+  };
+  
+  // Google Chatへメッセージを送信
+  UrlFetchApp.fetch(chatWebhookUrl, options);
+  
+  Logger.log("Alert sent to Google Chat");
+}
+通知例:
+到達不能ホストがいる場合、Google Chatで以下のような通知が表示されます：
+
+yaml
+コードをコピーする
+Unreachable Hosts:
+Host1 (192.168.1.1)
+Host3 (192.168.1.3)
+すべてのホストが正常な場合は、notifyAllHostsAlive 関数を使用して、以下の通知が表示されます：
+
+sql
+コードをコピーする
+All hosts are reachable. No dead hosts detected.
+調整するべき箇所:
+PowerShellスクリプト:
+$targetFile: ホスト名とIPアドレスが記載されたtargets.csvのフルパスを設定。
+$deadHostsFile: 到達不能ホストを記録するdead_hosts.csvのフルパスを設定。
+Google Apps Script:
+fileId: Google Driveに保存された dead_hosts.csv ファイルのIDを設定。
+chatWebhookUrl: Google ChatのWebhook URLを設定。

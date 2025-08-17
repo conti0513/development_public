@@ -1,0 +1,6 @@
+{
+  "ftp_host": "your-ftps-ip",
+  "ftp_port": 21,
+  "username": "your_username",
+  "password": "your_password"
+}

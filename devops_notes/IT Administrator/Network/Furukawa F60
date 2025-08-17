@@ -1,0 +1,260 @@
+
+# 社内にテストネットワークを構築する場合の設定例
+
+
+
+### **📌 Finalized Requirements for VPN Switch Configuration**  
+
+#### **1️⃣ System & Security Settings**
+✅ **Set Hostname:** `TEST-RT`  
+✅ **Set Login Credentials:**  
+   - **Admin Username:** `admin`  
+   - **Admin Password:** `testpass`  
+   - **Enable Mode Password:** `testpass`  
+
+#### **2️⃣ WAN Configuration**
+✅ **WAN (1 port) acquires IP via DHCP**  
+✅ **Default route (`0.0.0.0/0`) set to WAN**  
+
+#### **3️⃣ LAN Configuration (4 Ports)**
+✅ **LAN1 & LAN2 → VLAN1 (Switch Group 1)**  
+✅ **LAN3 & LAN4 → VLAN2 (Switch Group 2)**  
+✅ **Switch groups used for Layer 2 segmentation**  
+
+#### **4️⃣ VLAN & DHCP Configuration**
+✅ **VLAN1 (192.168.1.1/24) → DHCP enabled (Lease: 1 day)**  
+✅ **VLAN2 (192.168.2.1/24) → DHCP enabled (Lease: 1 day)**  
+✅ **DNS: `8.8.8.8` & `8.8.4.4` for both VLANs**  
+✅ **LAN DHCP Server Enabled (`enable lan dhcp-server`)**  
+✅ **LAN DNS Enabled (`enable lan dns v4`)**  
+
+#### **5️⃣ Inter-VLAN & NAT Settings**
+✅ **VLAN1 and VLAN2 are **isolated** (no direct communication)**  
+✅ **WAN ⇔ VLAN1 & VLAN2 NAT enabled (Internet access allowed)**  
+
+---
+
+### **📜 Full Configuration**
+```plaintext
+# Set Hostname
+hostname TEST-RT
+
+# Set Login Credentials
+username admin password testpass
+enable password testpass
+
+# Enable LAN DHCP Server & DNS
+enable lan dhcp-server
+enable lan dns v4
+
+# Enable IP Routing
+ip routing
+
+# Default Route (WAN → Internet)
+ip route 0.0.0.0 0.0.0.0 WAN
+
+# WAN Configuration (DHCP)
+interface WAN
+ ip dhcp client enable
+ ip nat outside
+ no shutdown
+exit
+
+# VLAN1 Configuration (LAN1, LAN2 - Internet Enabled)
+interface vlanif 1
+ ip address 192.168.1.1 255.255.255.0
+ ip access-group 100 in
+ ip nat inside
+ dhcp server enable
+ dhcp address 192.168.1.100 192.168.1.200
+ dhcp lease 1d
+ dhcp option dns 8.8.8.8 8.8.4.4
+ vlan-id 1
+exit
+
+# VLAN2 Configuration (LAN3, LAN4 - Internet Enabled)
+interface vlanif 2
+ ip address 192.168.2.1 255.255.255.0
+ ip access-group 100 in
+ ip nat inside
+ dhcp server enable
+ dhcp address 192.168.2.100 192.168.2.200
+ dhcp lease 1d
+ dhcp option dns 8.8.8.8 8.8.4.4
+ vlan-id 2
+exit
+
+# Assign Switch Groups
+switch group 1
+ switchport 1
+ switchport 2
+exit
+
+switch group 2
+ switchport 3
+ switchport 4
+exit
+
+# Assign VLANs to Ports
+interface LAN1
+ switch group 1
+ switchport mode access
+ switchport access vlan 1
+ no shutdown
+exit
+
+interface LAN2
+ switch group 1
+ switchport mode access
+ switchport access vlan 1
+ no shutdown
+exit
+
+interface LAN3
+ switch group 2
+ switchport mode access
+ switchport access vlan 2
+ no shutdown
+exit
+
+interface LAN4
+ switch group 2
+ switchport mode access
+ switchport access vlan 2
+ no shutdown
+exit
+
+# Block Inter-VLAN Communication
+access-list 100 deny ip 192.168.1.0 0.0.0.255 192.168.2.0 0.0.0.255
+access-list 100 deny ip 192.168.2.0 0.0.0.255 192.168.1.0 0.0.0.255
+access-list 100 permit ip any any
+
+# NAT Configuration (Enable Internet for VLANs)
+ip nat inside source list 100 interface WAN overload
+```
+
+---
+
+### **🛠️ Testing & Verification**
+1️⃣ **Check System Information**  
+   ```plaintext
+   show running-config
+   ```
+   - Confirm **hostname, user accounts, passwords, and enabled services**.
+
+2️⃣ **Verify WAN DHCP Assignment**  
+   ```plaintext
+   show ip interface brief
+   ```
+   - Ensure WAN has obtained an IP address.
+
+3️⃣ **Check Default Route**  
+   ```plaintext
+   show ip route
+   ```
+   - Confirm `0.0.0.0/0` is correctly set to WAN.
+
+4️⃣ **DHCP Server Status**  
+   ```plaintext
+   show dhcp binding
+   ```
+   - Ensure VLAN1 & VLAN2 devices receive correct IPs.
+
+5️⃣ **Verify NAT Functionality**  
+   ```plaintext
+   show ip nat translations
+   ```
+   - Check if VLAN devices can access the internet.
+
+6️⃣ **Ensure VLAN Isolation**  
+   ```plaintext
+   ping 192.168.2.1
+   ```
+   - VLAN1 devices should **NOT** communicate with VLAN2.
+
+---
+
+## **🔚 Summary**
+✅ **Hostname: `TEST-RT` | Login & Enable Password Set**  
+✅ **LAN DHCP Server & LAN DNS Enabled**  
+✅ **WAN (DHCP) + Default Route Configured**  
+✅ **VLAN1 (LAN1, LAN2) & VLAN2 (LAN3, LAN4) - Isolated**  
+✅ **Switch Groups: Group 1 (VLAN1) | Group 2 (VLAN2)**  
+✅ **NAT for Internet Access on VLANs**  
+✅ **Inter-VLAN Traffic Blocked**  
+
+                   [ INTERNET ]
+                        │
+                  [ WAN (DHCP) ]
+                        │
+               ┌────────┴────────┐
+               │   TEST-RT VPN   │
+               │  (Switch & NAT) │
+               └────────┬────────┘
+                        │
+        ┌───────────────┼────────────────┐
+        │                               │
+    [ SWITCH GROUP 1 ]            [ SWITCH GROUP 2 ]
+   ( VLAN1 - 192.168.1.1/24 )     ( VLAN2 - 192.168.2.1/24 )
+        │                               │
+  ┌─────┴───────┐                 ┌────┴────┐
+  │             │                 │         │
+[LAN1]       [LAN2]           [LAN3]     [LAN4]
+  │             │                 │         │
+[PC1]        [PC2]           [PC3]      [PC4]
+
+────────────────────────────────────────────────
+✔ **WAN (DHCP)** → Obtains IP and Default Route  
+✔ **VLAN1 (LAN1, LAN2)** → `Switch Group 1`, NAT to WAN  
+✔ **VLAN2 (LAN3, LAN4)** → `Switch Group 2`, NAT to WAN  
+✔ **DHCP Enabled** for both VLANs (1-day lease)  
+✔ **Inter-VLAN Communication Blocked**  
+✔ **LAN DHCP Server & DNS Enabled**  
+✔ **User Authentication Configured (admin/testpass)**  
+────────────────────────────────────────────────
+
+
+memo
+about default route
+### **📌 Memo: Default Gateway with DHCP WAN**  
+
+✅ **If WAN uses DHCP, an explicit default gateway is usually NOT needed.**  
+✅ **DHCP automatically provides:**  
+   - **IP Address** (e.g., `192.168.1.100`)  
+   - **Subnet Mask** (e.g., `255.255.255.0`)  
+   - **Default Gateway** (e.g., `192.168.1.1`)  
+   - **DNS Servers** (e.g., `8.8.8.8`)  
+
+✅ **To verify default route:**  
+```plaintext
+show ip route
+```
+- If `0.0.0.0/0` is correctly set via WAN, no need for manual config.  
+
+✅ **If missing, set it manually:**  
+```plaintext
+ip route 0.0.0.0 0.0.0.0 WAN
+```
+or  
+```plaintext
+ip route 0.0.0.0 0.0.0.0 <gateway IP>
+```
+
+💡 **Always check `show ip route` to confirm DHCP has assigned the default gateway correctly! 🚀**
+
+---
+### **📌 Summary of Inter-VLAN Blocking ACL**  
+
+✅ **Purpose:** Prevents communication between **VLAN1 (192.168.1.0/24)** and **VLAN2 (192.168.2.0/24)** while allowing all other traffic.  
+
+| Rule | Action | Source | Destination | Effect |
+|------|--------|--------|-------------|--------|
+| 1️⃣ | `deny` | `192.168.1.0/24` | `192.168.2.0/24` | **Blocks VLAN1 → VLAN2** |
+| 2️⃣ | `deny` | `192.168.2.0/24` | `192.168.1.0/24` | **Blocks VLAN2 → VLAN1** |
+| 3️⃣ | `permit` | `any` | `any` | **Allows all other traffic (e.g., Internet)** |
+
+✅ **Prevents VLAN1 & VLAN2 from direct communication**  
+✅ **Ensures VLANs can still access external networks (Internet)**  
+✅ **Explicit `permit ip any any` prevents an implicit deny**  
+
+---
