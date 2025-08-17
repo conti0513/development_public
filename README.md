@@ -84,10 +84,12 @@ project_examples/
 - 成長の証跡を透明に残す  
 - 技術的なことを英語でも説明する練習  
 - シンプルな構造で続けやすくする  
+- AIの伴走を活用し、ログやドキュメントを効率的に整理  
 
 - Keep a transparent record of growth  
 - Practice explaining technical work in English  
 - Keep the structure simple to maintain consistency  
+- Leverage AI assistance to keep logs and documents well organized  
 
 ---
 

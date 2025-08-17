@@ -1,8 +1,3 @@
-素晴らしい構成です。  
-`C_vpc-networking` は **Cloud Run から外部（FTPS等）への通信を可能にするための基盤ネットワーク構築** ですので、以下のような `README.md` を提案します。
-
----
-
 ## 📘 `C_vpc-networking/README.md` 提案案
 
 ```markdown
@@ -105,21 +100,3 @@ bash 09_delete_network.sh
 - 外部 FTPS 側には、Cloud NAT の **静的IP** を許可することで IPベース制御が可能
 
 ---
-
-## 🏷️ ラベル
-
-```
-GCP / VPC / Cloud NAT / Cloud Run / VPC Connector / FTPS / 固定IP通信
-```
-
----
-
-開発者: あなた自身  
-プロジェクト名: `your-gcp-project`
-```
-
----
-
-ご要望に応じて、Terraform 対応版や Visual化図（Mermaid）付きにもアップグレードできます。
-
-この内容で進めても大丈夫そうですか？修正・加筆したい項目があれば気軽にどうぞ！

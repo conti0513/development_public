@@ -1,7 +1,3 @@
-了解。今の構成とログから読み取れる内容をもとに、**`A_cloudrun-api/README.md` の初期案**を以下に提案します。
-
----
-
 ## 📘 `README.md` 提案: `A_cloudrun-api/`
 
 ```markdown
@@ -117,6 +113,3 @@ bash 05_check_vsftpd_login.sh
 - READMEはZennの分割記事ベースにも使える構成になってます
 
 ---
-
-この案ベースで `vim README.md` に貼って編集すればOK。  
-気になる箇所があればそのまま修正・壁打ちどうぞ！:
