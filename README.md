@@ -99,3 +99,15 @@ project_examples/
 - In the last 6 years, my main focus has been on **security operations, cloud, and PMO work**.  
 - Earlier in my career, I worked on **network design and on-prem monitoring infrastructure**,  
 - starting as a **customer engineer** responsible for server and switch maintenance.
+
+## 📌 Example Projects / 代表的なプロジェクト
+
+- [Serverless FTPS Transfer API on GCP](./devops_notes/serverless-ftps-api-public)  
+  GCP (Cloud Run + VPC + FTPS) を使ったサーバーレス構成サンプル
+
+- [IT Administrator Notes](./devops_notes/IT_Administrator)  
+  IT管理（Apps / Cloud Solution / Windows / Mac / Network）領域のナレッジまとめ
+
+- [Daily Sheet to Slack (GAS Example)](./project_examples/daily-sheet-to-slack)  
+  Google スプレッドシートの日報を Slack に自動通知するサンプル
+---
