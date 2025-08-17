@@ -1,11 +1,20 @@
 # 開発・学習ログ（Development Public Repository）
 
-本リポジトリは **公開用の学習・開発ログ** です。  
-日々の作業ログやメモ、小さな自動化・スクリプトを整理しています。  
-セキュリティ運用やクラウド、PMO領域で得た知見を記録し、再利用できる形で残すことを意識しています。  
-普段の作業は日本語ですが、英語でのアウトプット練習も兼ねています。
+👋 はじめまして。日々の学びや小さな自動化・スクリプトをまとめた公開用リポジトリです。  
+セキュリティ運用、クラウド、PMO領域を中心に経験を積んできました。  
+ここでは実務で得た知見や改善のアイデアを、整理しつつ再利用できる形で残しています。  
+普段の作業は日本語ですが、セキュリティログやクラウド環境では英語が欠かせないため、  
+少しずつ英語アウトプットに慣れる練習も兼ねています。
 
 ---
+
+👋 Hello, this is my public repository for learning and development logs.  
+My experience focuses on **security operations, cloud, and PMO activities**.  
+Here I keep notes, small automation projects, and improvements from real practice,  
+with the aim of making them reusable and transparent.  
+Most of the content is in Japanese, but since security and cloud logs often require English,  
+I use this repository as a way to gradually get more comfortable writing in English.
+
 
 # Development Public Repository
 
