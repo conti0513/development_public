@@ -1,106 +1,77 @@
 # 開発・学習ログ（Development Public Repository）
 
-👋 はじめまして。日々の学びや小さな自動化・スクリプトをまとめた公開用リポジトリです。  
-セキュリティ運用、クラウド、PMO領域を中心に経験を積んできました。  
-ここでは実務で得た知見や改善のアイデアを、整理しつつ再利用できる形で残しています。  
-普段の作業は日本語ですが、セキュリティログやクラウド環境では英語が欠かせないため、  
-少しずつ英語アウトプットに慣れる練習も兼ねています。
+本リポジトリは、セキュリティ運用・クラウド・PMO領域を中心に、日々の学習や小規模自動化の成果を整理した記録です。
+実務経験をもとにした知見・改善策を再利用可能な形で残すことを目的としています。
 
 ---
 
-👋 Hello, this is my public repository for learning and development logs.  
-My experience focuses on **security operations, cloud, and PMO activities**.  
-Here I keep notes, small automation projects, and improvements from real practice,  
-with the aim of making them reusable and transparent.  
-Most of the content is in Japanese, but since security and cloud logs often require English,  
-I use this repository as a way to gradually get more comfortable writing in English.
+## 📝 TIL（Today I Learned）
 
-
-# Development Public Repository
-
-This repository is my **public learning & development log**.  
-It contains daily notes, small automation scripts, and reusable examples.  
-Focus areas include **security operations, cloud, and PMO activities**, where I aim to capture lessons learned and improvements.  
-Mainly written in Japanese, but I also use this space for **English writing practice**.
+* 1日の学びを簡潔に記録する仕組み
+* 内容は粗くてもまず残すことを優先
+* 継続性を重視し、後から整理・補完
 
 ---
 
-## 📝 TILとは / What is TIL?
-
-- **TIL (今日学んだこと)**  
-  1日の学びを軽く記録するための仕組みです。  
-  基本は日本語で書きつつ、英語アウトプットのトレーニングも兼ねています。
-
-- **TIL (Today I Learned)**  
-  A lightweight way of recording daily learning.  
-  Mostly in Japanese, but with English notes for writing practice.
-
----
-
-## 📂 リポジトリ構成ツリー / Repository Structure (Tree)
+## 📂 リポジトリ構成
 
 ```bash
 TIL/
-  ├── entries/2025/...   # Daily logs (JP/EN mixed)
+  ├── entries/2025/...   # Daily logs
   ├── create_til_entry.sh
   └── til_git_push.sh
 
 devops_notes/
-  ├── cloud/             # Infra notes
-  ├── docker/            # Docker env & scripts
+  ├── cloud/             # クラウド関連ノート
+  ├── docker/            # Docker環境・スクリプト
   ├── gas/               # Google Apps Script
-  ├── php/               # PHP snippets
-  ├── powershell/        # PowerShell scripts
-  ├── python/            # Python exercises
-  └── security/          # Security-related notes
+  ├── powershell/        # PowerShellスクリプト
+  ├── python/            # Python演習
+  └── security/          # セキュリティ関連ノート
 
 project_examples/
-  ├── daily-sheet-to-slack/        # Example GAS project
-  ├── form-to-slack/               # Example GAS project
-  ├── gmailcsv_to_gcs_uploader/    # Node.js uploader
-  ├── gws_auto_py/                 # Python GWS automation
-  ├── mac_setup_auto/              # macOS setup automation
-  ├── unit_data_csv_automation/    # CSV automation scripts
-  ├── windows_setup_automation/    # Windows IT automation
-  └── zapier_form_notify_logger/   # Zapier + GCS logger
+  ├── daily-sheet-to-slack/        # GAS 日報通知サンプル
+  ├── gmailcsv_to_gcs_uploader/    # Node.js CSVアップローダー
+  ├── gws_auto_py/                 # Python GWS自動化
+  ├── windows_setup_automation/    # Windows セットアップ自動化
+  └── zapier_form_notify_logger/   # Zapier + GCS ロガー
 ```
----
-
-
-## 🎯 運用方針 / Usage Policy
-- 学習ログを最優先：粗いアウトプットでもまず残す  
-- 英語はトレーニング目的：正確さよりも継続を重視  
-- メイン作業は日本語：整理・共有は日本語ベース  
-- アーカイブ運用：古い・ノイズになるものは archive_private/ へ  
-
-- Personal learning first. Logs may be rough, but consistency matters.  
-- English is for training. Focus on habit, not perfection.  
-- Japanese is the main workflow. Notes are primarily in Japanese.  
-- Archiving rule. Old or noisy files → archive_private/  
 
 ---
 
-## 🚀 モチベーション / Motivation
-- 成長の証跡を透明に残す  
-- 技術的なことを英語でも説明する練習  
-- シンプルな構造で続けやすくする  
-- AIの伴走を活用し、ログやドキュメントを効率的に整理  
+## 💼 キャリア概要（直近6年間）
 
-- Keep a transparent record of growth  
-- Practice explaining technical work in English  
-- Keep the structure simple to maintain consistency  
-- Leverage AI assistance to keep logs and documents well organized  
+* **2019**：大手通信会社 — M365導入支援・導入後サポート
+* **2020〜2022**：ITサービス企業 — HENNGE / GWS / SaaS運用、セキュリティ教育・監査対応、一人情シス業務
+* **2022〜2023**：医療系企業 — M365運用、SharePoint管理、PowerAutomate導入、VPNリプレース対応
+* **2023〜2024**：製造業系SIer — Entra ID運用（海外ユーザー含む）、クラウド認証基盤管理
+* **2024〜2025**：小売企業 — ESET / HENNGE / GWS、セキュリティ運用、監査、ベンダー調整、PM補佐・PMO
 
 ---
 
-## 💼 キャリア背景 / Career Background
-- 直近6年間は **セキュリティ運用・クラウド・PMO領域** を中心に活動しています。  
-- 以前は **ネットワーク設計構築** や **オンプレミス監視インフラ** に従事し、  
-- キャリアのスタートは **カスタマエンジニア** としてサーバー／スイッチの保守から始めました。  
+## 📌 主な取り組み・強み
 
-- In the last 6 years, my main focus has been on **security operations, cloud, and PMO work**.  
-- Earlier in my career, I worked on **network design and on-prem monitoring infrastructure**,  
-- starting as a **customer engineer** responsible for server and switch maintenance.
+* **セキュリティ運用**：ESET / HENNGE / GWS を中心としたゼロトラスト基盤運用、監査対応
+* **クラウド自動化**：AWS Lambda / GCP Cloud Run を活用したファイル転送・認証処理の自動化
+* **ベンダー・工程調整**：出退店に伴う弱電工程管理、発注管理、ベンダー調整
+* **PMO補佐業務**：進捗管理、タスク調整、議事録・ドキュメント整理
+
+---
+
+## 🎯 運用ポリシー
+
+* 記録を優先：学習や業務の成果をまず残す
+* 日本語ベース：国内案件での活用を想定
+* アーカイブ活用：古い・ノイズの多い情報は archive\_private/ に集約
+
+---
+
+## 🔑 今後の方向性
+
+「セキュリティ運用 × クラウド基盤 × ベンダー調整」を核とし、
+PMO経験も組み合わせて **再現性のある改善スキル** を強みとして磨いていきます。
+
+---
 
 ## 📌 Example Projects / 代表的なプロジェクト
 
