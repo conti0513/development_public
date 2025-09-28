@@ -235,6 +235,8 @@ Focus on **definitions + Japanese keyword bridge** for quick review.
 - **RBAC (ロールベースアクセス制御)**  
   - Permissions assigned to roles, not individuals  
 
+  
+
 - **Least Privilege (最小権限の原則)**  
   - Users get only the access necessary to perform tasks  
 
@@ -252,14 +254,38 @@ Focus on **definitions + Japanese keyword bridge** for quick review.
 
 - **Passwordless Authentication (パスワードレス認証)**  
   - FIDO2 keys, Windows Hello, Authenticator app  
-
 ---
 
-## 🌐 Microsoft Entra (Identity)
-- **Microsoft Entra ID (旧 Azure AD)** — Cloud-based identity and access management (IAM).  
-- **Conditional Access (条件付きアクセス)** — Policies controlling access based on conditions (location, device, risk).  
-- **Verified ID (検証済みID)** — Decentralized identity / verifiable credentials.  
-- **Permissions Management (権限管理)** — Cloud Infrastructure Entitlement Management (CIEM).  
+## 🌐 Microsoft Entra (Identity)## 🌐 Microsoft Entra (Identity)
+
+- **Microsoft Entra ID (旧 Azure AD)**  
+  - Cloud-based Identity and Access Management (IAM).  
+
+- **Conditional Access (条件付きアクセス)**  
+  - Policies that control access based on conditions (location, device, risk).  
+
+- **Verified ID (検証済みID)**  
+  - Decentralized identity / verifiable credentials.  
+
+- **Permissions Management (権限管理)**  
+  - Cloud Infrastructure Entitlement Management (CIEM).  
+---
+
+### Azure AD Roles
+- Feature of Azure Active Directory to manage access by assigning roles to users or groups.  
+- Roles are based on job functions or permissions.  
+- Simplifies access management: administrators grant or revoke access per role, not per user.  
+---
+
+### Role-Based Access Control (RBAC)
+- **RBAC** = Model to manage access with roles.  
+- **Role** = A set of permissions (e.g., Reader, Admin).  
+- RBAC assigns roles to users/groups → consistent & scalable access.  
+
+**Granular access control** = very detailed permissions (fine-grained).  
+
+**Q:** Difference between Roles and RBAC?  
+**A:** Roles = sets of permissions. RBAC = system that uses roles to control access.  
 
 ---
 
@@ -277,12 +303,26 @@ Focus on **definitions + Japanese keyword bridge** for quick review.
 ---
 
 ## 📊 Compliance & Governance
-- **Microsoft Purview (データガバナンス/コンプライアンス)** — Unified compliance solution.  
+- **Microsoft Purview (データガバナンス / コンプライアンス)**  
+  - Unified solution for data security, compliance, and governance.  
+  - Combines Microsoft 365 compliance tools + Azure Purview.  
+  - Key functions: protect sensitive data, manage risks, ensure regulatory compliance.  
+
+---
+
+
+
+
 - **Data Loss Prevention / DLP (情報漏えい防止)** — Prevents sensitive data from leaving the org.  
 - **Sensitivity Labels (機密ラベル)** — Classify and protect data (encryption, watermark).  
 - **eDiscovery (電子情報開示)** — Find/manage data for legal cases.  
 - **Audit Logs (監査ログ)** — Record user/admin activities.  
-- **Insider Risk Management (内部リスク管理)** — Detects risky insider activity.  
+- **Insider Risk Management (内部リスク管理)**  
+  - Detects risky insider activity.  
+  - Monitors user actions in the organization.  
+  - Real-time detection of data leaks, IP theft, etc.  
+  - Enables action before incidents occur.  
+
 - **Communication Compliance (コミュニケーション コンプライアンス)** — Monitor messages for compliance.  
 - **Information Barriers (情報バリア)** — Prevent communication between groups.  
 - **Records Management (記録管理)** — Define retention and disposition of records.  
@@ -321,3 +361,28 @@ Focus on **definitions + Japanese keyword bridge** for quick review.
 - **DLP** — Data Loss Prevention (情報漏えい防止)  
 
 ---
+
+
+
+## perview
+
+### Information Barriers
+- **Purpose**: Restrict communication or collaboration between groups.  
+- **Example**: Block Sales from chatting with Research.  
+- **Focus**: Who can talk to whom.  
+
+### Information Protection
+- **Purpose**: Classify, label, and protect sensitive data.  
+- **Example**: Encrypt confidential emails or documents.  
+- **Focus**: How data is used and protected.  
+
+### Information Governance
+- **Purpose**: Manage the lifecycle of data (retention, deletion, archiving).  
+- **Example**: Keep financial records for 7 years, auto-delete old chats.  
+- **Focus**: How long data is kept and how it is managed.  
+
+
+### Communication Compliance (in Microsoft Purview)
+- **Primary purpose**: Automatically detect and prevent policy violations in communication channels.  
+- **Examples**: offensive language, sensitive data sharing, harassment, insider trading.  
+- **Goal**: Support compliance with regulatory and corporate policies.  
