@@ -210,15 +210,48 @@ Focus on **definitions + Japanese keyword bridge** for quick review.
 ---
 
 ## 🔐 Identity & Access
-- **Authentication (認証)** — Verifying identity (password, token, biometric).  
-- **Authorization (認可)** — Defining what resources a user can access.  
-- **RBAC (ロールベースアクセス制御)** — Permissions assigned to roles, not individuals.  
-- **Least Privilege (最小権限の原則)** — Users get only the access necessary to perform tasks.  
-- **SSO (シングルサインオン)** — One login for multiple apps/services.  
-- **MFA (多要素認証)** — Requires two or more authentication methods.  
-- **Privileged Identity Management / PIM (特権ID管理)** — Manage and monitor privileged accounts.  
-- **Just-In-Time Access / JIT (JITアクセス)** — Temporary elevated access.  
-- **Passwordless Authentication (パスワードレス認証)** — FIDO2 keys, Windows Hello, Authenticator app.  
+
+- **Authentication (認証)**  
+  - AuthN: Who are you?  
+  - Check your identity → username, password, MFA  
+  - 入り口の鍵  
+
+- **Authorization (認可)**  
+  - AuthZ: What can you do?  
+  - Control access → which files, apps, or actions you get  
+  - 部屋の鍵  
+
+- **Federation**  
+  - “Login once, use in many places (because of trust).”  
+  - Trust between different organizations or domains.  
+  - Your identity is checked by your home system, then trusted by others.  
+  - No need for separate accounts or passwords in each system.  
+
+- **Identity as the Primary Security Perimeter**  
+  - Before: network (firewall) was the border  
+  - Now: user identity is the new border  
+  - So, IAM (identity & access management) must be the foundation of security strategy  
+
+- **RBAC (ロールベースアクセス制御)**  
+  - Permissions assigned to roles, not individuals  
+
+- **Least Privilege (最小権限の原則)**  
+  - Users get only the access necessary to perform tasks  
+
+- **SSO (シングルサインオン)**  
+  - One login for multiple apps/services  
+
+- **MFA (多要素認証)**  
+  - Requires two or more authentication methods  
+
+- **Privileged Identity Management / PIM (特権ID管理)**  
+  - Manage and monitor privileged accounts  
+
+- **Just-In-Time Access / JIT (JITアクセス)**  
+  - Temporary elevated access  
+
+- **Passwordless Authentication (パスワードレス認証)**  
+  - FIDO2 keys, Windows Hello, Authenticator app  
 
 ---
 
@@ -253,6 +286,8 @@ Focus on **definitions + Japanese keyword bridge** for quick review.
 - **Communication Compliance (コミュニケーション コンプライアンス)** — Monitor messages for compliance.  
 - **Information Barriers (情報バリア)** — Prevent communication between groups.  
 - **Records Management (記録管理)** — Define retention and disposition of records.  
+- Set how long to keep records and when to delete them.
+- keep and delete
 
 ---
 
