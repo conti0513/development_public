@@ -271,6 +271,56 @@ Focus on **definitions + Japanese keyword bridge** for quick review.
   - Cloud Infrastructure Entitlement Management (CIEM).  
 ---
 
+
+
+
+## Identity Providers in Azure AD
+
+### Identity Providers in Azure AD
+- Let users sign in to **many cloud apps with the same credentials**.  
+- Support Microsoft, ADFS, Google, Facebook, and more.  
+- Improve user experience and reduce password fatigue.  
+- Azure AD IdPs = one login → many apps (SaaS), with less password hassle.
+
+
+### Federation (in Identity & Access Management)
+- Lets users access resources **across organizations**.  
+- Uses trust between identity providers (IdPs).  
+- No need for separate accounts in each org.  
+- **Example:** Sign in with your company account to use a partner’s app.  
+- Federation = one account, access to multiple organizations through trust.
+---
+
+### Primary Security Perimeter (Azure AD)
+- Old days: **Network** was the perimeter (firewalls, inside vs outside).  
+- Now (cloud era): **Identity** is the new perimeter.  
+- Security depends on *who you are* and *how you log in* (MFA, SSO).  
+- Identity is the new security perimeter in Azure AD.
+
+### Azure AD as Identity Provider (IdP)
+- **Azure AD (Entra ID)** = Microsoft’s cloud-based **Identity Provider**.  
+- Manages **authentication** (who you are) and **authorization** (what you can access).  
+- Lets users sign in once and access **multiple cloud apps** (SSO).  
+- Works with Microsoft apps (M365, Azure) and 3rd-party SaaS (Salesforce, Google Workspace).  
+- Extends on-premises **Active Directory** to the cloud (hybrid identity).  
+--
+
+### Authentication in IdP (Azure AD)
+- **Authentication** = verifying a user’s identity before granting access.  
+- Methods:  
+  - Password (least secure)  
+  - Social login (convenient, not secure)  
+  - Biometric (secure, needs hardware)  
+  - **MFA (most secure)** → combines password + device/app/biometric.  
+- **Azure AD as IdP**:  
+  - Provides strong authentication, including MFA.  
+  - Ensures users prove identity with multiple factors before accessing cloud resources.  
+---
+
+
+
+
+
 ### Azure AD Roles
 - Feature of Azure Active Directory to manage access by assigning roles to users or groups.  
 - Roles are based on job functions or permissions.  
