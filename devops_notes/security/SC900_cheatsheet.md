@@ -436,3 +436,186 @@ Focus on **definitions + Japanese keyword bridge** for quick review.
 - **Primary purpose**: Automatically detect and prevent policy violations in communication channels.  
 - **Examples**: offensive language, sensitive data sharing, harassment, insider trading.  
 - **Goal**: Support compliance with regulatory and corporate policies.  
+
+
+
+
+## 🆔 Identity Governance (Azure AD)
+
+### Purpose
+- Manage the **lifecycle** and **attributes** of user identities.  
+- Create → Update → Remove users properly.  
+- Keep user details (department, title, groups, etc.) correct.
+
+### Not the same as
+- **Authentication / Authorization** → IAM basics  
+- **Permissions / Roles** → RBAC  
+- **Security settings** → Conditional Access
+
+### Anki Card
+**Q:** What is identity governance in Azure AD?  
+**A:** Managing the lifecycle and attributes of user identities (create → update → remove).  
+
+
+
+## 🔥 Azure Firewall
+
+### Overview
+- **Cloud-native network security service** for Azure.  
+- Functions as a **Network Virtual Appliance (NVA)**.  
+- Works at **Layer 3 & 4** (network/transport).  
+
+### Key Functions
+- Protects resources inside a **Virtual Network** (VMs, apps, databases).  
+- **Outbound NAT** → resources can safely reach the internet.  
+- Supports **Inbound NAT rules** & **NSGs** for port/protocol control.  
+- Deployed in a **dedicated subnet**, routing all traffic through the firewall.  
+- Scalable, high availability, managed via Azure Portal or REST API.  
+
+### Not
+- ❌ Not SaaS  
+- ❌ Not PaaS  
+- ❌ Not open-source  
+
+
+## ☁️ Cloud Security Posture Management (CSPM)
+
+### Purpose
+- Identify and fix **security risks and misconfigurations** in cloud environments.  
+- Ensure compliance with regulations and security standards.  
+
+### Key Functions
+- Detect vulnerabilities (e.g., misconfigured storage, open ports).  
+- Monitor cloud resources against best practices.  
+- Automate security policy checks and enforcement.  
+
+### Not
+- ❌ Not mainly for encryption (that’s data security).  
+- ❌ Not only for blocking attacks (needs IAM, firewalls, etc.).  
+- ❌ Not just access control.  
+
+### Benefit
+👉 Provides better **visibility and security posture** for Azure cloud deployments.  
+
+
+## ☁️ CSPM vs CWPP
+
+### CSPM (Cloud Security Posture Management)
+- Focus: **Cloud environment settings & compliance**  
+- Purpose: Detect misconfigurations, policy violations, compliance risks  
+- Example: Open storage bucket, insecure network config, missing encryption  
+- Benefit: Improves **security posture & visibility**
+
+### CWPP (Cloud Workload Protection Platform)
+- Focus: **Workloads (VMs, containers, serverless)**  
+- Purpose: Protect apps and workloads from threats & vulnerabilities  
+- Example: Malware on VM, container escape, unpatched OS  
+- Benefit: Provides **runtime protection & threat defense**
+
+### Key Difference
+- **CSPM = Preventive (secure the environment/config)**  
+- **CWPP = Protective (secure workloads at runtime)**  
+---
+
+## 🎯 Benefit of Assigning Roles in Azure AD
+
+- **Granular Access Control**  
+  Users get only the permissions they need (least privilege).  
+
+- **Efficient Access Management**  
+  Easy to assign/revoke access at scale.  
+
+- **Improved Security**  
+  Reduces unnecessary access → lowers risk.  
+
+- **Audit & Monitoring**  
+  Role assignments provide a clear audit trail of who has access to what.  
+---
+
+## 🎯 Purpose of Access Reviews in Azure AD
+
+- **Main Purpose**  
+  Review and manage **access to resources** (apps, groups, role assignments).  
+
+- **Key Benefits**  
+  - Ensure users/apps have **only necessary access**  
+  - Remove outdated/unnecessary permissions → reduce risk  
+  - Support **compliance** and governance requirements  
+  - Automate review cycles with notifications & approvals  
+
+- ❌ Not the purpose:  
+  - Directly managing **security groups**  
+  - Managing **devices** (done by Conditional Access/Intune)  
+---
+
+## ✅ Azure Active Directory Groups
+
+- **True Statement**  
+  Azure AD Groups can manage access to **both Azure and Microsoft 365 resources**.  
+
+- **Key Points**  
+  - Simplifies permission assignment for **multiple users/devices**.  
+  - Available to **all Azure AD tenants** (not only Premium).  
+  - Can be used for email, but **main purpose = access management**.  
+
+👉 一言：  
+**Azure AD Groups = Azure & M365 両方のリソースへのアクセス管理をまとめて行う仕組み**。
+
+---
+
+
+## ✅ Shared Responsibility Model in Azure
+
+- **Microsoft’s responsibility**  
+  - Ensures **physical security of data centers**  
+    (protection against natural disasters, power outages, intrusions)
+
+- **Customer’s responsibility**  
+  - Configure **NSGs (Network Security Groups)**  
+  - Manage **firewall rules & VPN connections**  
+  - Implement **data classification policies**  
+  - Secure VMs, apps, network access, and data
+
+👉 Key Point:  
+**Microsoft secures the infrastructure, customers secure their resources.**
+
+---
+
+## 🔑 Azure AD Privileged Identity Management (PIM)
+
+- **Purpose**  
+  - Manage **privileged access** to Azure resources and services.  
+  - Extra layer of security for high-level roles.  
+
+- **Key Features**  
+  - **Just-in-Time (JIT) access** → temporary elevation of privileges  
+  - **MFA enforcement** for privileged roles  
+  - **Alerts & notifications** when roles are activated/deactivated  
+  - **Access reviews** → ensure privileged users still need access  
+  - **Centralized monitoring** of privileged activities  
+
+👉 Core Idea:  
+PIM = Controls, limits, and audits **who can use admin-level permissions**, reducing security risks.
+
+---
+
+## 🌐 Azure Network Security Groups (NSGs)
+
+- **Purpose**  
+  - Secure your **virtual network (VNet)** using firewall rules.  
+  - Control **inbound & outbound traffic** to subnets or network interfaces.  
+
+- **How it Works**  
+  - Uses **Access Control List (ACL) rules** → allow/deny traffic.  
+  - Rules based on **source, destination, port, protocol**.  
+  - By default: all traffic allowed → NSGs restrict with rules.  
+
+- **Not**  
+  - Not for managing Azure AD groups (identity).  
+  - Not serverless computing (Azure Functions/Logic Apps).  
+  - Not a network management service.  
+
+👉 Core Idea:  
+NSG = Firewall rules for **filtering traffic** inside Azure VNets.
+---
+
