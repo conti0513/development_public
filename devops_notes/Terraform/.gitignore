@@ -1,0 +1,13 @@
+# sandboxを丸ごと無視
+sandbox/**
+!sandbox/.gitkeep
+
+# Terraform生成物をグローバル無視
+**/.terraform/
+**/*.tfstate
+**/*.tfstate.*
+**/crash.log
+**/*.tfvars
+**/*.tfvars.json
+.terraform.lock.hcl
+
