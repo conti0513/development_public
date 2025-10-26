@@ -1,19 +1,21 @@
-# 開発・学習ログ（Development Public Repository）
+````md
+# 🧭 Development & Learning Log — Public Repository
 
-本リポジトリは、セキュリティ運用・クラウド・PMO領域を中心に、日々の学習や小規模自動化の成果を整理した記録です。
-実務経験をもとにした知見・改善策を再利用可能な形で残すことを目的としています。
+This repository documents **daily learning, small automation projects, and IaC (Infrastructure as Code) experiments**  
+focusing on **Security Operations, Cloud Infrastructure, and PMO practices**.  
+It aims to make operational knowledge **reusable, structured, and continuously improvable**.
 
 ---
 
 ## 📝 TIL（Today I Learned）
 
-* 1日の学びを簡潔に記録する仕組み
-* 内容は粗くてもまず残すことを優先
-* 継続性を重視し、後から整理・補完
+* Simple daily learning logs — “done is better than perfect.”  
+* Focus on **continuity and reflection**, not polish.  
+* Entries are stored under `/TIL/entries/YYYY/`.
 
 ---
 
-## 📂 リポジトリ構成
+## 📂 Repository Structure
 
 ```bash
 TIL/
@@ -22,65 +24,94 @@ TIL/
   └── til_git_push.sh
 
 devops_notes/
-  ├── cloud/             # クラウド関連ノート
-  ├── docker/            # Docker環境・スクリプト
-  ├── gas/               # Google Apps Script
-  ├── powershell/        # PowerShellスクリプト
-  ├── python/            # Python演習
-  └── security/          # セキュリティ関連ノート
+  ├── Terraform/          # IaC Sandbox & Design Docs (Terraform)
+  ├── cloud/              # Cloud notes (AWS / GCP)
+  ├── docker/             # Docker environment & automation
+  ├── gas/                # Google Apps Script
+  ├── powershell/         # Windows automation scripts
+  ├── python/             # Python utilities
+  └── security/           # Security operation notes
 
 project_examples/
-  ├── daily-sheet-to-slack/        # GAS 日報通知サンプル
-  ├── gmailcsv_to_gcs_uploader/    # Node.js CSVアップローダー
-  ├── gws_auto_py/                 # Python GWS自動化
-  ├── windows_setup_automation/    # Windows セットアップ自動化
-  └── zapier_form_notify_logger/   # Zapier + GCS ロガー
+  ├── daily-sheet-to-slack/        # GAS: daily report → Slack
+  ├── gmailcsv_to_gcs_uploader/    # Node.js CSV uploader
+  ├── gws_auto_py/                 # Python GWS automation
+  ├── windows_setup_automation/    # Windows setup automation
+  └── zapier_form_notify_logger/   # Zapier + GCS logger
+````
+
+---
+
+## 💼 Career Summary (Recent 6 Years)
+
+* **2019** — Telecom: M365 deployment & post-support
+* **2020–2022** — IT Service: SaaS integration (HENNGE / GWS), security ops, audit support
+* **2022–2023** — Healthcare: SharePoint, PowerAutomate, VPN replacement
+* **2023–2024** — Manufacturing SIer: Entra ID / Cloud IAM management
+* **2024–2025** — Retail (IPO-prep): ESET, GWS, HENNGE ops, audit, vendor coordination, PMO support
+
+---
+
+## 🧱 Key Strengths
+
+* **Security Operations** — Zero Trust (HENNGE / GWS / ESET)
+* **Cloud Automation** — AWS Lambda / GCP Cloud Run / Terraform
+* **Process Design** — Store IT setup, vendor coordination, weak-current planning
+* **PMO Assistance** — Progress tracking, documentation, audit coordination
+
+---
+
+## 🌍 Terraform Sandbox (IaC Learning Environment)
+
+> **“A portable Terraform lab that resets instantly — no local pollution.”**
+
+This Codespaces-based environment enables safe Terraform experimentation.
+It focuses on **clean isolation**, **quick resets**, and **step-by-step IaC learning**.
+
+### 🧩 Structure
+
+```bash
+devops_notes/
+└── Terraform/
+    ├── README.md                # Main guide
+    ├── scripts/                 # reset / clean scripts
+    ├── sandbox/                 # Hands-on experiments (non-committed)
+    │   ├── 01_init_validate/    # Terraform basic init/validate
+    │   ├── 02_gcp_connect/      # GCP authentication test
+    │   └── 03_cloudrun_hello/   # Cloud Run Hello World
+    └── design_docs/             # Layer design blueprints
 ```
 
----
+### 🧠 Purpose
 
-## 💼 キャリア概要（直近6年間）
+* Learn Terraform step by step (Layer 1–3)
+* Practice IaC safely inside Codespaces
+* Prepare for **Terraform Associate (TA-003)** certification
+* Use as base material for **Zenn / Udemy courses**
 
-* **2019**：大手通信会社 — M365導入支援・導入後サポート
-* **2020〜2022**：ITサービス企業 — HENNGE / GWS / SaaS運用、セキュリティ教育・監査対応、一人情シス業務
-* **2022〜2023**：医療系企業 — M365運用、SharePoint管理、PowerAutomate導入、VPNリプレース対応
-* **2023〜2024**：製造業系SIer — Entra ID運用（海外ユーザー含む）、クラウド認証基盤管理
-* **2024〜2025**：小売企業 — ESET / HENNGE / GWS、セキュリティ運用、監査、ベンダー調整、PM補佐・PMO
-
----
-
-## 📌 主な取り組み・強み
-
-* **セキュリティ運用**：ESET / HENNGE / GWS を中心としたゼロトラスト基盤運用、監査対応
-* **クラウド自動化**：AWS Lambda / GCP Cloud Run を活用したファイル転送・認証処理の自動化
-* **ベンダー・工程調整**：出退店に伴う弱電工程管理、発注管理、ベンダー調整
-* **PMO補佐業務**：進捗管理、タスク調整、議事録・ドキュメント整理
+→ See detailed guide: [Terraform README](./devops_notes/Terraform/README.md)
 
 ---
 
-## 🎯 運用ポリシー
+## 🚀 Direction
 
-* 記録を優先：学習や業務の成果をまず残す
-* 日本語ベース：国内案件での活用を想定
-* アーカイブ活用：古い・ノイズの多い情報は archive\_private/ に集約
-
----
-
-## 🔑 今後の方向性
-
-「セキュリティ運用 × クラウド基盤 × ベンダー調整」を核とし、
-PMO経験も組み合わせて **再現性のある改善スキル** を強みとして磨いていきます。
+* Maintain consistent **daily learning (TIL)**
+* Refine **Terraform Mock environment** for Upwork / portfolio use
+* Prepare for **Terraform Associate & GCP certifications**
+* Long-term: convert learnings into **Zenn / Udemy** content
 
 ---
 
-## 📌 Example Projects / 代表的なプロジェクト
+## 🎯 Policy
 
-- [Serverless FTPS Transfer API on GCP](./devops_notes/serverless-ftps-api-public)  
-  GCP (Cloud Run + VPC + FTPS) を使ったサーバーレス構成サンプル
+* **Record first, refine later**
+* **Japanese-first**, with English adaptability for global use
+* **Archive outdated info** in `archive_private/`
+* **Keep reproducibility & minimalism**
 
-- [IT Administrator Notes](./devops_notes/IT_Administrator)  
-  IT管理（Apps / Cloud Solution / Windows / Mac / Network）領域のナレッジまとめ
-
-- [Daily Sheet to Slack (GAS Example)](./project_examples/daily-sheet-to-slack)  
-  Google スプレッドシートの日報を Slack に自動通知するサンプル
 ---
+
+**© 2025 Yoshimasaru Kondo — Licensed under MIT License**
+
+```
+```
