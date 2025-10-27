@@ -1,28 +1,78 @@
+````markdown
+# 🧱 Terraform Layer 2 — GCP Connect Design (Execution Summary)
 
-# L2 実行（最短・安全・コピペOK）
+## 🎯 Objective
+In this layer, we **migrate Terraform state management from local to GCS**  
+and **enable billing for the GCP project**, preparing the environment so Terraform can manage Google Cloud resources securely.
 
-## 0) 事前移動＆L1から雛形コピー
+---
 
+## 🪜 Workflow (Fast, Safe, and Copy-Paste Ready)
+
+### 0️⃣ Preparation — Clone from Layer 1 (Clean Copy)
 ```bash
 cd /workspaces/development_public/devops_notes/Terraform/sandbox
 cp -a 01_init_validate/. 02_gcp_connect/
 cd 02_gcp_connect
 rm -rf .terraform terraform.tfstate .terraform.lock.hcl
-　「L1（ローカルstateの検証用）環境をきれいに初期化し、L2（GCSバックエンド環境）を真っさらな状態で構築するためのリセット」
+````
 
-```
+> Clean copy from Layer 1 (local state) and initialize a fresh environment for Layer 2 (GCS backend).
 
-## 1) tfstate用バケットを先に作る（初回のみ gcloud）
+---
+
+### 1️⃣ Re-authenticate & Set Environment Variables
 
 ```bash
 export PROJECT_ID="terraform-sandbox-lab"
 export TFSTATE_BUCKET="${PROJECT_ID}-tfstate"
+gcloud auth login --update-adc --no-launch-browser
+gcloud config set project "$PROJECT_ID"
+gcloud auth application-default set-quota-project "$PROJECT_ID"
+gcloud auth print-access-token >/dev/null && echo "gcloud OK"
+gcloud auth application-default print-access-token >/dev/null && echo "ADC OK"
+```
+
+---
+
+### 2️⃣ Enable Billing (first-time setup)
+
+If billing is disabled, GCS bucket creation will fail with **HTTP 403**.
+
+```bash
+gcloud beta billing projects describe terraform-sandbox-lab
+gcloud beta billing accounts list
+```
+
+Link your project with a billing account using the retrieved `ACCOUNT_ID`:
+
+```bash
+gcloud beta billing projects link terraform-sandbox-lab \
+  --billing-account=01AACC-E66176-43BBDC
+```
+
+Confirm:
+
+```bash
+gcloud beta billing projects describe terraform-sandbox-lab
+# billingEnabled: true
+```
+
+---
+
+### 3️⃣ Create the tfstate Bucket (gcloud)
+
+```bash
 gcloud storage buckets create gs://$TFSTATE_BUCKET \
-  --project=$PROJECT_ID --location=asia-northeast1 \
+  --project="$PROJECT_ID" --location=asia-northeast1 \
   --uniform-bucket-level-access
 ```
 
-## 2) backend.tf を追加（stateをGCSへ）
+> Creates a dedicated GCS bucket to store Terraform state files.
+
+---
+
+### 4️⃣ Add `backend.tf` (GCS Backend Configuration)
 
 ```bash
 cat > backend.tf <<'EOF'
@@ -33,15 +83,16 @@ terraform {
   }
 }
 EOF
-```
 
-**state 移行（初期化）**
-
-```bash
 terraform init -migrate-state
 ```
 
-## 3) API管理＆検証用バケットの定義を追加
+> Migrates `.tfstate` from local storage to GCS,
+> enabling secure state sharing across teams and CI/CD pipelines.
+
+---
+
+### 5️⃣ Add Terraform-Managed Resources (API + Validation Bucket)
 
 ```bash
 # services.tf
@@ -53,7 +104,7 @@ resource "google_project_service" "storage" {
 }
 EOF
 
-# versions.tf に random 追加（上書き）
+# versions.tf (add random provider)
 cat > versions.tf <<'EOF'
 terraform {
   required_version = ">= 1.7.0"
@@ -86,42 +137,65 @@ output "lab_bucket_name" { value = google_storage_bucket.lab.name }
 EOF
 ```
 
-## 4) plan → apply
+---
+
+### 6️⃣ Apply Changes
 
 ```bash
-terraform init    # random追加で一度だけ
+terraform init
 terraform plan
 terraform apply -auto-approve
 ```
 
-## 5) 検証
+> On success, a validation bucket will be created
+> (e.g., `terraform-sandbox-lab-tf-lab-8876`).
+
+---
+
+### 7️⃣ Verification
 
 ```bash
-# state がGCSにあるか
+# Verify state is stored in GCS
 gcloud storage ls gs://$TFSTATE_BUCKET/envs/sandbox
 
-# 作られた検証バケット名＆存在確認
+# Check the Terraform-created validation bucket
 terraform output -raw lab_bucket_name
 gcloud storage ls gs://$(terraform output -raw lab_bucket_name)
 ```
 
 ---
 
-## 詰まったら（超要約）
+## 💡 Troubleshooting
 
-* 認証系：`gcloud auth application-default login`
-* 権限：自アカに `Storage Admin` と `Viewer` 以上
-* API：`services.tf` の `storage.googleapis.com` を確認（depends_on 済み）
+| Issue                  | Resolution                                                   |
+| ---------------------- | ------------------------------------------------------------ |
+| Authentication expired | `gcloud auth application-default login`                      |
+| Permission denied      | Assign yourself the `Storage Admin` role                     |
+| API not enabled        | Verify `storage.googleapis.com` is included in `services.tf` |
 
 ---
 
-## 今日のゴール（チェック）
+## ✅ Results Achieved
 
-* [ ] tfstate用GCSバケット作成（gcloud）
-* [ ] `backend.tf` 追加 → `terraform init -migrate-state` 成功
-* [ ] `storage.googleapis.com` を Terraform 管理化
-* [ ] 検証用GCSバケットを Terraform で作成
-* [ ] state と バケットの存在をGCSで確認
+* [x] Billing enabled for the project
+* [x] GCS buckets created (tfstate & validation)
+* [x] Terraform state migrated to GCS
+* [x] Managed API resources via Terraform
+* [x] Secure and minimal GCP integration confirmed
 
-ここまで通れば **Layer 2 完了**です。
-進めてログを貼ってくれれば、そのまま **Layer 3（Cloud Run Hello）** の雛形を渡します。
+---
+
+## 💰 Cost Summary
+
+Only a few KB of GCS usage for state files.
+**Monthly cost: ¥0 (within Always Free tier).**
+
+---
+
+## 🚀 Next Step (Layer 3)
+
+In **Layer 3**, we’ll enable **Cloud Run** and **Artifact Registry APIs** via Terraform
+and deploy a **“Hello World” Cloud Run service** for validation.
+
+```
+```
