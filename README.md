@@ -1,117 +1,75 @@
-````md
-# 🧭 Development & Learning Log — Public Repository
-
-This repository documents **daily learning, small automation projects, and IaC (Infrastructure as Code) experiments**  
-focusing on **Security Operations, Cloud Infrastructure, and PMO practices**.  
-It aims to make operational knowledge **reusable, structured, and continuously improvable**.
+```markdown
+# 🌐 Modern Cloud Architecture & Technical Logs
+GCP（Cloud Run / VPC）を中心としたインフラ構築パターンと、AIとの協調による技術検証の記録を公開しています。
 
 ---
 
-## 📝 TIL（Today I Learned）
+### 🚀 Featured Architecture: Cloud Run & Secure Network
+サーバーレス環境におけるセキュアなネットワーク構成（固定IP/Egress制御）の実装例です。
 
-* Simple daily learning logs — “done is better than perfect.”  
-* Focus on **continuity and reflection**, not polish.  
-* Entries are stored under `/TIL/entries/YYYY/`.
+```mermaid
+graph LR
+    subgraph Google_Cloud [Google Cloud Platform]
+        direction TB
+        CR[Cloud Run<br/>Python API] 
+        SVC[VPC Serverless<br/>Connector]
+        SN[Custom Subnet]
+        NAT[Cloud NAT / Router]
+    end
+    
+    CR --> SVC --> SN --> NAT
+    NAT -->|Static IP| FTPS[External FTPS Server]
+
+    style CR fill:#4285F4,color:#fff
+    style NAT fill:#FBBC04,color:#000
+    style Google_Cloud fill:#f8f9fa,stroke:#4285F4,stroke-dasharray: 5 5
+
+```
+
+### 🛠 Core Stack & Methodologies
+* **Cloud:** Google Cloud (Cloud Run, VPC, Cloud NAT, Cloud SQL)
+* **Languages:** Python / Shell Script / Go (Ongoing)
+* **AI-Collaboration:** Gemini / GitHub Copilot を活用した設計の迅速化とドキュメントの即時同期。
 
 ---
 
-## 📂 Repository Structure
+### 📂 Main Content Index
+* **[TIL (Today I Learned)](https://www.google.com/search?q=./TIL/)**: 2025年後半より継続。日々の技術的な課題解決と試行錯誤のプロセスを記録。
+* **[Project Examples](https://www.google.com/search?q=./project_examples/)**: 業務自動化・インフラ構築の具体的な実装サンプル。
+* **[DevOps Notes](https://www.google.com/search?q=./devops_notes/)**: 各種技術スタック（Docker / Terraform / Security）のナレッジベース。
+
+---
+
+### 🏗 Repository Details (DIR Structure)
+
+本リポジトリの全体構成です。運用知識を再利用可能かつ構造的に管理することを目指しています。
 
 ```bash
 TIL/
-  ├── entries/2025/...   # Daily logs
+  ├── entries/2025/...    # Daily logs
   ├── create_til_entry.sh
   └── til_git_push.sh
 
 devops_notes/
-  ├── Terraform/          # IaC Sandbox & Design Docs (Terraform)
+  ├── Terraform/          # IaC Sandbox & Design Docs
   ├── cloud/              # Cloud notes (AWS / GCP)
   ├── docker/             # Docker environment & automation
-  ├── gas/                # Google Apps Script
-  ├── powershell/         # Windows automation scripts
   ├── python/             # Python utilities
   └── security/           # Security operation notes
 
 project_examples/
   ├── daily-sheet-to-slack/        # GAS: daily report → Slack
-  ├── gmailcsv_to_gcs_uploader/    # Node.js CSV uploader
   ├── gws_auto_py/                 # Python GWS automation
-  ├── windows_setup_automation/    # Windows setup automation
-  └── zapier_form_notify_logger/   # Zapier + GCS logger
-````
-
----
-
-## 💼 Career Summary (Recent 6 Years)
-
-* **2019** — Telecom: M365 deployment & post-support
-* **2020–2022** — IT Service: SaaS integration (HENNGE / GWS), security ops, audit support
-* **2022–2023** — Healthcare: SharePoint, PowerAutomate, VPN replacement
-* **2023–2024** — Manufacturing SIer: Entra ID / Cloud IAM management
-* **2024–2025** — Retail (IPO-prep): ESET, GWS, HENNGE ops, audit, vendor coordination, PMO support
-
----
-
-## 🧱 Key Strengths
-
-* **Security Operations** — Zero Trust (HENNGE / GWS / ESET)
-* **Cloud Automation** — AWS Lambda / GCP Cloud Run / Terraform
-* **Process Design** — Store IT setup, vendor coordination, weak-current planning
-* **PMO Assistance** — Progress tracking, documentation, audit coordination
-
----
-
-## 🌍 Terraform Sandbox (IaC Learning Environment)
-
-> **“A portable Terraform lab that resets instantly — no local pollution.”**
-
-This Codespaces-based environment enables safe Terraform experimentation.
-It focuses on **clean isolation**, **quick resets**, and **step-by-step IaC learning**.
-
-### 🧩 Structure
-
-```bash
-devops_notes/
-└── Terraform/
-    ├── README.md                # Main guide
-    ├── scripts/                 # reset / clean scripts
-    ├── sandbox/                 # Hands-on experiments (non-committed)
-    │   ├── 01_init_validate/    # Terraform basic init/validate
-    │   ├── 02_gcp_connect/      # GCP authentication test
-    │   └── 03_cloudrun_hello/   # Cloud Run Hello World
-    └── design_docs/             # Layer design blueprints
-```
-
-### 🧠 Purpose
-
-* Learn Terraform step by step (Layer 1–3)
-* Practice IaC safely inside Codespaces
-* Prepare for **Terraform Associate (TA-003)** certification
-* Use as base material for **Zenn / Udemy courses**
-
-→ See detailed guide: [Terraform README](./devops_notes/Terraform/README.md)
-
----
-
-## 🚀 Direction
-
-* Maintain consistent **daily learning (TIL)**
-* Refine **Terraform Mock environment** for Upwork / portfolio use
-* Prepare for **Terraform Associate & GCP certifications**
-* Long-term: convert learnings into **Zenn / Udemy** content
-
----
-
-## 🎯 Policy
-
-* **Record first, refine later**
-* **Japanese-first**, with English adaptability for global use
-* **Archive outdated info** in `archive_private/`
-* **Keep reproducibility & minimalism**
-
----
-
-**© 2025 Yoshimasaru Kondo — Licensed under MIT License**
+  └── windows_setup_automation/    # Windows setup automation
 
 ```
+
+---
+
+### 📝 Note
+
+現在、技術の棚卸しと並行して、新たなチャレンジに向けたポートフォリオの整理を行っています。
+
 ```
+
+---
