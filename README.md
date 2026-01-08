@@ -1,11 +1,13 @@
-```markdown
 # 🌐 Modern Cloud Architecture & Technical Logs
-GCP（Cloud Run / VPC）を中心としたインフラ構築パターンと、AIとの協調による技術検証の記録を公開しています。
+
+This repository documents infrastructure design patterns centered on **Google Cloud (Cloud Run / VPC)**  
+and technical experiments conducted in collaboration with AI tools.
 
 ---
 
-### 🚀 Featured Architecture: Cloud Run & Secure Network
-サーバーレス環境におけるセキュアなネットワーク構成（固定IP/Egress制御）の実装例です。
+## 🚀 Featured Architecture: Cloud Run & Secure Network
+
+An example of a secure serverless network architecture with **static IP and controlled egress**.
 
 ```mermaid
 graph LR
@@ -23,25 +25,35 @@ graph LR
     style CR fill:#4285F4,color:#fff
     style NAT fill:#FBBC04,color:#000
     style Google_Cloud fill:#f8f9fa,stroke:#4285F4,stroke-dasharray: 5 5
-    
+```
 
-### 🛠 Core Stack & Methodologies
+---
+
+## 🛠 Core Stack & Methodologies
+
 * **Cloud:** Google Cloud (Cloud Run, VPC, Cloud NAT, Cloud SQL)
-* **Languages:** Python / Shell Script / Go (Ongoing)
-* **AI-Collaboration:** Gemini / GitHub Copilot を活用した設計の迅速化とドキュメントの即時同期。
+* **Languages:** Python / Shell Script / Go *(ongoing)*
+* **AI Collaboration:** Gemini / GitHub Copilot for rapid design iteration and real-time documentation support
 
 ---
 
-### 📂 Main Content Index
-* **[TIL (Today I Learned)](https://www.google.com/search?q=./TIL/)**: 2025年後半より継続。日々の技術的な課題解決と試行錯誤のプロセスを記録。
-* **[Project Examples](https://www.google.com/search?q=./project_examples/)**: 業務自動化・インフラ構築の具体的な実装サンプル。
-* **[DevOps Notes](https://www.google.com/search?q=./devops_notes/)**: 各種技術スタック（Docker / Terraform / Security）のナレッジベース。
+## 📂 Main Content Index
+
+* **[TIL (Today I Learned)](./TIL/)**  
+  Continuous logs since late 2025, capturing daily problem-solving and technical insights.
+
+* **[Project Examples](./project_examples/)**  
+  Practical implementations for infrastructure automation and operational tooling.
+
+* **[DevOps Notes](./devops_notes/)**  
+  Knowledge base covering Docker, Terraform, and security-related practices.
 
 ---
 
-### 🏗 Repository Details (DIR Structure)
+## 🏗 Repository Structure
 
-本リポジトリの全体構成です。運用知識を再利用可能かつ構造的に管理することを目指しています。
+Overall directory layout of this repository.  
+The goal is to manage operational knowledge in a **reusable and structured** manner.
 
 ```bash
 TIL/
@@ -50,25 +62,21 @@ TIL/
   └── til_git_push.sh
 
 devops_notes/
-  ├── Terraform/          # IaC Sandbox & Design Docs
+  ├── terraform/          # IaC sandbox & design docs
   ├── cloud/              # Cloud notes (AWS / GCP)
-  ├── docker/             # Docker environment & automation
+  ├── docker/             # Docker environments & automation
   ├── python/             # Python utilities
   └── security/           # Security operation notes
 
 project_examples/
   ├── daily-sheet-to-slack/        # GAS: daily report → Slack
-  ├── gws_auto_py/                 # Python GWS automation
+  ├── gws_auto_py/                 # Python-based GWS automation
   └── windows_setup_automation/    # Windows setup automation
-
 ```
 
 ---
 
-### 📝 Note
+## 📝 Note
 
-現在、技術の棚卸しと並行して、新たなチャレンジに向けたポートフォリオの整理を行っています。
-
-```
-
----
+This repository is currently being refined as part of a **technical inventory and portfolio consolidation**,  
+while preparing for the next phase of professional challenges.
