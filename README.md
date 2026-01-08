@@ -23,8 +23,7 @@ graph LR
     style CR fill:#4285F4,color:#fff
     style NAT fill:#FBBC04,color:#000
     style Google_Cloud fill:#f8f9fa,stroke:#4285F4,stroke-dasharray: 5 5
-
-```
+    
 
 ### 🛠 Core Stack & Methodologies
 * **Cloud:** Google Cloud (Cloud Run, VPC, Cloud NAT, Cloud SQL)
