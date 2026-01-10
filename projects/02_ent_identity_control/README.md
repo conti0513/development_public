@@ -31,7 +31,6 @@ graph TD
     style Log fill:#f6ffed,stroke:#237804,stroke-width:1px
     style Workflow fill:#fff7e6,stroke:#d46b08,stroke-width:1px
     style Policy fill:#f5f5f5,stroke:#333,stroke-width:1px
-
 ```
 
 ### 🎯 運用の要諦
