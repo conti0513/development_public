@@ -1,14 +1,12 @@
-# 🌐 モダン・クラウドアーキテクチャ & 技術ログ
 
-本リポジトリでは、Google Cloud（Cloud Run / VPC）を中心とした
-インフラ構築パターンや、AIと協調しながら行った技術検証・試行錯誤の記録を公開しています。
+```markdown
+# 🌐 Modern Cloud Architecture & Technical Logs
+GCP（Cloud Run / VPC）を中心としたインフラ構築パターンと、AIとの協調による技術検証の記録を公開しています。
 
 ---
 
-## 🚀 代表的な構成例：Cloud Run & セキュアネットワーク
-
-サーバーレス環境における
-固定IP（Egress制御）を伴うセキュアなネットワーク構成の実装例です。
+### 🚀 Featured Architecture: Cloud Run & Secure Network
+サーバーレス環境におけるセキュアなネットワーク構成（固定IP/Egress制御）の実装例です。
 
 ```mermaid
 graph LR
@@ -21,60 +19,59 @@ graph LR
     end
     
     CR --> SVC --> SN --> NAT
-    NAT -->|Static IP| FTPS[外部 FTPS サーバ]
+    NAT -->|Static IP| FTPS[External FTPS Server]
 
     style CR fill:#4285F4,color:#fff
     style NAT fill:#FBBC04,color:#000
     style Google_Cloud fill:#f8f9fa,stroke:#4285F4,stroke-dasharray: 5 5
+
+```
+
+### 🛠 Core Stack & Methodologies
+
+* **Cloud:** Google Cloud (Cloud Run, VPC, Cloud NAT, Cloud SQL)
+* **Languages:** Python / Shell Script / Go (Ongoing)
+* **AI-Collaboration:** Gemini / GitHub Copilot を活用した設計の迅速化とドキュメントの即時同期。
+
+---
+
+### 📂 Main Content Index
+
+* **[TIL (Today I Learned)](https://www.google.com/search?q=./TIL/)**: 2025年後半より継続。日々の技術的な課題解決と試行錯誤のプロセスを記録。
+* **[Project Examples](https://www.google.com/search?q=./project_examples/)**: 業務自動化・インフラ構築の具体的な実装サンプル。
+* **[DevOps Notes](https://www.google.com/search?q=./devops_notes/)**: 各種技術スタック（Docker / Terraform / Security）のナレッジベース。
+
+---
+
+### 🏗 Repository Details (DIR Structure)
+
+本リポジトリの全体構成です。運用知識を再利用可能かつ構造的に管理することを目指しています。
+
+```bash
+TIL/
+  ├── entries/2025/...    # Daily logs
+  ├── create_til_entry.sh
+  └── til_git_push.sh
+
+devops_notes/
+  ├── Terraform/          # IaC Sandbox & Design Docs
+  ├── cloud/              # Cloud notes (AWS / GCP)
+  ├── docker/             # Docker environment & automation
+  ├── python/             # Python utilities
+  └── security/           # Security operation notes
+
+project_examples/
+  ├── daily-sheet-to-slack/        # GAS: daily report → Slack
+  ├── gws_auto_py/                 # Python GWS automation
+  └── windows_setup_automation/    # Windows setup automation
+
 ```
 
 ---
 
-## 🛠 技術スタック / アプローチ
+### 📝 Note
 
-- Cloud: Google Cloud（Cloud Run / VPC / Cloud NAT / Cloud SQL）
-- Languages: Python / Shell Script / Go（継続学習中）
-- AI活用: Gemini / GitHub Copilot による設計支援・壁打ち・ドキュメント即時化
+現在、技術の棚卸しと並行して、新たなチャレンジに向けたポートフォリオの整理を行っています。
 
----
+```
 
-## 📂 コンテンツ一覧
-
-- TIL（Today I Learned）: ./TIL/
-  日々の技術的な課題、トラブル対応、学びの記録
-
-- Project Examples: ./project_examples/
-  業務自動化・インフラ構築の具体例
-
-- DevOps Notes: ./devops_notes/
-  Docker / Terraform / セキュリティ運用メモ
-
----
-
-## 🏗 リポジトリ構成
-
-運用知識を再利用可能かつ構造的に管理することを目的とした構成です。
-
-TIL/
-  entries/2025/...    日次ログ
-  create_til_entry.sh
-  til_git_push.sh
-
-devops_notes/
-  terraform/          IaC 検証・設計
-  cloud/              AWS / GCP
-  docker/             Docker 環境
-  python/             Python ユーティリティ
-  security/           セキュリティ運用
-
-project_examples/
-  daily-sheet-to-slack/
-  gws_auto_py/
-  windows_setup_automation/
-
----
-
-## 📝 補足
-
-現在は技術の棚卸しとポートフォリオ整理フェーズにあり、
-次のチャレンジに向けた準備を進めています。
