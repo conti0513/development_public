@@ -13,7 +13,7 @@
 ```mermaid
 graph TD
     subgraph Incident [現場のカオス]
-        Fail[未知의 故障 / 散発的なログ] --> Manual[属人的な解析 / 記憶頼みの管理]
+        Fail[故障 / 散発的なログ] --> Manual[属人的な解析 / 記憶頼みの管理]
     end
 
     subgraph Structuring [標準化・構造化]
