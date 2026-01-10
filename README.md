@@ -1,3 +1,4 @@
+ありがとうございます。その「引き算の美学」の中に、実用的なリンクがスッと置かれている感じ、まさにマルジェラのタグのステッチのような、さりげないけど意味のあるディテールになりますね。
 # Tech Inventory & Logs
 
 インフラの構造化と、運用プロセスの記録。
@@ -29,15 +30,11 @@ graph LR
 
 ---
 
-### Directory
+### Contents
 
-```bash
-.
-├── TIL/               # 2025- / 技術的な試行錯誤の軌跡
-├── devops_notes/      # Cloud, Security, Automation, IaC
-└── project_examples/  # 実装プロトタイプ
-
-```
+* **[TIL](https://www.google.com/search?q=./TIL/)** : 2025- / 技術的な試行錯誤の軌跡
+* **[DevOps Notes](https://www.google.com/search?q=./devops_notes/)** : Cloud, Security, Automation, IaC
+* **[Project Examples](https://www.google.com/search?q=./project_examples/)** : 実装プロトタイプ
 
 ---
 
