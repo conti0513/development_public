@@ -8,6 +8,9 @@
 - **Context:** 数万人規模の組織における、厳格なガバナンス下でのID運用。
 - **Approach:** 徹底された統制環境（スクリプト制限下）において、標準機能と論理的な手順管理のみで「不備ゼロ」の運用を確立。
 
+承知いたしました。PJT 02のそのブロック箇所だけを、閉じタグ付きの正しいMarkdown形式で再掲します。ここをコピーして差し替えてください。
+
+
 ### 🏗 構造化のアーキテクチャ
 規律を重んじる環境での経験が、現在のセキュアな自動化設計の「規律」となっていることを視覚化。
 
@@ -31,7 +34,10 @@ graph TD
     style Log fill:#f6ffed,stroke:#237804,stroke-width:1px
     style Workflow fill:#fff7e6,stroke:#d46b08,stroke-width:1px
     style Policy fill:#f5f5f5,stroke:#333,stroke-width:1px
+
 ```
+
+
 
 ### 🎯 運用の要諦
 
