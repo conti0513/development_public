@@ -1,5 +1,3 @@
-
-```markdown
 # 🌐 Modern Cloud Architecture & Technical Logs
 GCP（Cloud Run / VPC）を中心としたインフラ構築パターンと、AIとの協調による技術検証の記録を公開しています。
 
@@ -73,5 +71,4 @@ project_examples/
 
 現在、技術の棚卸しと並行して、新たなチャレンジに向けたポートフォリオの整理を行っています。
 
-```
 
