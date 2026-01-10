@@ -4,10 +4,9 @@
 
 ---
 
+### Implementation Archives
 
-### 実装アーカイブ：インフラ構築と自動化
-
-サーバーレス基盤の構築から、現場の負債を解消する自動化ツールまで、実務に即した構成を記録しています。
+サーバーレス基盤の構築から、現場の負債を解消する自動化まで。
 
 #### 1. [Cloud Run / Secure Egress](https://github.com/conti0513/development_public/tree/main/devops_notes/serverless-ftps-api-public)
 
@@ -20,24 +19,24 @@ graph LR
     end
     NAT -->|Static IP| Ext[External]
 
-    style CR fill:#e1f5fe,stroke:#01579b
-    style NAT fill:#fff9c4,stroke:#fbc02d
-    style SVC fill:#f5f5f5,stroke:#333
-    style VPC fill:#fafafa,stroke:#eee
+    style CR fill:#f0f7ff,stroke:#004a99,stroke-width:1px
+    style NAT fill:#fffdeb,stroke:#857000,stroke-width:1px
+    style SVC fill:#f5f5f5,stroke:#333,stroke-width:1px
+    style VPC fill:#fafafa,stroke:#eee,stroke-dasharray: 5 5
 
 ```
 
-#### 2. [Google Workspace / Slack Automation](https://github.com/conti0513/development_public/tree/main/project_examples/daily-sheet-to-slack)
+#### 2. [GWS / Slack Automation](https://github.com/conti0513/development_public/tree/main/project_examples/daily-sheet-to-slack)
 
 ```mermaid
 graph LR
     SS[Google Sheets] --> GAS[Apps Script] --> SL[Slack]
     GWS[GWS API] <--> Py[Python Script]
     
-    style SS fill:#e8f5e9,stroke:#2e7d32
-    style GAS fill:#e8f5e9,stroke:#2e7d32
-    style Py fill:#e8f5e9,stroke:#2e7d32
-    style SL fill:#fff3e0,stroke:#e65100
+    style SS fill:#f6ffed,stroke:#237804,stroke-width:1px
+    style GAS fill:#f6ffed,stroke:#237804,stroke-width:1px
+    style Py fill:#f6ffed,stroke:#237804,stroke-width:1px
+    style SL fill:#fff7e6,stroke:#d46b08,stroke-width:1px
 
 ```
 
@@ -48,14 +47,13 @@ graph LR
     Win[Raw Windows OS] --> PS[PowerShell]
     PS --> Pol[Policy / Apps / Config]
     
-    style Win fill:#e1f5fe,stroke:#01579b
-    style PS fill:#f5f5f5,stroke:#333
-    style Pol fill:#fff3e0,stroke:#e65100
+    style Win fill:#f0f7ff,stroke:#004a99,stroke-width:1px
+    style PS fill:#f5f5f5,stroke:#333,stroke-width:1px
+    style Pol fill:#fff7e6,stroke:#d46b08,stroke-width:1px
 
 ```
 
 ---
-
 
 ### Stacks
 
@@ -67,9 +65,9 @@ graph LR
 
 ### Contents
 
-* **[TIL](https://github.com/conti0513/development_public/tree/main/TIL)** : 2025- / 技術的な試行錯誤の軌跡
-* **[DevOps Notes](https://github.com/conti0513/development_public/tree/main/devops_notes)** : Cloud, Security, Automation, IaC
-* **[Project Examples](https://github.com/conti0513/development_public/tree/main/project_examples)** : 実装プロトタイプ
+* **[TIL](https://www.google.com/search?q=./TIL/)** : 2025- / 技術的な試行錯誤の軌跡
+* **[DevOps Notes](https://www.google.com/search?q=./devops_notes/)** : Cloud, Security, Automation, IaC
+* **[Project Examples](https://www.google.com/search?q=./project_examples/)** : 実装プロトタイプ
 
 ---
 
