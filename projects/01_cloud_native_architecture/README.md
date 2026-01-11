@@ -1,6 +1,6 @@
 ## 🛠 Cloud Native Design Patterns (GCP / IaC)
 
-現行のプロジェクト知見を抽象化し、再利用可能なアーキテクチャパターンとして整理しています。
+Architectural Assets サーバーレス環境における「疎結合」と「堅牢性」を両立するための、汎用的な実装パターン集です。
 
 ### Pattern 01: Legacy Integration & Egress Control
 
