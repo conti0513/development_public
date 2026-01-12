@@ -1,4 +1,4 @@
-# Case Study 06: 社会インフラ級ネットワークの設計および変更管理
+# Case Study 06: スマートフォン データ通信用ネットワークの設計および変更管理
 
 ## 📌 プロジェクトの背景
 
@@ -8,26 +8,26 @@
 
 ## 🏗 構造化のアーキテクチャ
 
-「設計」から「現場投入」までの間に厳格なバリデーション層を設け、ヒューマンエラーを物理的に排除するフローを視覚化。
+「設計」から「本番ネットワーク反映」までの間に厳格なバリデーション層を設け、ヒューマンエラーを物理的に排除するフローを視覚化。
 
 ```mermaid
 graph LR
-    subgraph Planning [設計・判定]
-        Design[NW設計図 / Config] --> Review[技術判定会議 / リスク整理]
+    subgraph Planning
+        A["設計資料 / 設定内容"] --> B["技術確認・リスク整理"]
     end
 
-    subgraph Validation [構造化バリデーション]
-        Review --> Script[自動チェックツール / VBAマクロ]
+    subgraph Validation
+        B --> C["自動チェック<br/>（スクリプト / マクロ）"]
     end
 
-    subgraph Execution [現場投入・静寂]
-        Script --> NW[キャリアコア網 / 無線基地局]
-        NW --> Quality[無事故・無戻りの完遂]
+    subgraph Execution
+        C --> D["ネットワーク反映<br/>（キャリア網 / 無線設備）"]
+        D --> E["問題なく完了"]
     end
 
-    style Script fill:#e8f5e9,stroke:#237804,stroke-width:1px
-    style Design fill:#f0f7ff,stroke:#004a99,stroke-width:1px
-    style Quality fill:#fff7e6,stroke:#d46b08,stroke-width:1px
+    style A fill:#f0f7ff,stroke:#004a99,stroke-width:1px
+    style C fill:#e8f5e9,stroke:#237804,stroke-width:1px
+    style E fill:#fff7e6,stroke:#d46b08,stroke-width:1px
 
 ```
 
@@ -35,6 +35,6 @@ graph LR
 
 * **堅実な運用を技術で支える:** 膨大な設定値の投入において、手作業を最小限にするためのチェック機構を自作。この「正確な作業を支援する仕組み作り」が、現在の自動化スキルの原点。
 * **ステークホルダー調整:** グローバルベンダーを含む多様な関係者と足並みを揃え、リスク箇所を事前に構造化して共有することで、円滑な合意形成を実現。
-* **実績:** 長期間にわたり、重大事故や工事戻りのない安定した現場運営を継続。大規模インフラ工事における「絶対的な安心感」を構築。
+* **実績:** 長期間にわたり、重大事故や工事戻りのない安定した現場運営を継続。大規模インフラ工事における「安心感」を構築。
 
 ---
