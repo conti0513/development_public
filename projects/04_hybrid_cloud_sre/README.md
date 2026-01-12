@@ -1,4 +1,4 @@
-# Case Study 04 インフラ内製化とイベントドリブン監視の再構築
+# Case Study 04: インフラ内製化とイベントドリブン監視の再構築
 （AdTech / Corporate IT / Hybrid Infra）
 
 ### 📌 プロジェクト概要

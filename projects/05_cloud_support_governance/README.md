@@ -1,5 +1,4 @@
-## Case Study 05  
-### ID基盤・デバイス管理における技術サポートスキームの整理  
+## Case Study 05: ID基盤・デバイス管理における技術サポートスキームの整理  
 （Corporate IT / M365 / Presales–Aftersales Support）
 
 ---

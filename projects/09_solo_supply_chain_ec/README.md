@@ -1,77 +1,104 @@
-# 📦 Project 09: Solo Supply Chain & EC Operations
+# Project 09：個人事業における EC・物流運用の実践
 
-### Overview
+## 概要
 
-エンジニアリングの枠を超え、個人事業主として「仕入れ・集客・販売・配送」の全工程を一人で完結させる**一人サプライチェーン**を構築・運用。
-「自分のリソースをいかに技術で浮かせるか」をテーマに、ビジネス課題を技術（自動化/IaC）で解決する、現場主義のアーキテクチャを実践しています。
+個人事業として、
+**仕入れ・集客・販売・配送までを一人で完結させる EC 運用**を行っていました。
 
----
+限られた時間とリソースの中で事業を継続するため、
+手作業を極力減らし、**運用を仕組み化すること**を重視しています。
 
-### 🛠 Business & Tech Stack
-
-* **EC Platforms:** eBay (Global Export), Shopify (D2C), Instagram Shopping
-* **Marketing:** Instagram Ads / Meta Business Suite
-* **Automation:** Python / Shell Script (Inventory & Listing Management)
-* **Data Analysis:** Google Sheets / App Script (Profit & Logistics tracking)
+エンジニアリングを目的としたプロジェクトではなく、
+**事業を回すために必要な部分を技術で支えた実務の記録**です。
 
 ---
 
-### 🔄 One-Man Supply Chain Flow
+## 使用していたサービス・ツール
 
-ビジネスの全工程を、極力手作業を排除した「仕組み」として定義しています。
+### 販売・集客
+
+* eBay（海外販売）
+* Shopify（自社 EC）
+* Instagram（集客・導線）
+
+### 運用・自動化
+
+* Python / Shell Script
+
+  * 在庫管理
+  * 出品データ更新
+* Google スプレッドシート / Apps Script
+
+  * 収支管理
+  * 配送状況の整理
+
+---
+
+## 運用フロー（全体像）
+
+仕入れから販売、配送、振り返りまでを
+**できるだけ人手に依存しない流れ**として整理しています。
 
 ```mermaid
 graph TD
-    subgraph Sourcing
-        A[Supplier / Auction] -->|Research & Buy| B[Inventory Management]
+    subgraph 仕入れ
+        A[仕入先 / オークション] --> B[在庫管理]
     end
     
-    subgraph Marketing_Sales
-        B -->|Auto Sync| C[Shopify / eBay]
-        D[Instagram Content] -->|Ad Conversion| C
+    subgraph 販売・集客
+        B --> C[Shopify / eBay]
+        D[Instagram投稿] --> C
     end
     
-    subgraph Logistics_Ops
-        C -->|Order Trigger| E[Shipping Label Auto-Gen]
-        E -->|International Ship| F[Global Customer]
+    subgraph 配送
+        C --> E[配送ラベル作成]
+        E --> F[購入者]
     end
     
-    subgraph Analysis
-        F -->|Feedback| G[Profit/Loss Dashboard]
-        G -->|Optimize| A
+    subgraph 振り返り
+        F --> G[収支・実績管理]
+        G --> A
     end
-
-    style C fill:#f9f9f9,stroke:#333,stroke-width:2px
-    style G fill:#fff4dd,stroke:#d4a017,stroke-width:2px
-
 ```
 
 ---
 
-### 🚀 Key Philosophies & Implementation
+## 運用上の工夫
 
-* **「自分の工数を浮かせる」ための自動化**
-副業・兼業という限られた時間で成果を出すため、在庫更新や出品作業、国際配送ラベルの発行などをスクリプトで自動化。「ポチポチ作業」を構造的に排除し、自分自身を**「運用担当」から「仕組みの管理者」**へとシフトさせています。
-* **Workload Identity / Security Policy**
-ShopifyやeBayのAPI連携において、静的なセキュリティキーの管理を最小化。クラウド連携（GCP/AWS等）の知見を活かし、セキュアで疎結合なデータ連携を意識しています。
-* **Idempotency (冪等性) の確保**
-大量の商品データ更新において、二重出品や在庫の不整合を防ぐため、リラン（再実行）が容易で「何度やっても正しい状態に戻る」処理ロジックを自作ツールに組み込んでいます。
+### 手作業を増やさない
+
+* 在庫更新や出品情報の反映はスクリプトで対応
+* 同じ操作を繰り返さなくて済むよう、処理をまとめて実行できる形に整理
+
+### 再実行できる仕組み
+
+* データ更新処理は何度実行しても整合が取れるように設計
+* 途中で失敗しても、最初からやり直せる状態を前提に運用
+
+### 認証情報の扱い
+
+* API 連携において、認証情報を分散管理しない形を意識
+* 手元での管理負荷を減らすことを優先
 
 ---
 
-### 📝 Project Learning (The Why)
+## この経験から得たこと
 
-システムが解決すべきは常に「現場の痛み」です。
-自らリスクを取って商売を回すことで、エンジニアの視点だけでは見落としがちな**「物流の不確実性」**や**「顧客体験の重要性」**を実感を伴って理解しています。
+* 技術だけでなく
+  **物流・在庫・顧客対応の不確実性**を前提に考えるようになった
+* 現場で実際に回る仕組みでないと意味がないことを実感
+* 「作る」よりも「壊れずに回し続ける」ことの難しさと重要性を理解
 
-この「ビジネスの全体像を俯瞰し、技術で整地する」感覚が、私のエンジニアとしての土台（JP1/ITIL）と最新技術（Cloud Native）を繋ぐミッシングリンクとなっています。
+個人事業として全工程を経験したことで、
+システムを **現場視点で整理し、無理のない形に落とす感覚** が身につきました。
 
 ---
 
-### 💡 補足情報
+## 補足
 
-* **eBay Store:** [analogcamerajp](https://www.ebay.com/usr/analogcamerajp)
-* **Instagram:** [@analogcamera.jp](https://www.instagram.com/analogcamera.jp/)
-
+* eBay ストア：
+  [https://www.ebay.com/usr/analogcamerajp](https://www.ebay.com/usr/analogcamerajp)
+* Instagram：
+  [https://www.instagram.com/analogcamera.jp/](https://www.instagram.com/analogcamera.jp/)
 
 ---
