@@ -1,78 +1,113 @@
-## 🛠 Cloud Native Design Patterns (GCP / IaC)
+# 業務で実装したクラウド構成例（GCP / IaC）
 
-### Architectural Assets
+## 概要
 
-サーバーレス環境における「疎結合」と「堅牢性」を両立するための、汎用的な実装パターン集です。現場の制約の中で、いかに「仕組み」で品質を担保するかに主眼を置いています。
+本リポジトリは、**実業務で実装・検証したクラウド構成例の整理**です。
+サーバーレス環境において、疎結合性と運用上の安定性を両立することを目的とし、
+**現場の制約下でどのような構成を選択したか**を記録しています。
+
+設計思想や理想論ではなく、
+「当時の要件・制約の中で実際に採用した構成」を as-is でまとめています。
 
 ---
 
-### Pattern 01: Legacy Integration & Egress Control
+## パターン01：外部レガシー環境（SFTP / FTPS）連携
 
-Cloud Run から外部レガシー環境（SFTP/FTPS）へのセキュアな接続パターン。
+Cloud Run から、外部の SFTP / FTPS 環境へ接続するための構成例です。
+送信元IPの固定や、認証情報の管理が求められる業務要件を前提としています。
 
-* **課題:** サーバーレス環境からの「送信元IP固定化」と、外部環境へのセキュアな認証管理。
-* **解決策:** Cloud Run + VPC Connector + Cloud NAT による固定IP化。Go言語による軽量なSFTPクライアント実装。
-* **コントローラビリティ:**
-* **Infrastructure Readiness:** 現場環境（Linux/CLI主導）に合わせつつ、**個人検証環境にて全リソースの Terraform 化を完了済み**。いつでもコードベース管理へ移行可能な「型」を保持。
-* **Zero Static Keys:** 認証に秘密鍵を直接埋め込まず、GCP/AWS間の連携は **Workload Identity (IAM/OIDC)** を前提とした、鍵を持たない（Keyless）設計を推奨。
-* **Centralized Params:** 接続先パスやID等の可変情報は JSON パラメータとして分離。環境変化時には設定の修正と再デプロイのみで即応。
+### 背景・課題
 
+* サーバーレス環境（Cloud Run）から外部サーバーへ接続する必要があった
+* 接続元IPの固定が必須
+* 秘密鍵や認証情報をアプリケーションに直接持たせたくない
+* 障害時に再実行・切り戻しを容易にしたい
 
+### 採用した構成
+
+* **Cloud Run + VPC Connector + Cloud NAT**
+
+  * Cloud Run の通信を VPC 経由にし、Cloud NAT により送信元IPを固定
+* **SFTP クライアント（Go）**
+
+  * 軽量な処理のみを担当させ、状態を持たない構成
+* **認証情報の取り扱い**
+
+  * 秘密鍵をコードやコンテナイメージに含めない構成とした
+
+### 運用面での工夫
+
+* **IaC（Terraform）対応**
+
+  * 個人検証環境にて全リソースを Terraform 化
+  * 必要に応じてコード管理へ移行可能な状態を維持
+* **設定値の分離**
+
+  * 接続先パスやユーザーIDなどの可変情報は JSON で外出し
+  * 環境変更時は設定修正と再デプロイのみで対応可能
 
 ```mermaid
 graph LR
-    subgraph GCP_Project
-        CR[Cloud Run / Go] -->|VPC Connector| SN[Subnet]
-        SN --> NAT[Cloud NAT / Static IP]
-        IAM[IAM / Workload Identity] -.->|Keyless Auth| CR
+    subgraph GCP
+        CR[Cloud Run] --> VC[VPC Connector]
+        VC --> NAT[Cloud NAT（固定IP）]
     end
-    NAT -->|Secure Connection| EXT[External SFTP Server]
-    
-    style CR fill:#f9f9f9,stroke:#333,stroke-width:2px
-    style EXT fill:#eee,stroke:#666,stroke-dasharray: 5 5
-
+    NAT --> EXT[外部 SFTP / FTPS サーバー]
 ```
 
 ---
 
-### Pattern 02: Event-Driven Data Pipeline (Rendering & Transfer)
+## パターン02：イベント駆動型データ連携（変換・配送）
 
-GCS発火によるデータの文字コード変換および配送パイプライン。
+Cloud Storage を起点に、データ加工と外部配送を行う構成例です。
 
-* **フロー:**
-1. **Extraction:** BigQueryから定期的にデータを抽出。
-2. **Detection:** GCSへの格納を Eventarc で検知し、Cloud Run を発火。
-3. **Processing:** Go / Python にて文字コード変換（SJIS対応）等のビジネスロジックを実行。
-4. **Delivery:** 完成したファイルを外部SFTPサーバーへ配送。
+### 処理フロー
 
+1. **データ抽出**
+   BigQuery から定期的にデータを出力
+2. **イベント検知**
+   GCS へのファイル格納を Eventarc で検知し、Cloud Run を起動
+3. **加工処理**
+   Go / Python にて文字コード変換（SJIS 対応等）を実施
+4. **配送**
+   完成したファイルを外部 SFTP サーバーへ転送
 
-* **構造上の強み:**
-* **完全な冪等性（Idempotency）:** 処理が中断しても、ファイルを再配置するだけで「リラン（再実行）」が可能。
-* **ステートレス設計:** 処理状態をアプリ内に保持しないため、環境不備があっても Cloud Run を再デプロイ（コマンド1発）するだけで即時復旧。
-* **Log Standardization:** 自作の**ログ出力用共通シェルスクリプト**を全工程に差し込み。OS層・アプリ層問わず共通フォーマットで出力し、トラブルシュートの可読性を強制。
-* **Backlog Traceability:** 構造化ログ（JSON）をベースに、エラー時は Cloud Logging から Backlog API を叩き、**「エラー箇所」と「再実行手順」を記したチケットを自動起票**。
+### 構成上のポイント
 
+* **冪等性の確保**
 
+  * 処理途中で失敗しても、ファイルを再配置することで再実行可能
+* **ステートレス設計**
+
+  * 処理状態をアプリ内に保持しないため、再デプロイのみで復旧可能
+* **ログの統一**
+
+  * OS層・アプリ層で共通フォーマットのログ出力を行い、調査性を確保
+* **エラー時の対応**
+
+  * Cloud Logging を起点に、エラー内容と再実行手順を記載したチケットを自動起票
 
 ```mermaid
 graph TD
-    BQ[(BigQuery)] -->|Scheduled Query| GCS[Cloud Storage]
-    GCS -->|Eventarc Trigger| CR[Cloud Run]
-    CR -->|Character Encoding| SFTP[External SFTP Server]
-    CR -.->|Error Trigger| LOG[Cloud Logging]
-    LOG -.->|API Call| BL[Backlog Ticket]
-    
-    style CR fill:#f9f9f9,stroke:#333,stroke-width:2px
-    style BL fill:#fff4dd,stroke:#d4a017,stroke-width:2px
-
+    BQ[(BigQuery)] -->|定期実行| GCS[Cloud Storage]
+    GCS -->|Eventarc| CR[Cloud Run]
+    CR -->|文字コード変換| SFTP[外部 SFTP]
+    CR -.->|エラー| LOG[Cloud Logging]
+    LOG -.->|API| BL[Backlog]
 ```
 
 ---
 
-### 📝 Engineering Policy
+## 実装・運用における共通方針
 
-* **Command-Line First:** 100%コマンドラインから再現可能な実装を徹底。管理画面の「ポチポチ」による設定のドリフトを構造的に排除。
-* **Zero Trust Auth:** キーペアの発行を最小化し、クラウド間連携は IAM / ARN の論理的な紐付けによる認証を優先。
-* **Reliability:** 「壊れても再デプロイで直る」「ファイルを置けばリランできる」という、現場運用の心理的安全性を最大化する設計。
+* **CLIベース運用**
+
+  * すべてコマンドラインから再現可能な手順を前提
+* **認証情報の最小化**
+
+  * 鍵や資格情報を極力持たせない構成を採用
+* **復旧容易性の重視**
+
+  * 再デプロイや再実行で復旧できる構成とし、運用負荷を抑制
 
 ---
