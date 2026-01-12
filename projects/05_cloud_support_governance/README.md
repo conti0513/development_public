@@ -19,7 +19,24 @@
 顧客対応の前線に立つ営業・サポート担当が安心して動けるよう、  
 **技術的な詰まりを裏側で整理する役割**を担った案件である。
 
+```mermaid
+graph TD
+    Sales[営業 / プリセールス] -->|技術確認| PoC[仕様確認・検証]
+    PoC --> Delivery[導入]
+    Delivery --> L1[一次対応]
+
+    L1 --> L2[二次対応（技術）]
+    L2 --> Analysis[仕様整理・ログ解析]
+    Analysis --> Knowledge[手順化 / スクリプト化]
+
+    Knowledge --> Entra[Entra ID]
+    Knowledge --> Intune[Intune]
+    Knowledge --> SSO[SAML / SSO]
+```
+
 ---
+
+
 
 ### 🎯 背景
 
