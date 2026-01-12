@@ -51,8 +51,7 @@ graph TD
 ### 🚀 Key Philosophies & Implementation
 
 * **「自分の工数を浮かせる」ための自動化**
-副業・兼業という限られた時間で成果を出すため、在庫更新や出品作業、国際配送ラベルの発行などをスクリプトで自動化。
-「ポチポチ作業」を構造的に排除し、自分自身を**「運用担当」から「仕組みの管理者」**へとシフトさせています。
+副業・兼業という限られた時間で成果を出すため、在庫更新や出品作業、国際配送ラベルの発行などをスクリプトで自動化。「ポチポチ作業」を構造的に排除し、自分自身を**「運用担当」から「仕組みの管理者」**へとシフトさせています。
 * **Workload Identity / Security Policy**
 ShopifyやeBayのAPI連携において、静的なセキュリティキーの管理を最小化。クラウド連携（GCP/AWS等）の知見を活かし、セキュアで疎結合なデータ連携を意識しています。
 * **Idempotency (冪等性) の確保**
@@ -71,8 +70,8 @@ ShopifyやeBayのAPI連携において、静的なセキュリティキーの管
 
 ### 💡 補足情報
 
-* **eBay Store:** [ここにURL]
-* **Instagram:** [ここにURL]
+* **eBay Store:** [analogcamerajp](https://www.ebay.com/usr/analogcamerajp)
+* **Instagram:** [@analogcamera.jp](https://www.instagram.com/analogcamera.jp/)
+
 
 ---
-
