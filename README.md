@@ -65,9 +65,9 @@ graph LR
 
 ### Contents
 
-* **[TIL](https://www.google.com/search?q=./TIL/)** : 2025- / 技術的な試行錯誤の軌跡
-* **[DevOps Notes](https://www.google.com/search?q=./devops_notes/)** : Cloud, Security, Automation, IaC
-* **[Project Examples](https://www.google.com/search?q=./project_examples/)** : 実装プロトタイプ
+* **[TIL](https://github.com/conti0513/development_public/tree/main/TIL)** : 2025- / 技術的な試行錯誤の軌跡
+* **[DevOps Notes](https://github.com/conti0513/development_public/tree/main/devops_notes)** : Cloud, Security, Automation, IaC
+* **[Project Examples](https://github.com/conti0513/development_public/tree/main/project_examples)** : 実装プロトタイプ
 
 ---
 
