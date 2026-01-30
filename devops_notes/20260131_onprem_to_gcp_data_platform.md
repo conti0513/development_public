@@ -238,26 +238,27 @@ ETL定義や構成変更を自動反映する仕組み。人が実行ボタン�
 ```mermaid
 flowchart TB
   subgraph OnPrem
-    POS[POS Windows\nRaw Data (要件未達)]
-    SCH[Scheduler\n(gcloud command)]
+    POS["POS Windows<br/>Raw Data (Not meeting requirements)"]
+    SCH["Scheduler<br/>(gcloud command)"]
   end
 
   subgraph GCP
-    GCS1[GCS Box1\nRaw / Staging]
-    BQ[BigQuery\nTransform①\n業務要件整形]
-    GCS2[GCS Box2\nDelivery (UTF-8)]
-    CR[Cloud Run\nTransform② + Delivery\nUTF-8→SJIS]
-    GCS3[GCS Box3\nOps\nLogs / Meta / Retry]
+    GCS1["GCS Box1<br/>Raw / Staging"]
+    BQ["BigQuery<br/>Transform-1<br/>Business schema shaping"]
+    GCS2["GCS Box2<br/>Delivery (UTF-8)"]
+    CR["Cloud Run<br/>Transform-2 + Delivery<br/>UTF-8 to SJIS"]
+    GCS3["GCS Box3<br/>Ops<br/>Logs / Meta / Retry"]
   end
 
   subgraph CoreSystem
-    CORE[Core System\n(SFTP / FTPS)]
+    CORE["Core System<br/>(SFTP / FTPS)"]
   end
 
   POS --> SCH --> GCS1 --> BQ --> GCS2
-  GCS2 -->|PUT trigger| CR
-  CR -->|log / meta| GCS3
-  CR -->|secure transfer| CORE
+  GCS2 -->|"PUT trigger"| CR
+  CR -->|"log / meta"| GCS3
+  CR -->|"secure transfer"| CORE
+
 ```
 
 ---
