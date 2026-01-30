@@ -275,18 +275,17 @@ flowchart TB
 ### 4. 学習メモ（BigQueryの位置づけ）
 
 * BigQueryは「分析専用」ではなく **ETLの中核的Transformレイヤー**
-* BigQuery自体を使いこなすことより、
+* 重要なのは
 
   * どこまでをBigQueryでやるか
   * どこからを外部処理に切り出すか
-    の判断が重要
 * BigQueryはパイプラインの **終点ではなく通過点** になり得る
 
 ---
 
 ### 5. まとめ（気づき）
 
-ETLの問題は、ツールやSQLの問題ではなく、
+ETLの問題は、ツールやSQLの問題ではなく
 **構造・責任境界・運用定義が存在しないこと** に起因する。
 
 BigQueryとCloud Runを分離して設計することで、
@@ -295,60 +294,43 @@ BigQueryとCloud Runを分離して設計することで、
 
 ---
 
-## embulk Digdag 学習メモ
+## embulk / Digdag 学習メモ
 
 ### embulk（えんばるく）
 
-ETL（特に Extract / Load）を担うための **データ転送・取り込みツール**。  
-オンプレミスや外部システム、ファイル（CSV/TSVなど）からデータを取得し、  
-BigQuery や Cloud Storage などへ **定義ベースで再現性をもって投入**するために使われる。
+ETL（特に Extract / Load）を担う **データ転送・取り込みツール**。
+オンプレや外部ソースからデータを取得し、
+BigQuery / Cloud Storage へ **定義ベースで再現性をもって投入**する。
 
-#### 役割のポイント
-- データの「取り出し」と「投入」を専門に扱う
-- 入出力の仕様を設定ファイル（YAML等）で定義できる
-- 手動転送（WinSCP等）を排除し、**自動・再実行可能**な形にできる
-- ローカル/オンプレ環境からクラウドへの橋渡し役になりやすい
+#### ポイント
 
-#### 現場文脈での位置づけ
-- POSや業務DBなど、**クラウド外にあるデータを定期的に取り込む**用途で利用される
-- Transform（複雑な加工）は embulk ではなく、  
-  取り込み後に BigQuery や別処理に委ねるケースが多い
-- 「転送の標準化」「属人化排除」が主目的
+* データ取得と投入に特化
+* 設定ファイルで再実行可能
+* 手動転送の排除・属人化防止
 
 ---
 
 ### Digdag（でぃぐだぐ）
 
-ETLやバッチ処理全体を **どの順番で・いつ・失敗時にどう回すか** を管理する  
-**ワークフロー（オーケストレーション）ツール**。
+ETL全体を **どの順で・いつ・どう回すか** を制御する
+ワークフロー（オーケストレーション）ツール。
 
-#### 役割のポイント
-- 複数ジョブの依存関係を定義できる
-- 定期実行（スケジューリング）が可能
-- 失敗時の停止・再実行・分岐制御ができる
-- embulk やスクリプト、SQL などを **まとめて制御** する立場
+#### ポイント
 
-#### 現場文脈での位置づけ
-- embulk単体では管理しきれない  
-  「前処理 → 取り込み → 整形 → 出力」 の流れを制御する
-- 夜間バッチ・日次処理などの **運用の司令塔**
-- 人が cron や手動で順番管理する代わりに使われる
+* 依存関係・定期実行・失敗制御
+* embulkやSQLをまとめて管理
+* 夜間/日次バッチの司令塔
 
 ---
 
-### embulk × Digdag の関係（理解の軸）
+### embulk × Digdag の関係
 
-- embulk：  
-  **「データを運ぶ人」**
-- Digdag：  
-  **「いつ・どの順で運ぶか指示する人」**
-
-embulkが「1作業」なのに対し、  
-Digdagは「全体の流れと失敗時の振る舞い」を管理する。
+* embulk：データを運ぶ
+* Digdag：流れを制御する
 
 ---
 
-### ETL全体での配置イメージ
+### 配置イメージ
 
 ```mermaid
 flowchart LR
@@ -358,112 +340,39 @@ flowchart LR
 
   E[Digdag] --> B
   E --> D
-````
+```
 
 ---
 
-### 学習メモ（自分の経験と照合）
-
-* 手動転送や個人PC起点の処理は、
-  本来 embulk + Digdag が担う領域
-* 自分が Cloud Run で実装した処理は、
-  embulk の代替や後段 Transform をクラウドネイティブに実装した形とも言える
-* ツールは違っても、**考え方（ETL / オーケストレーション）は共通**
-
-
-なお、「embulk / Digdag はOSSで安価だが、運用基盤としての維持コストが高い場合があるため、
-Cloud Run中心のマネージド構成を選択してもOKな場合も多い。
-オンプレミスなどで、大量のデータを裁く必要がある場合は道入メリットはありそう。
-運用コストとの兼ね合い。
----
-
-
-## 警報転送（Alert → Slack）の実装案メモ
+## 警報転送（Alert → Slack）設計メモ
 
 ### 方針
-- 処理（Cloud Run / BigQuery）は「ログを出すだけ」
-- 異常検知・通知は Cloud Monitoring 側に寄せる（責務分離）
-- Slack通知は Incoming Webhook を Notification Channel として使う
+
+* 処理はログ出力のみ
+* 検知・通知は Cloud Monitoring に集約
+* Slack は Notification Channel として利用
 
 ---
 
-### 通知先（Slack）準備
-1. Slack に専用チャンネルを用意（例：#etl-alert）
-2. Incoming Webhook を作成
-3. Webhook URL を控える（Secret化してもよいが、まずはMonitoring登録でOK）
+### 監視構成
+
+1. Cloud Logging
+2. ログベースメトリクス
+3. Cloud Monitoring Alert Policy
+4. Slack Webhook 通知
 
 ---
 
-### 監視/通知の全体構成
-1) Cloud Logging にログが集約  
-2) ログベースメトリクス（Log-based Metrics）で「失敗」を数値化  
-3) Cloud Monitoring Alert Policy で閾値判定  
-4) Notification Channel（Slack Webhook）へ通知
+### 監視対象（最小）
 
----
-
-### 監視項目（最小3つ）
-
-#### 1. Cloud Run 転送失敗（Delivery失敗）
-- 検知：Cloud Run の ERROR ログ / 非200
-- 実装：ログベースメトリクス（例：cloudrun_transfer_fail_count）
-- アラート：直近5分で >0 なら通知
-
-例：ログフィルタ（概念）
-- resource.type="cloud_run_revision"
-- severity>=ERROR
-- "transfer" "failed" などのキーワード
-- もしくは jsonPayload.status="fail"（メタログ出してるならこれが最強）
-
----
-
-#### 2. BigQuery ジョブ失敗（Transform①失敗）
-- 検知：BigQuery job の error
-- 実装：BigQueryジョブログをログベースメトリクス化
-- アラート：直近1時間で >0
-
----
-
-#### 3. 「日次成功メタが出ていない」（未実行/詰まり検知）
-- 検知：Ops（箱3）に success メタログが一定時間出ていない
-- 実装案A（推奨）：Cloud Runが成功時に `status=success` を必ずログ出力 → 欠損アラート（absence）
-- 実装案B：Ops用GCSへ successメタJSONを出力し、その書き込みログを監視（欠損）
-
-アラート：24h 連続で success が無い → 通知
-
----
-
-### Slack通知メッセージ（短く・構造的に）
-通知文に入れるのはこれだけで十分：
-- step（どの工程か）
-- status（FAILED / MISSING）
-- time
-- run_id（あれば）
-- log_link（あれば）
-
-例（イメージ）
-[ELT ALERT]
-step: Cloud Run Delivery
-status: FAILED
-time: 2026-01-31 02:15 JST
-hint: check Cloud Logging (cloud_run_revision)
-
----
-
-### 実装の優先順位（1週間想定の最短ルート）
-Day1: Slack webhook + Monitoring Notification Channel 作成  
-Day2: Cloud Run ERRORログ → ログベースメトリクス → Alert  
-Day3: BigQuery job failure → メトリクス → Alert  
-Day4: successログ（またはsuccessメタJSON）を定義  
-Day5: 欠損アラート（absence）を追加  
-Day6: しきい値調整（誤検知を減らす）  
-Day7: 運用手順（誰が見る/一次対応/再実行）を1枚メモ化
+* Cloud Run 転送失敗（ERROR / 非200）
+* BigQuery ジョブ失敗
+* successログ欠損（24h）
 
 ---
 
 ### メモ
-- 「処理からSlackへ直接通知」は避ける（責務分離・監査説明が楽）
-- Ops用メタログ（run_id/status/rows/dest）を出すと、監視・監査・運用が一気に安定する
 
----
+* 処理から直接Slack通知しない（責務分離）
+* Opsメタログ（run_id/status等）で監視・監査が安定
 
