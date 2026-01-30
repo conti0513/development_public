@@ -258,7 +258,7 @@ flowchart TB
   GCS2 -->|PUT trigger| CR
   CR -->|log / meta| GCS3
   CR -->|secure transfer| CORE
-````
+```
 
 ---
 
