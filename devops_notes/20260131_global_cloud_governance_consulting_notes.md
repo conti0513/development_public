@@ -49,14 +49,14 @@
 ```mermaid
 flowchart TB
   subgraph HQ["日本本社"]
-    HQIT["本社IT部門\n(全体把握なし)"]
-    AUDIT["監査部門\n(説明要求)"]
+    HQIT["本社IT部門(全体把握なし)"]
+    AUDIT["監査部門(説明要求)"]
   end
 
   subgraph Global["海外拠点"]
-    A1["拠点A\nAWS(独自運用)"]
-    A2["拠点B\nAWS(独自運用)"]
-    A3["拠点C\nAWS(独自運用)"]
+    A1["拠点A AWS(独自運用)"]
+    A2["拠点B AWS(独自運用)"]
+    A3["拠点C AWS(独自運用)"]
   end
 
   SI["現地SI / ベンダー"]
