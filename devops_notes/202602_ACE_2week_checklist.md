@@ -1,93 +1,125 @@
-# 🚀 Google Cloud ACE 完全攻略チートシート（実戦版）
+# 🚀 Google Cloud ACE 試験対策：2週間合格ハックシート
 
-## 1. 【速攻判断】10秒で切るための条件反射リスト
+## 1. 🌐 ネットワーク (Networking)
 
-### 🌐 ネットワーク
+> **判断基準:** 「広げる」「繋ぐ」「最大」を見極める。
 
 * **オンプレからGCP API利用（インターネット禁止）**
-* 👉 `VPN / Interconnect` + `Cloud Router` + `restricted.googleapis.com` (DNS CNAME)
+* 👉 `VPN / Interconnect` + `Cloud Router` + **`restricted.googleapis.com`** (DNS CNAME)
 
 
-* **IPアドレスが足りない**
-* 👉 `expand-ip-range` コマンドでサブネットのマスク（例：/25 → /24）を広げる。
+* **IPアドレスが足りなくなった**
+* 👉 **`expand-ip-range`** コマンドでサブネットマスクを広げる（例：/25 → /24）。
 
 
 * **VPCの最大IPレンジが必要**
-* 👉 `10.0.0.0/8` を選ぶ。
+* 👉 **`10.0.0.0/8`**
+* **ハック：** 数字が小さいほどデカい（/8 > /24）。`10.0.0.0` 系列がプライベートIPの王者。
 
 
 
-### 🔐 IAM & セキュリティ
+---
 
-* **VMへのSSH管理（チーム対応）**
-* 👉 `OS Login` (`compute.osAdminLogin`) をGoogleグループに付与。
-    VMへのSSHログイン管理
-    キーワード：Individual tracking (個別追跡), Efficient (効率的)
-    正解：OS Login (compute.osAdminLogin) を使う。
-    ひっかけ： 鍵の共有や手動配布はすべて「不正解」として切る。
+## 2. 🔐 IAM & セキュリティ (Security)
+
+> **判断基準:** 「最小権限」と「管理コストの削減」。
+
+* **VMへのSSH管理（チーム対応・個別追跡）**
+* 👉 **`OS Login`** (`compute.osAdminLogin`) をGoogleグループに付与。
+* **ハック：** `Individual tracking` (個別追跡) や `Efficient` とあればこれ。鍵の手動配布は**即切り**。
 
 
-* **特定のプロジェクトのロールを別プロジェクトへコピー**
-* 👉 `gcloud iam roles copy --destination-project...`
+* **カスタムロールの複製（プロジェクト間）**
+* 👉 **`gcloud iam roles copy`**
+* **ハック：** `Fewest steps` で「他でも使いたい」なら **`copy`**。`create` は手間が多いのでハズレ。
 
 
 * **オンプレアプリからGCP APIへの認証**
-* 👉 `gcloud` で **Service Account Key (JSON)** を作成し、オンプレ側に配置。
+* 👉 `Service Account Key` (JSON) を作成し、オンプレ側に配置。
 
 
-* **サービスアカウントキーの寿命制限（一時対策）**
-* 👉 **Organization Policy** で `Key Lifetime` を24時間に制限。
+* **SAキーの寿命制限（一時対策）**
+* 👉 **Organization Policy** で `Key Lifetime` を制限。
 
 
 
-### 💻 Compute & Scaling
+---
 
-* **低トラフィック / コスト最小 / 運用ゼロ**
-* 👉 `Cloud Run` (Scale to Zero が決め手)。
+## 3. 💻 Compute & Scaling (Workloads)
 
+> **判断基準:** 「何（Pod/Node）を増やすか」「どこ（gcloud/kubectl）をいじるか」。
 
-* **GKEの「中身（Pod）」を増やす**
-* 👉 `HPA (Horizontal Pod Autoscaler)`。
-
-
-* **GKEの「器（Node）」を増やす**
-* 👉 `Cluster Autoscaler`。
-
-    GKE/K8s環境の切り替え
-    キーワード：Kubernetes configuration ＋ Minimal steps
-    正解：kubectl config use-context ➔ kubectl config view
-    鉄則： GCP自体の設定（Project等）は gcloud、K8sの中身（Context等）は kubectl。
+* **コンテナ / 低トラフィック / コスト最小**
+* 👉 **`Cloud Run`** (Scale to Zero が決め手)。
 
 
-* **GKE運用を楽にしたい / セキュリティ重視**
-* 👉 `GKE Autopilot` (Shielded Nodes がデフォルト)。
+* **GKEのオートスケーリング**
+* 👉 中身（Pod）を増やす ➔ **`HPA`** (Horizontal Pod Autoscaler)
+* 👉 器（Node）を増やす ➔ **`Cluster Autoscaler`**
+
+
+* **GKE環境の切り替え（コンテキスト操作）**
+* 👉 **`kubectl config use-context`** ➔ **`kubectl config view`**
+* **鉄則：** GCP設定（プロジェクト等）は `gcloud`、K8s内部（コンテキスト等）は `kubectl`。
+
+
+* **Deployment ManagerからK8sを操作**
+* 👉 **`Type Provider`** を追加。
+* **ハック：** 「GCPツールでK8sリソースを直接いじりたい」ならこの単語を探す。
 
 
 * **VMの自動復旧（Autohealing）**
-* 👉 `MIG (Managed Instance Group)` + `HTTP Health Check`。
+* 👉 **`MIG`** + **`HTTP Health Check`**。
 
 
-
-### 📦 Storage & Database
-
-* **DBのポイントインタイムリカバリ (PITR)**
-* 👉 Cloud SQL で `Binary Logging` を有効化。
-
-
-* **Cassandraなどのサードパーティ製DBを最速で移行**
-* 👉 **Cloud Marketplace** のプリセットイメージを使用。
-
-
-* **特定のメモリ量が必要（CPUは不要）**
-* 👉 Compute Engine の `Custom Machine Type` でメモリだけを増設。
-
-    【コスト最適化：マシンタイプの選択】
-    特定のメモリ量が必要（CPUは不要 / 最小にしたい）
-    👉 Compute Engine の Custom Machine Type を選択。
-    理由： 既定のプリセット（Standard等）だと、メモリを増やすと勝手にCPU数も増えて高くなるため。**「メモリとCPUの比率が歪（いびつ）」**ならカスタム一択。
-    キーワード： Minimize cost（コスト最小化）、Almost no CPU usage（CPUはほぼ使わない）、In-memory cache（メモリキャッシュ用途）。
 
 ---
+
+## 4. 💰 課金とコスト最適化 (Billing & Optimization)
+
+> **判断基準:** 「明日まで（最速）」か「歪なスペック（カスタム）」か。
+
+* **急ぎの課金統合 (Rapid Consolidation)**
+* 👉 新しい **`Billing Account`** にプロジェクトを **`Link`** する。
+* **ハック：** `as of tomorrow`（明日まで）のような急ぎの場合、プロジェクトの「移動（Migrate）」は時間がかかるので**即切り**。
+
+
+* **特定のメモリ量が必要（CPU不要 / コスト最小）**
+* 👉 **`Custom Machine Type`** でメモリだけを増設。
+* **キーワード：** `Minimize cost`, `Almost no CPU usage`。比率が歪ならカスタム一択。
+
+
+
+---
+
+## 5. 📦 Storage & Database (Data Handling)
+
+> **判断基準:** 「きっかけ（Trigger）」と「窓口（Proxy）」。
+
+* **画像変換のトリガー（イベント駆動）**
+* 👉 **`GCS`** ➔ **`Cloud Functions`** ➔ **`GCS`**
+* **ハック：** 「ファイルが置かれたら ➔ 何かする」はGCPの鉄板。
+
+
+* **HTTPリバースプロキシ（キャッシュ用）**
+* 👉 **`Compute Engine (VM)`** に Nginx等を入れる。
+* **ハック：** `Memorystore (Redis)` は「倉庫」であり「窓口（プロキシ）」になれないため、この文脈では**即切り**。
+
+
+* **DBのポイントインタイムリカバリ (PITR)**
+* 👉 Cloud SQL で **`Binary Logging`** を有効化。
+
+
+* **サードパーティDB（Cassandra等）の最速移行**
+* 👉 **`Cloud Marketplace`** のプリセットイメージ。
+
+
+
+---
+
+
+
+
 
 ## ⚖️ 【境界線】どっちを選ぶ？の判断軸
 
@@ -146,22 +178,46 @@
 
 ---
 
-# 📚 GCP ACE 試験対策：初日まとめ
 
-## 1. 英語・重要フレーズ (English for ACE)
+## 📖 ACE試験：最重要英単語・フレーズ集
 
-試験問題の「悪い現状」と「理想のゴール」を読み解くためのキーワードです。
+> **スキャン術:** 問題文の「毒（現状）」をこれらの単語で見抜き、「薬（正解）」を導き出す。
 
-| 英単語・フレーズ | 意味 | 試験での文脈 |
+### 1. 🏢 組織・ビジネス背景（Scenario Context）
+
+| 英単語・フレーズ | 意味 | 試験での「読み替え」ハック |
 | --- | --- | --- |
-| **Operates a ride-hailing app** | 配車アプリを運営している | 会社の事業背景（SnapRideなど） |
-| **Personal credit cards** | 個人のクレジットカード | **NGな現状。** 統制が取れていない状態。 |
-| **Cover costs** | 費用を（一時的に）負担する | 従業員が立て替えている状態。 |
-| **Reimburses** | 払い戻す（精算する） | **重要：** 経費精算の手間が発生している。 |
-| **Streamline billing** | 請求を効率化する | **ゴール：** バラバラな支払いを一つにまとめたい。 |
-| **Consolidating projects** | プロジェクトを統合する | 複数のプロジェクトを1つの請求先に紐付けること。 |
-| **Inactive environments** | 非アクティブな（今使っていない）環境 | 別のクラスター設定を確認する際に出てくる。 |
-| **Minimal steps** | 最小の手間で | **正解へのヒント：** 最も効率的な標準機能を選べ。 |
+| **Operates a ride-hailing app** | 配車アプリを運営している | 背景説明。SnapRideなどの会社名とセット。 |
+| **Company A acquired Company B** | A社がB社を買収した | **フラグ：** 異なる組織や請求先を「統合」する問題の開始合図。 |
+| **Streamline operations** | 運用を効率化する | **ゴール：** 無駄な手順を省く、マネージドサービスを使う。 |
+| **To accommodate future scaling** | 将来の拡張に対応する | **ゴール：** IPアドレスを多めに取る、オートスケールを設定する。 |
+
+### 2. 💰 請求・コスト管理（Billing & Cost）
+
+| 英単語・フレーズ | 意味 | 試験での「読み替え」ハック |
+| --- | --- | --- |
+| **Personal credit cards** | 個人のクレジットカード | **毒（現状）：** 統制が取れていない「悪い状態」。 |
+| **Cover costs** | 費用を負担（立て替え）する | **毒（現状）：** 従業員が自腹を切っている。 |
+| **Reimburses** | 払い戻す（精算する） | **毒（現状）：** 会社が後から精算する手間。これが来たら「一括請求への統合」が正解。 |
+| **Consolidate / Consolidation** | 統合する / 集約 | **薬（正解）：** 複数のプロジェクトを1つの請求先に紐付ける（Link）。 |
+| **Streamline billing** | 請求を効率化する | **ゴール：** バラバラな支払いを「Single Billing Account」にまとめる。 |
+
+### 3. 🛠️ 運用・効率化（Operations）
+
+| 英単語・フレーズ | 意味 | 試験での「読み替え」ハック |
+| --- | --- | --- |
+| **Minimal steps / Fewest steps** | 最小の手間で | **鉄則：** 最短の標準機能を選べ。手動作成（create）よりコピー（copy）や既存機能。 |
+| **Inactive environments** | 非アクティブな環境 | 設定だけ確認したい対象。`kubectl config` 系の出番。 |
+| **Appropriate IAM roles** | 適切なIAMロール | **ゴール：** 最小権限（Least Privilege）を守れ。 |
+| **Production project** | 本番環境プロジェクト | 開発（Dev）とは別の、権限管理が厳しい場所。 |
+
+---
+
+### 💡 ACE単語ハック
+
+* **`Consolidate`（固める）** と出たら、**`Link`（繋ぐ）** を探す。
+* **`Reimburse`（精算）** と出たら、**`Personal card`（個人払い）をやめる** 選択肢を探す。
+* **`Minimal steps`（最小の手間）** と出たら、**「Googleが用意した楽な道（Managed/Command）」** を探す。
 
 ---
 
