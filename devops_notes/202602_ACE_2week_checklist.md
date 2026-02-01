@@ -21,6 +21,10 @@
 
 * **VMへのSSH管理（チーム対応）**
 * 👉 `OS Login` (`compute.osAdminLogin`) をGoogleグループに付与。
+    VMへのSSHログイン管理
+    キーワード：Individual tracking (個別追跡), Efficient (効率的)
+    正解：OS Login (compute.osAdminLogin) を使う。
+    ひっかけ： 鍵の共有や手動配布はすべて「不正解」として切る。
 
 
 * **特定のプロジェクトのロールを別プロジェクトへコピー**
@@ -49,6 +53,11 @@
 * **GKEの「器（Node）」を増やす**
 * 👉 `Cluster Autoscaler`。
 
+    GKE/K8s環境の切り替え
+    キーワード：Kubernetes configuration ＋ Minimal steps
+    正解：kubectl config use-context ➔ kubectl config view
+    鉄則： GCP自体の設定（Project等）は gcloud、K8sの中身（Context等）は kubectl。
+
 
 * **GKE運用を楽にしたい / セキュリティ重視**
 * 👉 `GKE Autopilot` (Shielded Nodes がデフォルト)。
@@ -72,7 +81,11 @@
 * **特定のメモリ量が必要（CPUは不要）**
 * 👉 Compute Engine の `Custom Machine Type` でメモリだけを増設。
 
-
+    【コスト最適化：マシンタイプの選択】
+    特定のメモリ量が必要（CPUは不要 / 最小にしたい）
+    👉 Compute Engine の Custom Machine Type を選択。
+    理由： 既定のプリセット（Standard等）だと、メモリを増やすと勝手にCPU数も増えて高くなるため。**「メモリとCPUの比率が歪（いびつ）」**ならカスタム一択。
+    キーワード： Minimize cost（コスト最小化）、Almost no CPU usage（CPUはほぼ使わない）、In-memory cache（メモリキャッシュ用途）。
 
 ---
 
@@ -132,3 +145,58 @@
 5. **"Download JSON key"** 👉 サービス間の連携なら「Role付与」が正攻法。
 
 ---
+
+# 📚 GCP ACE 試験対策：初日まとめ
+
+## 1. 英語・重要フレーズ (English for ACE)
+
+試験問題の「悪い現状」と「理想のゴール」を読み解くためのキーワードです。
+
+| 英単語・フレーズ | 意味 | 試験での文脈 |
+| --- | --- | --- |
+| **Operates a ride-hailing app** | 配車アプリを運営している | 会社の事業背景（SnapRideなど） |
+| **Personal credit cards** | 個人のクレジットカード | **NGな現状。** 統制が取れていない状態。 |
+| **Cover costs** | 費用を（一時的に）負担する | 従業員が立て替えている状態。 |
+| **Reimburses** | 払い戻す（精算する） | **重要：** 経費精算の手間が発生している。 |
+| **Streamline billing** | 請求を効率化する | **ゴール：** バラバラな支払いを一つにまとめたい。 |
+| **Consolidating projects** | プロジェクトを統合する | 複数のプロジェクトを1つの請求先に紐付けること。 |
+| **Inactive environments** | 非アクティブな（今使っていない）環境 | 別のクラスター設定を確認する際に出てくる。 |
+| **Minimal steps** | 最小の手間で | **正解へのヒント：** 最も効率的な標準機能を選べ。 |
+
+---
+
+## 2. 技術ポイント (Technical Deep Dive)
+
+### 🚀 HTTP Reverse Proxy（リバースプロキシ）
+
+* **役割：** インターネットからのアクセスを一番前で受け、裏側のサーバーへ中継・キャッシュする**「受付窓口」**。
+* **代表例：** **Nginx** (エンジンエックス), **Apache** (アパッチ), **Varnish** (バーニッシュ)。
+* **【試験ハック】：**
+* 問題文に「HTTP Reverse Proxy」とあれば、正解は **Compute Engine (VM)**。
+* **Memorystore (Redis)** は「高速な倉庫」に過ぎず、HTTP窓口にはなれないため、この文脈では**即切り**。
+
+
+
+### ☸️ GKE / Kubernetes の管理
+
+* **境界線：**
+* **`gcloud`**：GCPという「プラットフォーム」の設定（プロジェクト、APIなど）。
+* **`kubectl`**：Kubernetesという「OSの中」の設定（ポッド、コンテキストなど）。
+
+
+* **【試験ハック】：**
+* 「非アクティブな環境の設定を確認する」なら、**`kubectl config use-context`** で切り替えてから **`kubectl config view`** で見るのが最短。
+
+
+
+---
+
+## 3. 今日の「条件反射」チートシート追加分
+
+* **[支払い]** `Personal cards` / `Reimburse` ➔ **New Billing Account を作成して Link する**。
+* **[マシン]** `Memory 32GB` ＋ `Low CPU` ➔ **Custom Machine Type** でメモリだけ盛る。
+* **[ネットワーク]** `On-prem` ➔ `GCS (Private)` ➔ **restricted.googleapis.com** ＋ **DNS CNAME**。
+
+---
+
+
