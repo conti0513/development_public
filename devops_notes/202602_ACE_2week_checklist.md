@@ -52,6 +52,14 @@
 * **コンテナ / 低トラフィック / コスト最小**
 * 👉 **`Cloud Run`** (Scale to Zero が決め手)。
 
+    1-Q11 ハック：サーバーレスコンテナの選択
+    キーワード： Container image + HTTP endpoint + Very few users (または Low traffic)
+    正解： Cloud Run
+    英語ハック：
+    Pay-as-you-go：使った分だけ払う。
+    Incurs costs only when...：～のときだけ費用が発生する。
+    Idle：アイドル状態（暇な時間）。Cloud Runなら暇な時間のコストは0。
+
 
 * **GKEのオートスケーリング**
 * 👉 中身（Pod）を増やす ➔ **`HPA`** (Horizontal Pod Autoscaler)
@@ -89,6 +97,19 @@
 * **キーワード：** `Minimize cost`, `Almost no CPU usage`。比率が歪ならカスタム一択。
 
 
+** clout logging **
+    1-Q12: ログの分析用転送 (Logs Export to BigQuery)
+    キーワード：Logs to BigQuery, Analysis, Cost efficiency
+    正解：Cloud Logging Sink (Filter ➔ Create Export ➔ BigQuery)
+    ハック：**「ログをどこかへ送る」**なら、余計なサービスを挟まずに Sink（シンク） を使うのが常に最短・最安。
+
+    1-Q13: ログの長期保管 (Log Retention for 3 Years)
+    キーワード：3 years, Store logs, Cost-effective
+    正解：Cloud Storage (Coldline) への Sink。
+    ハック
+    BigQuery = 高機能・高コスト（分析用）。
+    GCS (Coldline) = 低機能・低コスト（保存用）。
+    「3年間」のような長期保存は、GCSのコールド系ストレージが鉄板。
 
 ---
 
@@ -125,10 +146,30 @@
 
 ### ストレージ：アクセス頻度（コスト最適化）
 
-* **毎日〜月1回未満** 👉 `Standard`
-* **30日以上触らない（バックアップ）** 👉 `Nearline`
-* **90日以上触らない（アーカイブ）** 👉 `Coldline`
-* **365日以上触らない（法規制・監査用）** 👉 `Archive`
+　　１−１４
+
+    📦 GCS ストレージクラス・運用ハック
+    【クラス選択の境界線】
+    Standard: 毎日〜月1回。Web画像など。
+    Nearline: 月1回以上。バックアップ用。
+    Coldline: 年1回以上 (DR / 災害復旧用)。※Q14の正解。
+    Archive: 数年に1回。監査・法規制データ用。
+
+    【運用・コスト最適化】
+    原則: 用途（アクセス頻度）ごとに バケットを分ける。
+    自動化 (Lifecycle Management):
+    「最初は頻繁に、後は長期保存」なら迷わずこれ。
+    経過日数（Age）に応じて、自動で安いクラスへ移動させる。
+
+    プラン変更の注意点:
+    バケットのデフォルトクラスを変更しても、既存ファイルには適用されない。
+    既存分も一括変更したいなら、Lifecycle Management か gsutil rewrite を使う。
+
+    【試験スキャン単語】
+    Disaster Recovery (DR) ➔ Coldline
+    Long-term retention ➔ Coldline / Archive
+    Minimal steps / Automatically ➔ Lifecycle Management
+
 
 ### データベース：用途と規模
 
@@ -211,7 +252,15 @@
 | **Appropriate IAM roles** | 適切なIAMロール | **ゴール：** 最小権限（Least Privilege）を守れ。 |
 | **Production project** | 本番環境プロジェクト | 開発（Dev）とは別の、権限管理が厳しい場所。 |
 
+
+### 4. そのほか
+that creates personalized stargazing apps　直訳： 個人向けの「星空観察アプリ」を作っている（会社）。
+Virtual telescope　直訳： 仮想望遠鏡。
+Adhere (アドヒア) 意味： （規則・方針などに）忠実に従う、固守する。
+Retention (リテンション) 意味： 保持、保管。
+
 ---
+
 
 ### 💡 ACE単語ハック
 
