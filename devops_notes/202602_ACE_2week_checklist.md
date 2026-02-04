@@ -16,6 +16,17 @@
 * 👉 **`10.0.0.0/8`**
 * **ハック：** 数字が小さいほどデカい（/8 > /24）。`10.0.0.0` 系列がプライベートIPの王者。
 
+** Shared VPC (Host / Service Projectの関係)
+    Host Project: ネットワークの「持ち主」。
+    Service Project: ネットワークを「借りる人」。
+    「プロジェクト間でネットワークを共有」かつ「管理を楽に」ならShared VPC一択。
+
+** Static IP
+    Q1-16：ライセンスサーバーのIPを固定したい
+    毒（課題）： IP address 10.194.3.41 (ハードコード済み), cannot modify software.
+    薬（正解）： static internal IP address を gcloud で予約（Reserve）して割り当てる。
+    ハック： 「内部の特定のIPが必要」なら Static Internal IP。
+    選択肢Dの「Ephemeral（一時的）を後で昇格させる」は、最初にどのIPが割り振られるか運任せなので、指定のIP（10.194.3.41）にできる保証がなく不正解。
 
 
 ---
@@ -41,7 +52,14 @@
 * **SAキーの寿命制限（一時対策）**
 * 👉 **Organization Policy** で `Key Lifetime` を制限。
 
-
+** IAM Condition
+    Q1-19: 期間限定の権限付与 (IAM Condition)
+    キーワード：Temporary access, Automatically expire, External auditor
+    正解：IAM Condition
+    ハック：
+    Time-based access: 「いつまで」という条件で権限を縛る。
+    管理者の消し忘れを防止するベストプラクティス。
+    監査人や一時的な作業者に最適。
 
 ---
 
@@ -65,6 +83,19 @@
 * 👉 中身（Pod）を増やす ➔ **`HPA`** (Horizontal Pod Autoscaler)
 * 👉 器（Node）を増やす ➔ **`Cluster Autoscaler`**
 
+貼り付けていただいたQ16〜Q20の内容、すべてスキャンしました！ これらはACE試験の「重箱の隅」をつつくような実戦問題が含まれています。 GitHubのチートシートを**「プロレベル」**に引き上げるためのハックを整理します。
+
+特に**Q17（特定の費用の監視）とQ20（API有効化）**は、うっかりミスを誘う良問です。
+
+
+** Cluster Auto Scaler
+    Q1-19：GKEで、マイクロサービスが増えても「インフラ」を自動で拡張したい
+    毒（課題）： scale automatically, new features added in the future, minimize manual configuration.
+    薬（正解）： Cluster Autoscaler (Node pool の autoscaling 有効化)。
+    ハック： * HPA (A): 「Pod（アプリ）」を増やすだけ。
+    VPA (B): 「Podのサイズ（CPU/メモリ）」を大きくするだけ。
+    Cluster Autoscaler (C): 「Node（器）」を増やす。新しいサービスが次々増えるなら、器（Node）を増やす設定が必須。
+
 
 * **GKE環境の切り替え（コンテキスト操作）**
 * 👉 **`kubectl config use-context`** ➔ **`kubectl config view`**
@@ -80,6 +111,30 @@
 * 👉 **`MIG`** + **`HTTP Health Check`**。
 
 
+** Spot VM / Preemptible VM
+    1-
+    キーワード：Batch job, Minimize cost, Fault-tolerant（再開可能）
+    正解：Spot VM (旧名: Preemptible VM)
+    ハック：
+    最大91%オフ。
+    24時間の制限なし（Spotの場合。Preemptibleは最大24時間）。
+    Googleがリソースを必要としたら強制終了される。
+    「消えてもいい、安さが正義」な仕事用。
+
+** Managed Instance Group MIG
+    Q1-18：VMが死んだら「自動で」作り直したい（Autohealing）
+    毒（課題）： automatically re-created, unresponsive, minimum number of steps.
+    薬（正解）： Managed Instance Group (MIG) + Autohealing Health Check.
+    ハック： 「自動で作り直す（Re-create）」のは MIG の仕事。
+    ロードバランサ（A, B）は「不調なVMにトラフィックを送らない」だけで、VMを削除して作り直す権限はありません。
+
+** API enable
+    Q20：gcloud CLIでVMを作る前の「絶対条件」
+    毒（課題）： created project, linked billing, next prerequisite.
+    薬（正解）： compute.googleapis.com API の有効化。
+    ハック： GCPは「プロジェクトを作っただけ」では何もできません。
+    各サービス（Compute, Storageなど）の APIを有効化（Enable） しないと、gcloudコマンドはエラーになります。
+    ※デフォルトVPC（B）は最初からあるので「作成する」必要はありません。
 
 ---
 
@@ -110,6 +165,24 @@
     BigQuery = 高機能・高コスト（分析用）。
     GCS (Coldline) = 低機能・低コスト（保存用）。
     「3年間」のような長期保存は、GCSのコールド系ストレージが鉄板。
+
+
+** capping
+    Q1-: 予算の自動停止 (Budget Capping & Automation)
+    キーワード：Prevent overspending, Automate capping, Stop resources
+    正解：Pub/Sub ＋ Cloud Functions
+    ハック：
+    予算アラートそのものに「リソース停止」のボタンはない。
+    Pub/Sub を経由して Cloud Functions を叩き、Billingを解除 するのが鉄板構成。
+
+**Billing Data
+    Q1-17：特定リソース（Apache）の「下り通信費」だけを監視したい
+    毒（課題）： egress network costs, only for Apache server, not for entire project.
+    薬（正解）： Billing data ➔ BigQuery ➔ Cloud Functions でクエリを投げて判定。
+    ハック： 予算アラート（Budget Alert）の限界を知る問題。
+    予算アラートは「プロジェクト全体」や「請求アカウント全体」には設定できますが、「特定のVMの、特定の種類（Egress）の費用」という細かい絞り込みはできません。
+    細かいコスト分析 ➔ BigQueryへの請求データエクスポート が鉄板の正攻法。
+
 
 ---
 
@@ -258,6 +331,7 @@ that creates personalized stargazing apps　直訳： 個人向けの「星空�
 Virtual telescope　直訳： 仮想望遠鏡。
 Adhere (アドヒア) 意味： （規則・方針などに）忠実に従う、固守する。
 Retention (リテンション) 意味： 保持、保管。
+prerequisite 前提条件
 
 ---
 
