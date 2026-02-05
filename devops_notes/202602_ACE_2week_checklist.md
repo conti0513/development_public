@@ -379,3 +379,102 @@ prerequisite 前提条件
 ---
 
 
+
+Q21〜Q25のスキャンを完了しました。
+このセクションには、**「スケーリングの種類の見分け」**や**「DBの復旧設定」**など、ACE試験で確実に1点を取るための「公式」が詰まっています。
+
+GitHubのチートシートに加えるべき**「瞬殺ハック」**を整理します。
+
+---
+
+### 🚀 Q21-Q25：実戦ハック・スキャン
+
+#### **Q21：App Engineで「常に4台、暇なインスタンス」を待機させたい**
+
+* **毒（課題）：** `at least 4 unoccupied instances`, `sudden increases in traffic`.
+* **薬（正解）：** **Automatic Scaling** + **`min_idle_instances`** を4に設定。
+* **ハック：** * **Idle（アイドル）** ＝ 「暇な、仕事をしていない」状態。
+* 急なスパイクに備えて「予備のエンジンをふかしておく」設定が `min_idle_instances` です。
+* `min_instances` (B) だと、その4台が既に忙しい可能性があり、スパイクに対応できません。
+
+
+
+#### **Q22：GCSで30日過ぎた画像を「消さずに安く」したい**
+
+* **毒（課題）：** `older than 30 days`, `no longer needed in the near future`, `minimize costs`.
+* **薬（正解）：** **Object Lifecycle Management** で **Archive Storage** へ変更。
+* **ハック：** 「時間が経ったら何かする」は **Lifecycle** の仕事。
+* **Retention Policy (C)** は「削除禁止」の設定なので、コスト削減とは逆行します。
+* **Archive (A)** は最も安いクラス（保管料が激安）なので、削除したくない場合の正解です。
+
+
+
+#### **Q23：Cloud SQLで「間違えて消したデータ」を戻したい**
+
+* **毒（課題）：** `relational data`, `point-in-time recovery (PITR)`, `MySQL`.
+* **薬（正解）：** **Cloud SQL (MySQL)** で **Binary Logging** を有効化。
+* **ハック：** **「PITR（特定の時点に戻す）」＝「Binary Logging」**。
+* これはセットで覚える呪文です。
+* Cloud Spanner (C, D) は高機能ですが、小規模（small set）でコスト重視（cost-effective）なら Cloud SQL が正解。
+
+
+
+#### **Q24：Cassandraを「速攻で」開発環境に用意したい**
+
+* **毒（課題）：** `Cassandra`, `isolated development environment`, `complete migration quickly`, `minimize overhead`.
+* **薬（正解）：** **Cloud Marketplace** でプリセット画像を使う。
+* **ハック：** **「サードパーティ製ソフト（Cassandra, WordPress, Nginx等）」を「最速」で入れるなら Marketplace。**
+* 自分でインストール（A）や、スナップショットを配る（C, D）のは手間（Overhead）がかかりすぎるため、不正解。
+
+
+
+#### **Q25：他チームと同じ構成を「完全に独立した環境」で作りたい**
+
+* **毒（課題）：** `organized independently`, `separate resources`.
+* **薬（正解）：** **新しい Project を作成する**（IDもユニークなものを付与）。
+* **ハック：** GCPにおける**「独立した環境」の最小単位はプロジェクト**です。
+* 同じプロジェクト内で権限（IAM）を分ける（A, B）のは、リソースが混ざるため「独立」とは言えません。
+
+
+
+---
+
+### 📌 GitHubメモ・チートシート追加用
+
+> **Q21-25 実戦ハック**
+> * **App Engine スケーリング**:
+> * **`min_idle_instances`**: スパイク対策の「予備軍」。
+> * **`Automatic Scaling`**: リクエストに応じて勝手に増減。
+> 
+> 
+> * **GCS ライフサイクル**:
+> * **「30日経ったら安く」** ➔ Lifecycle でクラス変更 (Archiveへ)。
+> * **Retention Policy**: 「消させない」ためのロック。コスト削減ではない。
+> 
+> 
+> * **DBの復旧 (PITR)**:
+> * **Cloud SQL + Binary Logging** = タイムマシン（過去の特定の瞬間に戻れる）。
+> 
+> 
+> * **Marketplace**:
+> * **「Cassandraをすぐ使いたい」** ➔ 自分で作らず Marketplace からポチる。
+> 
+> 
+> * **リソースの分離**:
+> * **「完全に独立・別管理」** ➔ **New Project** を作る。Project IDは全世界で唯一（Unique）である必要がある。
+> 
+> 
+> 
+> 
+
+---
+
+### 💡 振り返り
+
+今回のスキャンの目玉は **Q21の `min_idle_instances**` と **Q23の `Binary Logging**` です。
+これらは「言葉を知っているかどうか」だけで勝負が決まる、典型的なACE問題です。
+
+これでQ25まで、全体の半分近くを攻略しましたね！
+この調子でハックを積み上げれば、本番はかなり楽になるはずです。
+
+**Would you like to continue with Q26-Q30, or take a break here for your PJT work?**
