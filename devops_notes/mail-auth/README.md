@@ -10,8 +10,8 @@
 
 ## 🚀 主要資産
 
-* **[QA・デプロイ計画書](https://www.google.com/search?q=./01_mail_auth_master.md)**: BIMI導入に向けた全工程のロードマップ。
-* **[verify-spf-rfc7208.sh](https://www.google.com/search?q=./verify-spf-rfc7208.sh)**: 受信側サーバー（M365/Gmail等）の挙動をシミュレートする完全再帰型SPFバリデーター。
+* **[QA・デプロイ計画書](https://github.com/conti0513/development_public/blob/main/devops_notes/mail-auth/01_mail_auth_master.md)**: BIMI導入に向けた全工程のロードマップ。
+* **[verify-spf-rfc7208.sh](https://github.com/conti0513/development_public/blob/main/devops_notes/mail-auth/verify-spf-rfc7208.sh)**: 受信側サーバー（M365/Gmail等）の挙動をシミュレートする完全再帰型SPFバリデーター。
 
 ---
 
