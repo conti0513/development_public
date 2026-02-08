@@ -6,7 +6,7 @@
 
 ## 2. クイックスタート（利用者向け）
 移行期間中、検証用として以下の URL を開放しています。
-- **URL:** `https://mail-gate-keeper-xxxx.a.run.app`（実際の URL に置換）
+- **URL:** `https://mail-gate-keeper-841765922679.asia-northeast1.run.app/`（実際の URL に置換）
 - **使い方:** 診断したいドメイン（例: `example.com`）を入力して実行。
 - **判定基準:** - 🟢 **Pass**: 10回未満。本番投入可能な状態です。
     - 🟡 **Warn**: 8〜9回。今後のサービス追加時に注意が必要です。
