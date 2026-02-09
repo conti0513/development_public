@@ -1,134 +1,117 @@
-# Tech Inventory & Logs
+# Tech Inventory
 
-インフラ構成・設計判断・運用プロセスを、  
-**再利用可能な技術資産として整理・蓄積したリポジトリ**です。
+本リポジトリは、  
+業務上必要となった構成・設計・実装を  
+**記録として整理したもの**です。
 
-個別案件の成果物ではなく、  
-「なぜその構成にしたのか」「どう運用・改善してきたか」を  
-**第三者が追える形で残すこと**を目的としています。
+特定の技術スタックやプロダクトを誇示する意図はなく、  
+再現性・説明可能性・運用性を重視しています。
 
 ---
 
-## Implementation Archives
+## Scope
 
-サーバーレス基盤の設計から、  
-現場に蓄積した運用負債を解消するための自動化までを扱います。
+主に、以下の領域を扱っています。
 
-### 1) Cloud Run / Secure Egress（固定IP・外部接続）
+---
 
-- パス：`02_ARCHITECTURE/serverless-ftps-api-public/`
-- 概要：  
-  Cloud Run から固定IPで外部システムへ安全に通信する構成例。  
-  VPC Connector + Cloud NAT を用いた **制御可能なアウトバウンド設計**。
+### Infrastructure as Code
+
+クラウド基盤を  
+コードとして管理するための設計と実装。
+
+- Terraform による構成管理
+- Cloud Run / Network / Identity を含む構成
+- 設計資料とコードの対応関係を保持
+
+▶︎ Architecture  
+https://github.com/conti0513/development_public/tree/main/02_ARCHITECTURE
 
 ```mermaid
 graph LR
-    subgraph VPC
-        direction LR
-        CR[Cloud Run] --> SVC[VPC Connector]
-        SVC --> NAT[Cloud NAT]
-    end
-    NAT -->|Static IP| Ext[External]
+    IaC[Terraform] --> Cloud[Cloud Resources]
+    Cloud --> Run[Cloud Run]
+    Cloud --> Net[Network]
+    Cloud --> Id[Identity]
 ````
 
-* 想定ユースケース：
-
-  * SFTP / FTPS 連携
-  * 外部ベンダー接続
-  * IP制限が必要な業務連携
-
 ---
 
-### 2) Google Workspace / Slack 自動連携
+### Security / Identity / Mail
 
-* パス：`03_IMPLEMENTATIONS/daily-sheet-to-slack/`
-* 概要：
-  Google Sheets 上の業務データを起点に、
-  Apps Script / Python を用いて Slack へ通知・連携する実装例。
+認証・認可・メール基盤まわりの整理。
+
+* Google Workspace / IdP 連携
+* SPF / DKIM / DMARC の運用設計
+* 検証結果を前提とした記録
+
+▶︎ Identity / SSO
+[https://github.com/conti0513/development_public/tree/main/02_ARCHITECTURE/02_IDENTITY_ACCESS/gws-idp](https://github.com/conti0513/development_public/tree/main/02_ARCHITECTURE/02_IDENTITY_ACCESS/gws-idp)
+
+▶︎ Mail / Security
+[https://github.com/conti0513/development_public/tree/main/02_ARCHITECTURE/03_SECURITY_MAIL](https://github.com/conti0513/development_public/tree/main/02_ARCHITECTURE/03_SECURITY_MAIL)
 
 ```mermaid
 graph LR
-    SS[Google Sheets] --> GAS[Apps Script] --> SL[Slack]
-    GWS[GWS API] <--> Py[Python Script]
+    User --> IdP[IdP]
+    IdP --> GWS[Google Workspace]
+    GWS --> Mail[Mail Flow]
+    Mail --> Auth[SPF / DKIM / DMARC]
 ```
-
-* 想定ユースケース：
-
-  * 日次・週次レポートの自動通知
-  * 手作業オペレーションの削減
-  * 情報共有の属人化解消
 
 ---
 
-### 3) Windows セットアップ自動化
+### Secure File Transfer
 
-* パス：`03_IMPLEMENTATIONS/windows_setup_automation/`
-* 概要：
-  初期状態の Windows 環境に対し、
-  PowerShell による **ポリシー・アプリ・設定の自動適用**を行う構成。
+FTP / SFTP を含む
+ファイル連携基盤の構成検討。
+
+* Cloud Run + VPC Connector + NAT
+* 固定IPを前提とした外部連携
+* 実運用を想定した分離構成
+
+▶︎ Serverless FTPS / SFTP
+[https://github.com/conti0513/development_public/tree/main/02_ARCHITECTURE/01_PLATFORM_CLOUD/serverless-ftps-api-public](https://github.com/conti0513/development_public/tree/main/02_ARCHITECTURE/01_PLATFORM_CLOUD/serverless-ftps-api-public)
 
 ```mermaid
 graph LR
-    Win[Raw Windows OS] --> PS[PowerShell]
-    PS --> Pol[Policy / Apps / Config]
+    App[Cloud Run] --> VPC[VPC Connector]
+    VPC --> NAT[Cloud NAT]
+    NAT --> Ext[External FTPS/SFTP]
 ```
 
-* 想定ユースケース：
+---
 
-  * キッティング作業の標準化
-  * 管理者依存の排除
-  * 少人数情シスでの運用効率化
+## Structure
+
+```text
+00_README.md
+01_TIL/
+02_ARCHITECTURE/
+03_IMPLEMENTATIONS/
+```
+
+* `02_ARCHITECTURE/`
+  設計・構成・検証の記録
+* `03_IMPLEMENTATIONS/`
+  実装例・自動化スクリプト
+
+※ 個人的なメモや下書きは Git 管理対象外。
 
 ---
 
-## 技術スタック
+## Notes
 
-* **Infrastructure**
-
-  * Google Cloud, AWS
-  * Entra ID, Microsoft 365（Intune）
-* **Governance / Control**
-
-  * ITGC 対応
-  * ID・アクセス管理
-* **Automation**
-
-  * Python
-  * PowerShell
-  * Google Apps Script
-  * LLM を用いた補助的オーケストレーション
+* 単発の実装ではなく、構造として残すこと
+* 後から読み返せる粒度で記録すること
+* 運用・引き継ぎを前提に考えること
 
 ---
 
-## コンテンツ構成
+## Background
 
-* **01_TIL**
-  日々の検証・試行錯誤・学習ログ。
-  技術選定や失敗の記録を含め、意思決定の背景を残しています。
+インフラ／ネットワーク／ID 基盤を中心に業務経験。
 
-* **02_ARCHITECTURE**
-  アーキテクチャ設計書、構成検討メモ、
-  セキュリティ・ガバナンス・IaC・運用設計の集約。
-
-* **03_IMPLEMENTATIONS**
-  実装例・プロトタイプ・自動化スクリプト。
-  実務で再利用可能な最小構成を意識しています。
-
-* **04_PROJECTS**
-  テーマ単位でまとめたプロジェクト形式の整理。
-  要件 → 設計 → 実装 → 運用を一連で俯瞰できる構成。
-
----
-
-## Profile
-
-インフラ領域で20年以上の実務経験。
-通信キャリアのネットワーク設計から、
-大規模組織の ID 基盤運用、スタートアップ環境での自動化・改善まで対応。
-
-一貫したスタンスは、
-**「一過性の作業を、再利用可能な構造として残すこと」**。
-
-商談・技術検討時において、
-設計思想・運用観点・リスク判断を共有できることを重視しています。
+現場で必要になったものを整理し、
+使える形で残しています。
 ---
