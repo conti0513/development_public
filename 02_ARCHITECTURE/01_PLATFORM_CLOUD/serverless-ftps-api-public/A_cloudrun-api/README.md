@@ -106,10 +106,3 @@ bash 05_check_vsftpd_login.sh
 ```
 
 ---
-
-## 🔚 次ステップ
-
-- 必要に応じて `config.api.json.sample` を作成して、実機との差分を管理
-- READMEはZennの分割記事ベースにも使える構成になってます
-
----
