@@ -1,0 +1,14 @@
+name: AI Worker Dispatch
+
+on:
+  repository_dispatch:
+    types: [ai-exec-command]
+
+jobs:
+  execute:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Receive Instruction
+        run: |
+          echo "Slackからの指示を受信しました: ${{ github.event.client_payload.instruction }}"
+          echo "Status: Phase 1 Connectivity Success!"
