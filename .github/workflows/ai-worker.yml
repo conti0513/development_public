@@ -15,14 +15,17 @@ jobs:
 
       - name: Create TIL File and PR
         run: |
-          # Go側のJSONキー (category, filename, content) に完全準拠
-          CATEGORY="${{ github.event.client_payload.category }}"
-          FILENAME="${{ github.event.client_payload.filename }}"
-          CONTENT="${{ github.event.client_payload.content }}"
+          # Payloadが空だった場合のガードレールを設置
+          RAW_CATEGORY="${{ github.event.client_payload.category }}"
+          CATEGORY="${RAW_CATEGORY:-01_TIL}"
+          
+          RAW_FILENAME="${{ github.event.client_payload.filename }}"
+          FILENAME="${RAW_FILENAME:-$(date +'%Y%m%d_%H%M%S')_til.md}"
+          
+          RAW_CONTENT="${{ github.event.client_payload.content }}"
+          CONTENT="${RAW_CONTENT:-'Claude 3.5 Sonnet からの応答、またはPayloadが空でした。ｗｗｗ'}"
 
           mkdir -p "$CATEGORY"
-          
-          # ファイルに書き込み
           echo "$CONTENT" > "$CATEGORY/$FILENAME"
           
           git config user.name "AI Junior"
