@@ -1,5 +1,4 @@
-name: AI Worker Dispatch
-
+name: AI Worker
 on:
   repository_dispatch:
     types: [ai-exec-command]
@@ -7,8 +6,28 @@ on:
 jobs:
   execute:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
     steps:
-      - name: Receive Instruction
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Create TIL File and PR
         run: |
-          echo "Slackからの指示を受信しました: ${{ github.event.client_payload.instruction }}"
-          echo "Status: Phase 1 Connectivity Success!"
+          mkdir -p 01_TIL
+          FILENAME="01_TIL/$(date +'%Y%m%d_%H%M%S')_til.md"
+          echo "${{ github.event.client_payload.message }}" > $FILENAME
+          
+          git config user.name "AI Junior"
+          git config user.email "ai-junior@example.com"
+          
+          BRANCH_NAME="ai-til-$(date +'%s')"
+          git checkout -b $BRANCH_NAME
+          git add .
+          git commit -m "🤖 AI Entry: TIL Update"
+          git push origin $BRANCH_NAME
+          
+          gh pr create --title "🤖 AI Entry: New TIL Found" --body "Slackからの投稿を基に生成しました。" --base main --head $BRANCH_NAME
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
