@@ -15,9 +15,15 @@ jobs:
 
       - name: Create TIL File and PR
         run: |
-          mkdir -p 01_TIL
-          FILENAME="01_TIL/$(date +'%Y%m%d_%H%M%S')_til.md"
-          echo "${{ github.event.client_payload.message }}" > $FILENAME
+          # Go側のJSONキー (category, filename, content) に完全準拠
+          CATEGORY="${{ github.event.client_payload.category }}"
+          FILENAME="${{ github.event.client_payload.filename }}"
+          CONTENT="${{ github.event.client_payload.content }}"
+
+          mkdir -p "$CATEGORY"
+          
+          # ファイルに書き込み
+          echo "$CONTENT" > "$CATEGORY/$FILENAME"
           
           git config user.name "AI Junior"
           git config user.email "ai-junior@example.com"
@@ -25,9 +31,9 @@ jobs:
           BRANCH_NAME="ai-til-$(date +'%s')"
           git checkout -b $BRANCH_NAME
           git add .
-          git commit -m "🤖 AI Entry: TIL Update"
+          git commit -m "🤖 AI Entry: $FILENAME"
           git push origin $BRANCH_NAME
           
-          gh pr create --title "🤖 AI Entry: New TIL Found" --body "Slackからの投稿を基に生成しました。" --base main --head $BRANCH_NAME
+          gh pr create --title "🤖 AI Entry: $FILENAME" --body "Slack投稿からCTO流TILテンプレートで自動生成しました。" --base main --head $BRANCH_NAME
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
