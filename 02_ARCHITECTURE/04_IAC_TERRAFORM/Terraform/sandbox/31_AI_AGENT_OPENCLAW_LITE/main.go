@@ -54,7 +54,7 @@ func askClaude(input string) (AIResponse, error) {
 	})
 	if err != nil { return AIResponse{}, err }
 	var aiRes AIResponse
-	err = json.Unmarshal([]byte(resp.Content[0].Text), &aiRes)
+	err = json.Unmarshal([]byte(*resp.Content[0].Text), &aiRes)
 	return aiRes, err
 }
 
