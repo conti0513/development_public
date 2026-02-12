@@ -88,3 +88,26 @@ Payload の欠損に備えた YAML 側でのガードレール（デフォルト
 現在、Claude API から返却される JSON のパース処理および GitHub Actions への Dispatch ロジックを Go で作り込んでいます。Go の厳格な型安全性を活かし、ポインタデリファレンスによるレスポンス処理を実装済みです。
 
 ---
+
+## 5. Next Action: GCP Native への転換（OpenGemini-Lite 計画）
+
+Claude API の残高不足および GCP エコシステムとの親和性を考慮し、AI モデルを **Google Gemini 1.5 Flash** へ移行する。
+
+### 移行のメリット
+
+* **コスト最適化**: 無料枠の活用および Google Cloud 請求への一本化。
+* **認証の簡素化**: `ADC (Application Default Credentials)` を利用し、API Key 管理をサービスアカウントへ委任。
+* **パフォーマンス**: 同一リージョン内での低レイテンシな推論実行。
+
+### 明日の実装タスク
+
+1. **SDK の変更**: `github.com/liushuangls/go-anthropic/v2` → `google.golang.org/api/genai`
+2. **ロジックの置換**: `askClaude` 関数を `askGemini` へリファクタ。
+* プロンプト（System Instruction）はそのまま流用。
+* JSON Mode（Response MIME Type: `application/json`）を有効化し、パースの堅牢性を向上。
+
+
+3. **プロジェクト名改訂**: `OpenClaw-Lite` → **`OpenGemini-Lite`** への一括置換。
+4. **デプロイ**: `gcloud run deploy` にて Gemini 呼び出し用の権限（Vertex AI ユーザー等）を付与。
+
+---
