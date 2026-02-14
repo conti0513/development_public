@@ -94,7 +94,7 @@ Slack を起点とし、最新の AI モデルと CI/CD パイプラインを直
 * **疎結合アーキテクチャ**: 思考（AI）と実行（CI）を分離し、将来的なマルチエージェント化や他プラットフォーム連携を容易にする拡張性を確保。
 
 ▶︎ AI Agent (OpenGemini-Lite)
-[https://github.com/conti0513/development_public/blob/main/02_ARCHITECTURE/04_IAC_TERRAFORM/Terraform/design_docs/31_AI_AGENT_OPENGEMINI_LITE.md](https://www.google.com/search?q=https://github.com/conti0513/development_public/blob/main/02_ARCHITECTURE/04_IAC_TERRAFORM/Terraform/design_docs/31_AI_AGENT_OPENGEMINI_LITE.md)
+[https://github.com/conti0513/development_public/blob/main/02_ARCHITECTURE/04_IAC_TERRAFORM/Terraform/design_docs/31_AI_AGENT_OPENGEMINI_LITE.md](https://github.com/conti0513/development_public/blob/main/02_ARCHITECTURE/04_IAC_TERRAFORM/Terraform/design_docs/31_AI_AGENT_OPENGEMINI_LITE.md)
 
 ```mermaid
 graph LR
