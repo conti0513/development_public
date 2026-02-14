@@ -84,57 +84,28 @@ graph LR
 
 ---
 
-### Event-Driven Automation / AI Agent
+### Event-Driven AI Agent / OpenGemini-Lite
 
-Slack を起点とした
-イベント駆動型自動化基盤の設計検証。
+Slack を起点とし、最新の AI モデルと CI/CD パイプラインを直結させた**自律型イベント駆動基盤**。
 
-* Cloud Run によるステートレス実行
-* GitHub Actions を実行レイヤーとした構成
-* `repository_dispatch` を用いた疎結合設計
-* 将来的な AI 統合を前提とした拡張可能構造
+* **Gemini 2.0/3.0 Ready**: `gemini-flash-latest` エイリアスを採用し、AIモデルの進化に自動追従するメンテフリーな設計。
+* **Cloud Run × Go**: ステートレスかつ低レイテンシな「脳」として、Slack API の制約内で高度な構造化データを錬成。
+* **GHA as Muscle**: GitHub Actions を実行レイヤーとし、`repository_dispatch` を通じてインフラ操作から TIL 生成までを完全自動化。
+* **疎結合アーキテクチャ**: 思考（AI）と実行（CI）を分離し、将来的なマルチエージェント化や他プラットフォーム連携を容易にする拡張性を確保。
 
-▶︎ AI Agent (OpenClaw-Lite)
-[https://github.com/conti0513/development_public/blob/main/02_ARCHITECTURE/04_IAC_TERRAFORM/Terraform/design_docs/31_AI_AGENT_OPENCLAW_LITE.md
-](https://github.com/conti0513/development_public/blob/main/02_ARCHITECTURE/04_IAC_TERRAFORM/Terraform/design_docs/31_AI_AGENT_OPENCLAW_LITE.md
-)
+▶︎ AI Agent (OpenGemini-Lite)
+[https://github.com/conti0513/development_public/blob/main/02_ARCHITECTURE/04_IAC_TERRAFORM/Terraform/design_docs/31_AI_AGENT_OPENGEMINI_LITE.md](https://www.google.com/search?q=https://github.com/conti0513/development_public/blob/main/02_ARCHITECTURE/04_IAC_TERRAFORM/Terraform/design_docs/31_AI_AGENT_OPENGEMINI_LITE.md)
 
 ```mermaid
 graph LR
-    Slack --> Run[Cloud Run]
-    Run --> GHA[GitHub Actions]
-    GHA --> Tasks[Infra / Automation Tasks]
+    Slack -- Mention --> Run[Cloud Run: Go/Gemini]
+    Run -- Dispatch --> GHA[GitHub Actions]
+    GHA -- Commit/PR --> Repo[GitHub Repository]
+
 ```
 
 ---
 
-## Structure
-
-```
-00_README.md
-01_TIL/
-02_ARCHITECTURE/
-03_IMPLEMENTATIONS/
-```
-
-* `02_ARCHITECTURE/`
-  設計・構成・検証の記録
-
-* `03_IMPLEMENTATIONS/`
-  実装例・自動化スクリプト
-
-※ 個人的なメモや下書きは Git 管理対象外。
-
----
-
-## Notes
-
-* 単発の実装ではなく、構造として残すこと
-* 後から読み返せる粒度で記録すること
-* 運用・引き継ぎを前提に考えること
-* 自動化・イベント駆動を意識した設計を行うこと
-
----
 
 ## Background
 
