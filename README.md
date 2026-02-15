@@ -17,6 +17,59 @@
 
 ---
 
+# 🌌 Development Public / 2026 Innovation Layer
+
+## 🛠️ Main Feature: OpenGemini-Lite (AI-Driven Pipeline)
+
+Slack を起点とし、最新の AI モデルと CI/CD パイプラインを直結させた**自律型イベント駆動基盤**。
+
+* **Gemini 2.0/3.0 Ready**: `gemini-flash-latest` エイリアスを採用し、AIモデルの進化に自動追従するメンテフリーな設計。
+* **Cloud Run × Go (The Brain)**: ステートレスかつ低レイテンシな実行環境で、Slack API の「3秒ルール」を Goroutine で攻略。
+* **GHA as Muscle (Execution)**: GitHub Actions を実行レイヤーとし、`repository_dispatch` を通じてインフラ操作から TIL 生成までを完全自動化。
+* **Decoupled Architecture**: 思考（AI）と実行（CI）を分離。将来的なマルチエージェント化や他プラットフォーム連携を容易にする高い拡張性を確保。
+
+---
+
+### 📊 System Flow
+
+```mermaid
+graph LR
+    subgraph "Interface"
+        A[Slack]
+    end
+    
+    subgraph "Intelligence (Google Cloud)"
+        B(Cloud Run: Go)
+        C[Gemini 1.5/2.0 Flash]
+        B <--> C
+    end
+    
+    subgraph "Automation (GitHub)"
+        D[GitHub Actions]
+        E[(Repository Assets)]
+        D --> E
+    end
+
+    A -- "Mention (Event)" --> B
+    B -- "Structured Dispatch" --> D
+    
+    style B fill:#4285F4,color:#fff
+    style C fill:#4285F4,color:#fff
+    style D fill:#238636,color:#fff
+
+```
+
+---
+
+### 📖 Design Philosophy & Deep Dive
+
+詳細な設計思想、および「AIの癖（UI汚染）」をいかに Go の厳格さで克服したかのドキュメントは以下を参照：
+👉 [Architecture Philosophy (OpenGemini-Lite)][https://github.com/conti0513/development_public/blob/main/02_ARCHITECTURE/04_IAC_TERRAFORM/Terraform/design_docs/31_AI_AGENT_OPENGEMINI_LITE.md](https://github.com/conti0513/development_public/blob/main/02_ARCHITECTURE/04_IAC_TERRAFORM/Terraform/design_docs/31_AI_AGENT_OPENGEMINI_LITE.md)
+
+
+
+---
+
 ### Infrastructure as Code
 
 クラウド基盤を
@@ -80,28 +133,6 @@ graph LR
     App[Cloud Run] --> VPC[VPC Connector]
     VPC --> NAT[Cloud NAT]
     NAT --> Ext[External FTPS/SFTP]
-```
-
----
-
-### Event-Driven AI Agent / OpenGemini-Lite
-
-Slack を起点とし、最新の AI モデルと CI/CD パイプラインを直結させた**自律型イベント駆動基盤**。
-
-* **Gemini 2.0/3.0 Ready**: `gemini-flash-latest` エイリアスを採用し、AIモデルの進化に自動追従するメンテフリーな設計。
-* **Cloud Run × Go**: ステートレスかつ低レイテンシな「脳」として、Slack API の制約内で高度な構造化データを錬成。
-* **GHA as Muscle**: GitHub Actions を実行レイヤーとし、`repository_dispatch` を通じてインフラ操作から TIL 生成までを完全自動化。
-* **疎結合アーキテクチャ**: 思考（AI）と実行（CI）を分離し、将来的なマルチエージェント化や他プラットフォーム連携を容易にする拡張性を確保。
-
-▶︎ AI Agent (OpenGemini-Lite)
-[https://github.com/conti0513/development_public/blob/main/02_ARCHITECTURE/04_IAC_TERRAFORM/Terraform/design_docs/31_AI_AGENT_OPENGEMINI_LITE.md](https://github.com/conti0513/development_public/blob/main/02_ARCHITECTURE/04_IAC_TERRAFORM/Terraform/design_docs/31_AI_AGENT_OPENGEMINI_LITE.md)
-
-```mermaid
-graph LR
-    Slack -- Mention --> Run[Cloud Run: Go/Gemini]
-    Run -- Dispatch --> GHA[GitHub Actions]
-    GHA -- Commit/PR --> Repo[GitHub Repository]
-
 ```
 
 ---
