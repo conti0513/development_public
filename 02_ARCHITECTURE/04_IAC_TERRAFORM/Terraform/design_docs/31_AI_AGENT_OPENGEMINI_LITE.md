@@ -75,5 +75,47 @@ curl -s "https://generativelanguage.googleapis.com/v1beta/models?key=${GEMINI_AP
 model := client.GenerativeModel("gemini-flash-latest")
 
 ```
+---
+
+# 🚩 OpenGemini-Lite: 2026.02.15 最終戦略サマリ
+
+## 1. 現状の状況（Status Quo）
+
+* **設計完了**: 「AIへの引き継ぎ」を軸とした、リポジトリ直下 `05_AGENT_OUTPUTS/` への多角的デリバリー構造が確定。
+* **コンフリクト発生**: AIによる自動マージ（Main）と、手元の設計リバイス（Local）で差分が発生中。
+* **技術選定**: Gemini 1.5 Flash（JSON Mode）/ Go (Goroutine) / Cloud Run (IAM認証) / BQ (ログルーター) の構成。
+
+## 2. 午後のやること（The 5 Implementation Tasks）
+
+床屋から戻り次第、以下の「5つの筋肉（実装）」を動かします。
+
+1. **Git Rebase & Sync**:
+* `git stash` ➔ `pull --rebase` ➔ `pop`。AIの成果を飲み込み、最新設計の `05_` フォルダへ秩序を再構築。
+
+
+2. **IAM & Secret Manager 移行**:
+* APIキーの排除。Cloud Runへの `roles/aiplatform.user` 付与と、`GITHUB_PAT` 等の Secret Manager マウント。
+
+
+3. **汎用 AI ロジックの換装**:
+* プロンプトの外部化。Go 側は `SYSTEM_PROMPT` を読み込み、ただ JSON をパースして Dispatch するだけの「知能レイヤー」へ。
+
+
+4. **05番（AGENT_OUTPUTS）の開通**:
+* 4つの Role（Consultation/Blueprints/Snippets/Journal）に応じた自動フォルダ振り分けロジックの実装。
+
+
+5. **BQ ログルーターの設定**:
+* 標準出力からの「書かないデータ収集」設定。Cloud Logging から BQ へデータを流すパイプを完成させる。
+
+
+
+## 3. 本日 追記・資産化していくこと（Continuous Assets）
+
+実装後、夜にかけて以下の「対話の厚み」をリポジトリに蓄積します。
+
+* **スレッド対話のログ**: `thread_ts` を使った修正ループの履歴。
+* **AI 技術顧問の知見**: 本日の「設計リバイス」そのものを AI に Markdown 化させ、`consultations/` に保存。
+* **BQ への初データ投下**: 開発中の全ログを BQ に蓄積し、本日の「思考の変遷」を可視化。
 
 ---
