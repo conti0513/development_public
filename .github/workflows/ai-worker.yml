@@ -22,8 +22,6 @@ jobs:
           CATEGORY="${{ github.event.client_payload.category || '05_AGENT_OUTPUTS/04_JOURNAL' }}"
           FILENAME="${{ github.event.client_payload.filename || 'til.md' }}"
           mkdir -p "$CATEGORY"
-
-          # 🚀 安全にデコードして封印解除
           echo "$ENCODED_CONTENT" | base64 --decode > "$CATEGORY/$FILENAME"
 
           git config user.name "AI Junior"
@@ -34,5 +32,5 @@ jobs:
           if ! git diff --cached --exit-code --quiet; then
             git commit -m "🤖 AI Entry: $FILENAME"
             git push origin "$BRANCH_NAME"
-            gh pr create --title "🤖 AI Entry: $FILENAME" --body "Base64 Mode Activated. ID: ${{ github.event.client_payload.reqID }}" --base main --head "$BRANCH_NAME"
+            gh pr create --title "🤖 AI Entry: $FILENAME" --body "Base64 Mode Activated." --base main --head "$BRANCH_NAME"
           fi
