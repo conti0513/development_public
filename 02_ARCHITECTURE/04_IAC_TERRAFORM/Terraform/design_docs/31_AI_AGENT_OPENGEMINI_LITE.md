@@ -1,91 +1,69 @@
-# AI Agent Architecture（OpenGemini-Lite）: 2026 Revised
+# OpenGemini-Lite 実装メモ (2026.02.16 暫定版)
 
-本リポジトリは、Slack を起点とした**イベント駆動型 AI エージェント基盤**の設計・実装プロジェクトである。
-2026年2月15日、実装上の「URLパースエラー」という技術的特異点を乗り越え、最新モデルへの**「動的追従（Alias Strategy）」**と、GitHub Actions への**「タスク委任（Dispatch）」**を両立した、持続可能な自動化パイプラインを確立した。
+Slackから入ってきたメモをGeminiでいい感じにMarkdown化して、GitHubのPRまで自動で持っていく仕組み。
+数日間にわたる「動かない」との格闘を経て、ようやく「これなら安定する」と言える形に落ち着いたので、その要点をまとめる。
 
 ---
 
-## 1. システム構成（Latest Architecture）
+## 1. ざっくりとした仕組み
 
-現在、Phase 2.5 に到達。Gemini 世代の機能を活用し、Slack と GitHub Actions を結ぶ疎結合なワークフローが安定稼働している。
+今の構成は、**「Slack → Cloud Run (Go) → GitHub Actions」** の3段構え。
 
-### 📊 アーキテクチャ図（Mermaid）
+* **Cloud Run (Go)**: 「脳みそ」担当。Slackの3秒ルールをGoroutineで回避しつつ、Geminiに構造化（JSON化）を依頼する。
+* **GitHub Actions**: 「手足」担当。Goから飛んできたデータをファイルにして、プルリク（PR）を投げる。
 
-```mermaid
-graph TD
-    subgraph "Slack (User Interface)"
-        A[User Input] -->|Event| B(Slack API)
-    end
+---
 
-    subgraph "Cloud Run (Brain: Go Logic)"
-        B -->|JSON POST| C[Go Handler]
-        C -->|1. Non-blocking| D[Goroutine]
-        C -->|2. Instant Response| E[200 OK to Slack]
-        
-        subgraph "AI Inference (Translator)"
-            D -->|Prompt| F[Gemini Flash Latest]
-            F -->|Unstructured Text| G{Flexible Parser}
-            G -->|Object or Array| H[Clean JSON Struct]
-        end
-    end
+## 2. 現場でハマったポイントと対策 (教訓)
 
-    subgraph "GitHub (Muscle: Execution)"
-        H -->|Dispatch| I[GitHub Repository Dispatch]
-        I -->|Trigger| J[GitHub Actions]
-        J -->|Result| K[05_AGENT_OUTPUTS]
-    end
+### ① 特殊文字による「自爆」対策 (Base64)
 
-    style F fill:#4285F4,color:#fff
-    style J fill:#238636,color:#fff
-    style G fill:#f96,stroke:#333,stroke-width:2px
+一番苦労したのが、AIが生成したMarkdownの中に `$`, `( )`, `"` とかの記号が入ると、GitHub Actionsのシェルが誤作動してエラーを吐く問題。
+
+* **対策**: Go側で中身を一旦 **Base64** でグチャグチャ（符号化）にして送り、GitHub側で受け取った瞬間に戻すことにした。これで、どんな変な記号が来ても壊れない「セキュアなトンネル」が完成。
+
+### ② モデル名「404」との根競べ (Alias)
+
+モデル名を `gemini-1.5-flash` と律儀に書くと、SDKのバージョンによって「そんなモデルはない」と怒られる。
+
+* **対策**: `gemini-flash-latest` という「エイリアス（あだ名）」を指定。これでGoogle側がその時一番安定しているモデルを勝手に選んでくれるようになり、404エラーを撲滅。
+
+### ③ 安全フィルターの「全開放」
+
+デフォルトだと、ちょっとした破壊的なコマンド例（`rm -rf` とか）を書くとGeminiがビビって回答を拒否する。
+
+* **対策**: `SafetySettings` を `HarmBlockNone`（全開放）に設定。余計な忖度をさせず、エンジニアの書いたコードをそのまま構造化させるように教育し直した。
+
+---
+
+## 3. 実装のキモ (Goのコード抜粋)
+
+「ここだけは変えるな」というポイント。
+
+```go
+// モデルは「あだ名」で指定するのが安定の秘訣
+model := client.GenerativeModel("gemini-flash-latest")
+
+// 特殊文字でGitHub側を壊さないよう、Base64で「封印」して送る
+encodedContent := base64.StdEncoding.EncodeToString([]byte(res.Content))
+
+// GitHubへのDispatch
+payload, _ := json.Marshal(map[string]interface{}{
+    "event_type": "ai-exec-command",
+    "client_payload": map[string]interface{}{
+        "content": encodedContent, // 封印済みデータ
+        "reqID":   reqID,
+    },
+})
 
 ```
 
 ---
 
-## 2. 設計思想と Lessons Learned（学んだ教訓）
+## 4. 最後に
 
-### ① 思考と実行の分離（Decoupling）
-
-Cloud Run（Go）を「思考（脳）」、GitHub Actions を「実行（筋肉）」と定義。Go 側は Git 操作の複雑さを知らず、API を通じた Dispatch 処理に専念することで、高い保守性を実現した。
-
-### ② 構造化パースの「型」の柔軟性
-
-AI モデルは指示が厳格になるほど、単一オブジェクトを期待しても「リスト形式（配列 `[]`）」で返してくる挙動が強まる特性がある。
-
-* **解決**: データの入り口で `[` の有無を検知し、配列・単体両対応の柔軟なアンマーシャル・ロジックを実装。静的型付け言語である Go の厳格さを保ちつつ、AI の出力の揺らぎをコード側で吸収・正規化した。
-
-### ③ Slack 3秒ルールの克服
-
-* **課題**: Slack API の「3秒以内レスポンス」制約。AI 推論時間はこれを超えることが常である。
-* **解決**: Go の **Goroutine（非同期処理）** を活用。HTTP ハンドラー内で即座に `200 OK` を返し、重い推論と Dispatch 処理をバックグラウンドへ逃がす設計を徹底した。
-
-### ④ AI 駆動開発における「表示」と「実行」の不一致
-
-* **課題**: AI チャット UI が提示するコード内の URL は、Markdown 自動リンク化により `[url](url)` 形式に汚染され、Go の `http.NewRequest` でパースエラーを引き起こす。
-* **解決**: AI の出力には「表示上の不純物」が混ざることを前提とした運用（環境変数への追い出し、または物理的な文字列クレンジング）の重要性を定義した。
+エラーが「動かない（404/127）」から「回数制限（429）」に変わった時、それは実装が「正解」に辿り着いた合図。
+あとはAPIの枠が回復するのを待って、Slackを叩くだけ。
+AI時代といっても、最後は「URLの1文字」や「記号のパース」といった泥臭い修正が、システムを動かす力になる。
 
 ---
-
-## 3. 2026.02.15 最終戦略サマリ
-
-### 開通したロジックの根幹
-
-本サービスの核心は、Gemini を単なる「チャット相手」ではなく、**「非構造化データを構造化データ（JSON）に変換する純粋な関数」**として再定義した点にある。
-
-### 打開した方法（エンジニアの赤ペン）
-
-AI は 99% のコードを爆速で生成するが、URL の 1 文字や記号ひとつでシステムを停止させる。この「最後の 1%」を人間が「静的型付け（Static Typing）」の厳格さをもって赤ペンを入れる（修正する）ことこそが、AI 時代のエンジニアリングの真髄である。
-
----
-
-## 🛠️ 実装の記録（Go Logic Highlights）
-
-実行環境の安定性を優先し、モデル指定はエイリアスを継続使用する。
-
-```go
-// 2026-02-15: 安定稼働を確認した推論エンジン指定
-model := client.GenerativeModel("gemini-flash-latest")
-
-// 2026-02-15: URL汚染問題を解決したクリーンなURL文字列
-url := "https://api.github.com/repos/conti0513/development_public/dispatches"
