@@ -14,29 +14,25 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Create TIL File and PR
-        run: |
-          # Payloadが空だった場合のガードレールを設置
-          RAW_CATEGORY="${{ github.event.client_payload.category }}"
-          CATEGORY="${RAW_CATEGORY:-01_TIL}"
-          
-          RAW_FILENAME="${{ github.event.client_payload.filename }}"
-          FILENAME="${RAW_FILENAME:-$(date +'%Y%m%d_%H%M%S')_til.md}"
-          
-          RAW_CONTENT="${{ github.event.client_payload.content }}"
-          CONTENT="${RAW_CONTENT:-'Claude 3.5 Sonnet からの応答、またはPayloadが空でした。ｗｗｗ'}"
-
-          mkdir -p "$CATEGORY"
-          echo "$CONTENT" > "$CATEGORY/$FILENAME"
-          
-          git config user.name "AI Junior"
-          git config user.email "ai-junior@example.com"
-          
-          BRANCH_NAME="ai-til-$(date +'%s')"
-          git checkout -b $BRANCH_NAME
-          git add .
-          git commit -m "🤖 AI Entry: $FILENAME"
-          git push origin $BRANCH_NAME
-          
-          gh pr create --title "🤖 AI Entry: $FILENAME" --body "Slack投稿からCTO流TILテンプレートで自動生成しました。" --base main --head $BRANCH_NAME
+        shell: bash
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          ENCODED_CONTENT: ${{ github.event.client_payload.content }}
+        run: |
+          CATEGORY="${{ github.event.client_payload.category || '05_AGENT_OUTPUTS/04_JOURNAL' }}"
+          FILENAME="${{ github.event.client_payload.filename || 'til.md' }}"
+          mkdir -p "$CATEGORY"
+
+          # 🚀 安全にデコードして封印解除
+          echo "$ENCODED_CONTENT" | base64 --decode > "$CATEGORY/$FILENAME"
+
+          git config user.name "AI Junior"
+          git config user.email "ai-junior@example.com"
+          BRANCH_NAME="ai-til-$(date +'%s')"
+          git checkout -b "$BRANCH_NAME"
+          git add .
+          if ! git diff --cached --exit-code --quiet; then
+            git commit -m "🤖 AI Entry: $FILENAME"
+            git push origin "$BRANCH_NAME"
+            gh pr create --title "🤖 AI Entry: $FILENAME" --body "Base64 Mode Activated. ID: ${{ github.event.client_payload.reqID }}" --base main --head "$BRANCH_NAME"
+          fi
