@@ -67,8 +67,8 @@ graph LR
 
 ### 📖 Design Philosophy & Deep Dive
 
-詳細な設計思想、および「AIの癖（UI汚染）」をいかに Go の厳格さで克服したかのドキュメントは以下を参照：
-👉 [Architecture Philosophy (OpenGemini-Lite)][https://github.com/conti0513/development_public/blob/main/02_ARCHITECTURE/04_IAC_TERRAFORM/Terraform/design_docs/31_AI_AGENT_OPENGEMINI_LITE.md](https://github.com/conti0513/development_public/blob/main/02_ARCHITECTURE/04_IAC_TERRAFORM/Terraform/design_docs/31_AI_AGENT_OPENGEMINI_LITE.md)
+▶︎ Architecture
+[https://github.com/conti0513/development_public/blob/main/02_ARCHITECTURE/04_IAC_TERRAFORM/Terraform/design_docs/31_AI_AGENT_OPENGEMINI_LITE.md](https://github.com/conti0513/development_public/blob/main/02_ARCHITECTURE/04_IAC_TERRAFORM/Terraform/design_docs/31_AI_AGENT_OPENGEMINI_LITE.md)
 
 
 
