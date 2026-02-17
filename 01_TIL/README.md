@@ -9,7 +9,8 @@ Slack を起点とし、最新の AI モデルと CI/CD パイプラインを直
 人間と AI エージェント（OpenGemini-Lite）が共作する「AI共存型ワークフロー」の実践。
 
 ### 📊 開発ライフサイクル (Mermaid)
-\`\`\`mermaid
+
+```mermaid
 sequenceDiagram
     autonumber
     actor Human as 👤 CTO (Local)
@@ -35,7 +36,7 @@ sequenceDiagram
     AI->>GitHub: 自律的な成果生成 (PR/Commit)
 
     Note over Human, AI: 🔄 サイクル完了（翌日へ）
-\`\`\`
+```
 
 ### 🐚 運用スクリプト (標準ルーチン)
 1. **./01_sync_ai.sh** : リモートのAI成果をローカルへ同期。
