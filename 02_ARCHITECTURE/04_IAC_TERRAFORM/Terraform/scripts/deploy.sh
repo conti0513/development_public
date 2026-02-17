@@ -9,7 +9,7 @@ gcloud run deploy opengemini-lite \
   --source . \
   --region asia-northeast1 \
   --set-secrets="GITHUB_PAT=GITHUB_PAT:latest" \
-  --set-env-vars="GEMINI_API_KEY=AIzaSyBjeZTE9JHRI3xMoLXwpWQTx0jvTXcmfQI" \
+  --set-env-vars="GEMINI_API_KEY=${GEMINI_API_KEY}" \
   --allow-unauthenticated \
   --quiet
 
