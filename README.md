@@ -11,51 +11,55 @@
 
 ---
 
-## Scope
-
-主に、以下の領域を扱っています。
-
----
-
 # 🌌 Development Public / 2026 Innovation Layer
 
-## 🛠️ Main Feature: OpenGemini-Lite (AI-Driven Pipeline)
+## コンセプト：AIと現場を「直結」する
 
-Slack を起点とし、最新の AI モデルと CI/CD パイプラインを直結させた**自律型イベント駆動基盤**。
+**「話したことが、そのまま資産になる」**
 
-* **Gemini 2.0/3.0 Ready**: `gemini-flash-latest` エイリアスを採用し、AIモデルの進化に自動追従するメンテフリーな設計。
-* **Cloud Run × Go (The Brain)**: ステートレスかつ低レイテンシな実行環境で、Slack API の「3秒ルール」を Goroutine で攻略。
-* **GHA as Muscle (Execution)**: GitHub Actions を実行レイヤーとし、`repository_dispatch` を通じてインフラ操作から TIL 生成までを完全自動化。
-* **Decoupled Architecture**: 思考（AI）と実行（CI）を分離。将来的なマルチエージェント化や他プラットフォーム連携を容易にする高い拡張性を確保。
+AIとの対話を「ただのチャット」で終わらせないための、実務直結型パイプライン。
+Slackという日常の場から、Geminiの知性とGitHubの実行力をつなぐ。
+人の手によるコピー＆ペーストを排除し、意志をシームレスに成果物へと変換します。
 
 ---
 
-### 📊 System Flow
+## 🛠️ 主な機能と特徴
+
+* **進化し続けるAI（思考ユニット）**
+最新モデル `gemini-flash-latest` を採用。AI側の進化に自動で追従するため、メンテナンスの手間をかけずに常に最新の知能を使い続けることが可能です。
+* **待ち時間のない並行処理（Go言語）**
+Go言語の強みである並列処理を活用。AIが深く考えている間も、システムは即座に応答。Slack特有のタイムアウト制限を気にせず、リズムを崩さない業務体験を提供します。
+* **「会話」を「実行」に変える自動連携**
+GitHub Actionsとの高度な連携。Slackでのやり取りの延長線上で、ドキュメントの作成やファイルの保存、インフラの操作までを完結させます。
+* **変化に強い「分離設計」**
+「考える（AI）」と「動く（システム）」を切り離して構成。将来、別のAIや別のプラットフォームに乗り換える際も、最小限の修正で対応できる高い拡張性を備えています。
+
+---
+
+## 📊 システムの流れ
 
 ```mermaid
 graph LR
-    subgraph "Interface"
-        A[Slack]
+    subgraph "いつもの場所（UI）"
+        A[Slack: 指示・相談]
     end
     
-    subgraph "Intelligence (Google Cloud)"
-        B(Cloud Run: Go)
-        C[Gemini 1.5/2.0 Flash]
-        B <--> C
+    subgraph "中継ユニット（Go / Cloud Run）"
+        B(OpenGemini-Lite)
     end
     
-    subgraph "Automation (GitHub)"
-        D[GitHub Actions]
-        E[(Repository Assets)]
-        D --> E
+    subgraph "知能と実行（AI / GitHub）"
+        C[Gemini API: 思考]
+        D[GitHub Actions: 作業]
     end
 
-    A -- "Mention (Event)" --> B
-    B -- "Structured Dispatch" --> D
+    A -- "話しかける" --> B
+    B <--> C
+    B -- "作業指示" --> D
     
-    style B fill:#4285F4,color:#fff
-    style C fill:#4285F4,color:#fff
-    style D fill:#238636,color:#fff
+    style B fill:#fdfdfd,stroke:#333
+    style C fill:#fff,stroke:#333
+    style D fill:#fff,stroke:#333
 
 ```
 
