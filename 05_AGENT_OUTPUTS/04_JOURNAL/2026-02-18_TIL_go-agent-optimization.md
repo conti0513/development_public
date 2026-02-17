@@ -1,4 +1,4 @@
-# :white_check_mark: TIL（2024-05-22）：Go言語によるエージェント運用強化と環境整備
+# :white_check_mark: TIL（2026-02-18）：Go言語によるエージェント運用強化と環境整備
 
 **MODE：STD**
 
