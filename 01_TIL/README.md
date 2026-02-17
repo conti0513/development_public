@@ -13,7 +13,7 @@ Slack を起点とし、最新の AI モデルと CI/CD パイプラインを直
 ```mermaid
 sequenceDiagram
     autonumber
-    actor Human as 👤 CTO (Local)
+    actor Human as 👤 自分 (Local)
     participant Shell as 🐚 Operations Shells
     participant GitHub as 🐙 GitHub (Remote)
     participant AI as 🧠 AI Agent (Cloud Run)
