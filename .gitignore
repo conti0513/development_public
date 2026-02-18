@@ -50,3 +50,7 @@ credentials*/
 # ========================
 archive_private/
 90_ARCHIVE/
+
+# Go Training Binaries
+/03_IMPLEMENTATIONS/06_GO_TRAINING/basics_*
+!/03_IMPLEMENTATIONS/06_GO_TRAINING/basics_*.go
