@@ -1,0 +1,7 @@
+{
+  "name": "legacy-app",
+  "version": "1.0.0",
+  "main": "legacy_system.js",
+  "dependencies": { "@slack/bolt": "^3.12.0", "@google-cloud/bigquery": "^6.0.0" },
+  "scripts": { "start": "node legacy_system.js" }
+}
