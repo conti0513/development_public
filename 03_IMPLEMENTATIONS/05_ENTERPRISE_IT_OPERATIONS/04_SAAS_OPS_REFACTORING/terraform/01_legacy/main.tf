@@ -1,5 +1,5 @@
 provider "google" {
-  project = "YOUR_PROJECT_ID"
+  project = "terraform-sandbox-lab"
   region  = "asia-northeast1"
 }
 
@@ -16,7 +16,7 @@ resource "google_bigquery_table" "legacy_tbl" {
 }
 
 resource "google_project_iam_member" "dangerous_iam" {
-  project = "YOUR_PROJECT_ID"
+  project = "terraform-sandbox-lab"
   role    = "roles/owner"
-  member  = "serviceAccount:YOUR_SERVICE_ACCOUNT_EMAIL"
+  member  = "serviceAccount:841765922679-compute@developer.gserviceaccount.com"
 }

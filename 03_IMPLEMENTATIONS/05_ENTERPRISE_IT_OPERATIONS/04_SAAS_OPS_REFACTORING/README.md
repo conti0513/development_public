@@ -1,7 +1,9 @@
 # SaaS Ops Modernization Project
+
 ## 〜 疎結合な構成とIaCによる技術的負債の解消シミュレーション 〜
 
 ### 1. プロジェクト概要
+
 本プロジェクトは、過去のIT運用現場（SaaS管理やワークフロー運用）で散見された技術的負債を抽象化し、モダンなクラウドネイティブ構成へリファクタリングするプロセスを実証するものです。
 「とりあえず動く」状態から「運用保守に耐えうる」状態への移行を、Infrastructure as Code (Terraform) と Node.js (Bolt SDK) を用いて実装しています。
 
@@ -9,73 +11,33 @@
 
 ### 2. 現状分析と目標構成 (AS-IS / TO-BE)
 
-#### AS-IS: 技術的負債の顕在化
-GUIベースのツールや属人的なスクリプトによる、管理コストの高い状態。
+#### AS-IS: 技術的負債の顕在化（現状のターゲット）
 
-```text
-[ユーザー] -> [GUIツール (ブラックボックス設定)] -> [野良JS (コピペによる冗長化)] -> [共有DB (過剰権限)]
-
-```
+GUIベースのツールや属人的なスクリプトによる、管理コストの高い状態をあえて再現しています。
 
 * **課題**:
 * **可視性の欠如**: GUI上の設定にロジックが依存し、変更履歴（Audit Log）の追跡が困難。
-* **保守性の低下**: 共通化されていないJavaScriptコードが散在。
-* **セキュリティリスク**: サービスアカウントに付与された権限が必要以上に強く、誤操作の影響範囲が広い。
+* **保守性の低下**: 共通化されていないJavaScriptコードが散在（スパゲッティ・ロジック）。
+* **セキュリティリスク**: サービスアカウントに付与された権限が必要以上に強く（Owner権限）、誤操作の影響範囲が広い。
 
 
 
-#### TO-BE: モダンなChatOps構成への移行
+#### TO-BE: モダンなChatOps構成への移行（リファクタリング後）
 
-疎結合なアーキテクチャとIaCによるガバナンスを効かせた状態。
-
-```text
-[Slack] -> [Cloud Run (Bolt SDK / Node.js)] -> [BigQuery (マネージドデータ基盤)]
-   |              |                                 ^
-   |              +---(IAMによる最小権限の適用)-------+
-   v
-[Terraform (GitHubによる構成管理 / State管理)]
-
-```
+疎結合なアーキテクチャとIaCによるガバナンスを効かせた状態を目指します。
 
 * **解決策**:
 * **透明性の確保**: Terraformによるインフラのコード化により、全ての変更をプルリクエストベースで管理。
-* **ロジックの集約**: 処理を「Script Include（共通クラス）」的な思想でモジュール化し、再利用性を向上。
+* **ロジックの集約**: 処理を「共通モジュール」思想でクラス化し、再利用性を向上。
 * **安全性の担保**: 最小権限原則 (Least Privilege) に基づくIAMロールの分離。
 
 
 
 ---
 
-### 3. 実装ミッション
+### 3. アーキテクチャ図（AS-IS 負債モデル）
 
-1. **Infrastructure**: Terraformを用いた初期の「非効率な構成」から「セキュアな構成」へのリファクタリング。
-2. **Application Logic**: 既存のレガシーコード（謎変数・文字列結合クエリ等）を解読し、パラメータ化クエリと適切な例外処理を実装。
-3. **Operations**: Slackをインターフェースとした、透明性の高いオペレーション環境の構築。
-EOF
-
-```
-
----
-
-
----
-
-### 4. 技術スタック (Technology Stack)
-
-#### Infrastructure & Platform
-- **IaC**: Terraform (GCP Provider)
-- **Computing**: Google Cloud Run
-- **Database**: Google BigQuery
-- **Secret Management**: Google Secret Manager
-- **Identity & Access**: GCP IAM (Service Account / Least Privilege)
-
-#### Application & Tooling
-- **Language**: JavaScript (Node.js 20.x)
-- **Framework**: Slack Bolt SDK
-- **API Integration**: Slack Web API
-- **Version Control**: Git / GitHub
-
-
+```text
 [ ユーザー ] 
           |
     +-----v---------------------------------------------------+
@@ -88,13 +50,13 @@ EOF
     |  Cloud Run (巨大な legacy_system.js )                    |
     |  +---------------------------------------------------+  |
     |  | [ハードコードされた秘匿情報]                        |  |
-    |  |  token: "xoxb-123456..." (リポジトリに丸見え)        |  |
+    |  |  token: "xoxb-dummy" (リポジトリに丸見え)           |  |
     |  +---------------------------------------------------+  |
     |  | [スパゲッティ・ロジック]                            |  |
-    |  |  if (a) { if (b) { if (c) { query = "..." + u } } } |  | <--- 読解不能
+    |  |  req.on('data') でストリームをこねくり回す実装      |  | <--- 読解・保守困難
     |  +---------------------------------------------------+  |
     |  | [エラーハンドリング]                                |  |
-    |  |  catch(e) { console.log("だめぽ"); }                |  | <--- ログがゴミ
+    |  |  catch(e) { console.log("だめぽ"); }                |  | <--- ログが不透明
     |  +---------------------------------------------------+  |
     +-----+---------------------------------------------------+
           | 
@@ -102,12 +64,35 @@ EOF
           | 
     +-----v---------------------------------------------------+
     |  BigQuery ( `temp_ops_dataset.legacy_tickets` )         |
-    |  - スキーマ：全部STRING（とりあえず入ればいい）           | <--- データ型が適当
+    |  - スキーマ：全部STRING（とりあえず入ればいい）           | <--- データ型が未整理
     |  - 変更履歴：なし（誰がいつ変えたか不明）                 |
     +---------------------------------------------------------+
 
-    [ Terraform管理 ]
-    - main.tf 1枚に全部ベタ書き（300行）
-    - project_id: "my-project-id" (ハードコード)
-    - 「環境分け？何それ美味しいの？」状態
-    ---
+```
+
+---
+
+### 4. 技術スタック (Technology Stack)
+
+#### Infrastructure & Platform
+
+* **IaC**: Terraform (GCP Provider)
+* **Computing**: Google Cloud Run
+* **Database**: Google BigQuery
+* **Identity & Access**: GCP IAM (Service Account / Owner Role)
+
+#### Application & Tooling
+
+* **Language**: JavaScript (Node.js 20.x)
+* **Framework**: Slack Bolt SDK (Legacy Raw Implementation)
+* **Version Control**: Git / GitHub
+
+---
+
+### 5. 実装ミッション
+
+1. **Infrastructure**: Terraformを用いた初期の「非効率な構成」から「セキュアな構成」へのリファクタリング。
+2. **Application Logic**: 既存のレガシーコード（謎変数・文字列結合クエリ等）を解読し、パラメータ化クエリと適切な例外処理を実装。
+3. **Operations**: Slackをインターフェースとした、透明性の高いオペレーション環境の構築。
+
+---
