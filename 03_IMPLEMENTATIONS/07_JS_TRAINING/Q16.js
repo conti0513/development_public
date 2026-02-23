@@ -34,4 +34,5 @@ activeUsers.forEach(function(user) {
  * 【ハックのポイント】
  * ・JSON.parse した直後の `allUsers` をそのまま使わず、一度 `filter` を通す。
  * ・この「一工程挟む」余裕が、後続の処理（mapや計算）でのエラーを防ぐ。
+ * 1行ハック：「for文で if 判定して push する泥臭いコードを見つけたら、filter 1行でエレガントに『検疫』せよ」
  */

@@ -38,4 +38,5 @@ console.log('Q22 (Pretty Print):\n' + prettyJson);
  * * 2. データの欠損に注意:
  * 値が `undefined` のプロパティや「関数」は、stringify すると消滅する。
  * 「送ったはずのデータが届いていない」原因の多くはこれ。
+ * ポイント：「中身が見えないオブジェクトは JSON.stringify() で文字列化して、中身を丸裸にせよ」
  */
