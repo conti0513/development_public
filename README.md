@@ -2,86 +2,165 @@
 
 本リポジトリは、
 業務上必要となった構成・設計・実装を
-**記録として整理したもの**です。
+**記録および再現可能な形で整理したもの**です。
 
-特定の技術スタックやプロダクトを誇示する意図はなく、
-再現性・説明可能性・運用性を重視しています。
+特定の技術スタックやプロダクトを誇示する意図はありません。
+重視しているのは以下の3点です。
 
-※ 実験的に、イベント駆動型の自動化基盤についても検証を行っています。
+* 再現性（Reproducibility）
+* 説明可能性（Explainability）
+* 運用性（Operability）
 
----
-
-# 🌌 OpenGemini-Lite：SlackメモのGitHub資産化エージェント
-
-## コンセプト：AIと現場を「直結」する
-
-**「話したことが、そのまま資産（アセット）になる」**
-
-AIとの対話を「ただのチャット」で終わらせないための、実務直結型パイプライン。
-Slackという日常の場から、Geminiの知性とGitHubの実行力をつなぎます。
-人の手によるコピー＆ペーストを排除し、意志をシームレスに成果物へと変換します。
+また、実験的にイベント駆動型の自動化基盤についても検証を行っています。
 
 ---
 
-## 🛠️ 主な機能と特徴
+# OpenGemini-Lite
 
-* **進化し続けるAI（思考ユニット）**
-最新モデル `gemini-flash-latest` を採用。AI側の進化に自動で追従するため、メンテナンスの手間を最小限に抑えつつ、常に最適な知能を利用可能です。
-* **非同期・並行処理による安定稼働（Go 1.22+）**
-Go言語の並列処理（Goroutine）を活用。AIの長考を許容しつつ、Slackの応答制限（3秒）を即座にクリア。業務のリズムを崩さないシームレスな体験を提供します。
-* **「会話」を「実行」に変える自動連携**
-GitHub Actions との高度な連携。Base64符号化によるセキュアなデータ転送により、AIが生成したコードや文書を、特殊文字の制約なく正確にリポジトリへ保存します。
+SlackメモのGitHub資産化エージェント
+
+## 概要
+
+Slack上のメモ・相談・設計思考を、
+AI処理を経由してGitHubへ保存する自動化パイプライン。
+
+目的は、
+
+> 「会話を記録で終わらせず、成果物へ変換すること」
+
+コピー＆ペーストを介さず、
+Slack → AI → GitHub を直接接続する構成です。
 
 ---
 
-## 📊 システムの流れ
+## 技術構成
+
+* Runtime: Go (1.22+)
+* Hosting: Cloud Run
+* AI: Gemini API
+* SCM: GitHub Actions
+* Trigger: Slack Events API
+
+---
+
+## 主な設計ポイント
+
+### 1. 非同期処理によるSlack制約回避
+
+Slackの3秒応答制限に対し、
+
+* 即時200 OKを返却
+* AI処理はGoroutineで非同期実行
+
+業務体験を阻害しない設計としています。
+
+---
+
+### 2. AI出力の安全な転送
+
+GitHub Actionsへのデータ送信は
+Base64エンコードにより文字制約を回避。
+
+* 特殊文字による破損防止
+* YAMLインジェクション対策の一助
+
+---
+
+### 3. モデル追従性
+
+`gemini-flash-latest` を採用。
+
+モデルバージョンを固定せず、
+API側の進化に追従可能な設計としています。
+
+---
+
+## システム構成
 
 ```mermaid
 graph LR
-    subgraph "いつもの場所（UI）"
-        A[Slack: 指示・相談]
+    subgraph UI
+        A[Slack]
     end
     
-    subgraph "中継ユニット（Go / Cloud Run）"
-        B(OpenGemini-Lite)
+    subgraph Runtime
+        B(OpenGemini-Lite / Cloud Run)
     end
     
-    subgraph "知能と実行（AI / GitHub）"
-        C[Gemini API: 思考]
-        D[GitHub Actions: 作業]
+    subgraph Intelligence
+        C[Gemini API]
+    end
+    
+    subgraph Execution
+        D[GitHub Actions]
     end
 
-    A -- "Event 受信" --> B
-    B -- "即時応答 (200 OK)" --> A
+    A --> B
+    B --> A
     B <--> C
-    B -- "Repository Dispatch" --> D
-    
-    style B fill:#fdfdfd,stroke:#333
-    style C fill:#fff,stroke:#333
-    style D fill:#fff,stroke:#333
-
+    B --> D
 ```
 
 ---
 
+### Architecture Documentation
 
-### 📖 Design Philosophy & Deep Dive
-
-▶︎ Architecture
+▶︎ AI Agent Design
 [https://github.com/conti0513/development_public/blob/main/02_ARCHITECTURE/04_IAC_TERRAFORM/Terraform/design_docs/31_AI_AGENT_OPENGEMINI_LITE.md](https://github.com/conti0513/development_public/blob/main/02_ARCHITECTURE/04_IAC_TERRAFORM/Terraform/design_docs/31_AI_AGENT_OPENGEMINI_LITE.md)
-
-
 
 ---
 
-### Infrastructure as Code
+# JavaScript / ChatOps Implementation
 
-クラウド基盤を
-コードとして管理するための設計と実装。
+Node.js 環境における、ChatOps基盤の設計および実装。
+
+## 主な内容
+
+* Slack Bolt SDK によるアプリ実装
+* Cloud Run 上でのスケーラブル構成
+* Slash Command 起点の処理設計
+* BigQuery とのデータパイプライン構築
+
+---
+
+## データ処理設計
+
+JavaScript 高階関数を活用した
+非破壊的なデータ処理ロジック。
+
+* `filter`
+* `map`
+* `find`
+* `some`
+* `every`
+
+ガード句および論理演算子を活用し、
+可読性と安全性を重視しています。
+
+```mermaid
+graph TD
+    Input[Raw Data] --> |filter/find| Detection[Detection]
+    Detection --> |map/spread| Transform[Transformation]
+    Transform --> Slack
+    Transform --> BigQuery
+```
+
+▶︎ Implementation
+[https://github.com/conti0513/development_public/tree/main/03_IMPLEMENTATIONS/05_ENTERPRISE_IT_OPERATIONS/04_SAAS_OPS_REFACTORING](https://github.com/conti0513/development_public/tree/main/03_IMPLEMENTATIONS/05_ENTERPRISE_IT_OPERATIONS/04_SAAS_OPS_REFACTORING)
+
+---
+
+# Infrastructure as Code
+
+クラウド基盤をコードとして管理する設計・実装。
+
+## 対象領域
 
 * Terraform による構成管理
-* Cloud Run / Network / Identity を含む構成
-* 設計資料とコードの対応関係を保持
+* Cloud Run / Network / Identity
+* State管理およびガードレール設計
+
+設計資料と実装コードの対応関係を明示しています。
 
 ▶︎ Architecture
 [https://github.com/conti0513/development_public/tree/main/02_ARCHITECTURE](https://github.com/conti0513/development_public/tree/main/02_ARCHITECTURE)
@@ -96,13 +175,15 @@ graph LR
 
 ---
 
-### Security / Identity / Mail
+# Security / Identity / Mail
 
-認証・認可・メール基盤まわりの整理。
+認証・認可・メール基盤の整理および検証記録。
+
+## 内容
 
 * Google Workspace / IdP 連携
-* SPF / DKIM / DMARC の運用設計
-* 検証結果を前提とした記録
+* SPF / DKIM / DMARC 設計
+* 変更時の検証ログ
 
 ▶︎ Identity / SSO
 [https://github.com/conti0513/development_public/tree/main/02_ARCHITECTURE/02_IDENTITY_ACCESS/gws-idp](https://github.com/conti0513/development_public/tree/main/02_ARCHITECTURE/02_IDENTITY_ACCESS/gws-idp)
@@ -112,22 +193,26 @@ graph LR
 
 ```mermaid
 graph LR
-    User --> IdP[IdP]
-    IdP --> GWS[Google Workspace]
-    GWS --> Mail[Mail Flow]
+    User --> IdP
+    IdP --> GWS
+    GWS --> Mail
     Mail --> Auth[SPF / DKIM / DMARC]
 ```
 
 ---
 
-### Secure File Transfer
+# Secure File Transfer
 
-FTP / SFTP を含む
-ファイル連携基盤の構成検討。
+FTP / SFTP を含む外部連携基盤の検討。
 
-* Cloud Run + VPC Connector + NAT
-* 固定IPを前提とした外部連携
-* 実運用を想定した分離構成
+## 構成例
+
+* Cloud Run
+* VPC Connector
+* Cloud NAT
+* 固定IP前提の外部接続
+
+実運用を想定したネットワーク分離構成で設計。
 
 ▶︎ Serverless FTPS / SFTP
 [https://github.com/conti0513/development_public/tree/main/02_ARCHITECTURE/01_PLATFORM_CLOUD/serverless-ftps-api-public](https://github.com/conti0513/development_public/tree/main/02_ARCHITECTURE/01_PLATFORM_CLOUD/serverless-ftps-api-public)
@@ -141,16 +226,20 @@ graph LR
 
 ---
 
+# Background
 
-## Background
+インフラ／ネットワーク／Identity基盤を中心とした業務経験。
 
-インフラ／ネットワーク／ID 基盤を中心に業務経験。
+現場で必要になった構成を整理し、
+再利用可能な形で記録しています。
 
-現場で必要になったものを整理し、
-使える形で残しています。
+現在は、
 
-現在は、エンタープライズ規模の環境に向けた
-GCP / Terraform / Identity / セキュリティガバナンス
-およびイベント駆動型自動化基盤の設計に注力しています。
+* GCP
+* Terraform
+* Identity / Security Governance
+* イベント駆動型自動化基盤
+
+の設計および実装検証に注力しています。
 
 ---
