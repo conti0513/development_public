@@ -1,68 +1,222 @@
-# ⚡️ Exam 1: ハックリスト (Q1-Q50)
+# ⚡️ Exam 1: ハックリスト (Q1-Q10)
 
-### 🌐 ネットワーク・接続 (Q1-Q10)
+## 🌐 ネットワーク・接続
 
-**Q1：オンプレからGCSアクセス（ネット禁止）**
+### 🌐 Q1：オンプレからGCSアクセス（インターネット禁止・非公開でGoogle APIsへ）
 
-* **キーワード：** `on-premises`, `prohibit public IP`, `restrict internet access`.
-* **正解：** **restricted.googleapis.com** へのCNAME設定と199.36.153.4/30の広報。
-* **ハック：** Googleサービス（GCS等）にネットを通らず秘密裏に繋ぐための専用窓口。
+* キーワード: `on-premises`, `no public IP`, `restrict internet access`, `Google Cloud APIs`
+* 正解（薬）:
 
-**Q2：VMへのSSH（個別追跡・効率管理）**
+  * **DNS を `restricted.googleapis.com` に向ける**（CNAME/Private DNS）
+  * **VIP `199.36.153.4/30` への経路を Cloud Router(BGP) でオンプレへ広報**
+* ハック（裏口の作り方）:
+  インターネット（公道）ではなく、**VPN/Interconnect（地下通路） + DNS書き換え + 専用VIP**で Google APIs に入る。
 
-* **キーワード：** `administrative access`, `tracked to individual`, `manage efficiently`.
-* **正解：** **OS Login** (`compute.osAdminLogin`) ロールの付与。
-* **ハック：** 共有キーは「誰がやったか」不明なのでNG。GoogleアカウントとSSHを紐付けるのが正攻法。
+#### ✅ AA（最小構成イメージ）
 
-**Q3：個人カード払いのプロジェクトを統合**
+```
+[On-Prem DNS]  storage.googleapis.com
+      |        (CNAME -> restricted.googleapis.com)
+      v
+[On-Prem App] -----> (VPN / Interconnect) -----> [VPC]
+                           |                       |
+                           |                  [Cloud Router]
+                           |                 (BGP advertise)
+                           |                       |
+                           +---- route to 199.36.153.4/30 ----+
+                                                             |
+                                                [restricted.googleapis.com VIP]
+                                                             |
+                                                           [GCS]
+```
 
-* **キーワード：** `personal credit cards`, `consolidating`, `single billing account`.
-* **正解：** **New Billing Account** を作成し、全プロジェクトに紐付ける。
-* **ハック：** 支払い元を一本化するには「新しい請求先」が必要。Resource Managerでの移動は組織図の整理。
+#### 🧠 なぜこれか（試験で刺さる理由）
 
-**Q4：CPU不要 / 32GBメモリ / コスト最小**
+1. DNS（名前の書き換え）
 
-* **キーワード：** `almost no CPU`, `30 GB in-memory cache`, `lowest costs`.
-* **正解：** **Custom Machine Type**（CPU最小、メモリ32GB指定）。
-* **ハック：** `n1-standard` 等のプリセットはCPUも増えて高くなる。メモリだけ欲しいなら「カスタム」一択。
+* `storage.googleapis.com` をそのまま引くと、通常は公開経路に寄りがち。
+* そこで **`*.googleapis.com` を `restricted.googleapis.com` に向ける**（CNAME/Private DNS）ことで、API宛先を「制限付き」側へ寄せる。
 
-**Q5：非アクティブなK8s設定を確認**
+2. VIP（199.36.153.4/30）
 
-* **キーワード：** `Kubernetes cluster configuration`, `inactive environments`, `minimal steps`.
-* **正解：** **`kubectl config use-context`** ➔ **`kubectl config view`**。
-* **ハック：** 複数のK8s環境がある場合、まず「操作対象（Context）」を切り替えないと中身は見えない。
+* `restricted.googleapis.com` の **VIP レンジが `199.36.153.4/30`**。このIP帯へ「社内から行ける」ようにするのがコア。
 
-**Q6：大至急（明日まで）に請求を統合**
+3. 経路広報（Cloud Router / BGP）
 
-* **キーワード：** `consolidate costs`, `single invoice`, `as of tomorrow`.
-* **正解：** **Link projects** to the new billing account.
-* **ハック：** 組織(Org)移行は数日かかる。プロジェクトを「請求先だけ変える」のは数秒。
+* オンプレ側に「`199.36.153.4/30` は VPN/Interconnect へ流せ」を教えるために、**Cloud Router で BGP 広報**する。
 
-**Q7：画像が置かれたら自動処理（最速）**
+#### 🛡️ 類似ワードの整理（混同ポイント）
 
-* **キーワード：** `upload images`, `convert images`, `most efficient/cost-effective`.
-* **正解：** **GCS ➔ Cloud Functions** 連携。
-* **ハック：** ファイルアップを検知してプログラムを動かす「イベント駆動」の王道。
+| 用語                          | どこから叩く？ | 典型要件                                          |
+| --------------------------- | ------- | --------------------------------------------- |
+| Private Google Access (PGA) | VPC内VM  | サブネットで PGA を有効化、など                            |
+| PGA for on-premises         | オンプレ    | VPN/Interconnect + DNS + VIP(199.36.153.4/30) |
 
-**Q8：他PJTのIAMロールをそのまま使いたい**
+* 毒になりやすい選択肢（典型）
 
-* **キーワード：** `same IAM roles`, `production project`, `fewest possible steps`.
-* **正解：** **`gcloud iam roles copy`** コマンド。
-* **ハック：** 手動作成は非効率。コマンド一発で「クローン」するのが最短。
+  * Squid等のプロキシを新設
+  * ILBで無理やり中継
+    → **要件が「Google推奨・管理最小」なら外しやすい**
 
-**Q9：サブネットの最大IPレンジ**
+#### 💡 2周目用 反射メモ（1行）
 
-* **キーワード：** `largest possible IP address range`, `future scaling`.
-* **正解：** **10.0.0.0/8**。
-* **ハック：** プライベートIPの規格（RFC 1918）で最も広いのが `/8`（約1600万アドレス）。
-
-**Q10：DMからK8s操作（DaemonSet等）**
-
-* **キーワード：** `Deployment Manager`, `DaemonSet`, `simplest way`.
-* **正解：** **Type Provider** を使ってK8s APIをDMに追加。
-* **ハック：** DM（インフラ管理）で「K8sの中身（アプリ）」まで管理したい時の拡張プラグイン。
+> オンプレから非公開Google APIs = **restricted.googleapis.com + 199.36.153.4/30 + Cloud Router(BGP)**
 
 ---
+
+### 🧠 Q2：VMへのSSH（個別追跡・効率管理）
+
+* キーワード: `administrative access`, `tracked to individual`, `manage efficiently`
+* 正解（薬）: **OS Login**（例: `compute.osAdminLogin`）
+* ハック:
+
+  * 共有鍵は「誰が入ったか」追えない → 毒
+  * OS Login は **IAM（Googleアカウント）でSSH制御**でき、退職・異動に強い
+
+#### 2周目用メモ
+
+> SSHをスマートに = **OS Login**
+
+---
+
+### 🧠 Q3：支払い元の一本化（Billing Consolidation）
+
+* キーワード: `personal credit cards`, `consolidating`, `single billing account`
+* 正解（薬）: **新しい Billing Account を作成**し、各プロジェクトを紐付け
+* ハック:
+
+  * Project（箱）と Billing（財布）は別
+  * 「組織配下へ移動」だけで請求は切り替わらない（管理構造の話）
+
+#### 2周目用メモ
+
+> 支払い一本化 = **新しいBilling Account作成 → 既存PJTを付け替え**
+
+---
+
+### 🧠 Q4：低CPU / 高メモリ / コスト最小（in-memory cache）
+
+* キーワード: `almost no CPU`, `30 GB in-memory cache`, `lowest costs`
+* 正解（薬）: **Custom machine type**（CPU最小 + メモリ32GB級）
+* ハック:
+
+  * Standard はCPU:メモリ比が固定 → メモリ目的だとCPU過剰でコスト増
+  * “in-memory” は **RAM**。SSD（ディスク）増設は筋違いになりやすい
+
+#### 2周目用メモ
+
+> いびつな要求（メモリ偏重）= **Custom machine**
+
+---
+
+### 🧠 Q5：K8sクラスター設定の確認（詳細 vs 一覧）
+
+* キーワード: `Kubernetes cluster configuration`, `inactive environments`, `minimal steps`
+* 正解（薬）:
+
+  * `kubectl config use-context <ctx>`
+  * `kubectl config view`
+* ハック:
+
+  * `get-contexts` は「一覧」寄り（名前と現在地）
+  * “configuration をチェック” は **中身(view)** を求めていることが多い
+
+#### 2周目用メモ
+
+> K8sの設定を見たい = **kubectl config view**
+
+---
+
+### 🧠 Q6：M&Aで請求一本化（明日まで・爆速）
+
+* キーワード: `consolidate all costs`, `single invoice`, `as of tomorrow`
+* 正解（薬）: **買収先プロジェクトを自社の Billing Account に付け替え**
+* ハック:
+
+  * 組織(Organization)移行は重い（IAM/ポリシー再設計が発生しやすい）
+  * “明日まで” があるなら、財布（Billing）を先に揃える
+
+#### 2周目用メモ
+
+> 期限が短い一本化 = **Billing付け替え**
+
+---
+
+### 🧠 Q7：画像アップロード → 自動変換（イベント駆動）
+
+* キーワード: `upload images`, `processed by converting`, `most efficient and cost-effective`
+* 正解（薬）: **Cloud Storage → Cloud Functions（GCSイベントで起動）**
+* ハック:
+
+  * 画像/動画/PDF は **GCS**
+  * 「置かれたら動く」= Functions の定番
+
+#### 2周目用メモ
+
+> ファイル置いたら処理 = **GCS + Functions**
+
+---
+
+### 🧠 Q8：カスタムロールの複製（Dev → Prod、最小ステップ）
+
+* キーワード: `launching production`, `apply the same IAM roles`, `fewest possible steps`
+* 正解（薬）: **`gcloud iam roles copy`**（コピー先をProd Project）
+* ハック:
+
+  * 手作業で作り直しはミス源＆最小ステップではない
+  * 組織レベルへコピーは影響範囲が広がりやすく、最小権限と衝突しがち
+
+#### 2周目用メモ
+
+> カスタムロール複製 = **gcloud iam roles copy**
+
+---
+
+### 🧠 Q9：VPC設計（単一サブネットで最大レンジ）
+
+* キーワード: `custom VPC`, `single subnet`, `largest possible IP address range`, `future scaling`
+* 正解（薬）: **`10.0.0.0/8`**
+* ハック:
+
+  * CIDRは **/の数字が小さいほど大きい**
+  * `/32` はIP1個（サブネットとしてはほぼ使い物にならない）
+
+#### 実務注意（試験と現場の差）
+
+* 試験: “最大”なら `/8` が素直
+* 実務: Peering/統合で **アドレス重複**が毒になり得るので、設計思想次第
+
+#### 2周目用メモ
+
+> 最大レンジ = **/8**
+
+---
+
+### 🧠 Q10：GKEリソース（DaemonSet）を Deployment Manager で展開（最小サービス）
+
+* キーワード: `GKE cluster`, `DaemonSet`, `fewest services`, `Deployment Manager`
+* 正解（薬）: **Type Provider で K8s API を登録し、Deployment Manager から DaemonSet を作る**
+* ハック:
+
+  * Deployment Manager は基本 GCP リソース向け
+  * **Type Provider** を使うと、外部/別API（K8s API含む）を “型” として扱える ([Google Cloud Documentation][1])
+* 毒になりやすい選択肢
+
+  * Runtime Configurator: 変数/同期用途で、K8sマニフェスト適用の本道ではない
+  * `kubectl` を叩くためだけのVM維持: “fewest services” に反しがち
+
+#### 現場メモ（重要）
+
+* Deployment Manager は **2026-03-31 でサポート終了**が明記されているため、実務では Infrastructure Manager / Terraform 等へ寄せる前提で考えるのが安全。 ([Google Cloud Documentation][1])
+
+#### 2周目用メモ
+
+> DMでK8s操作 = **Type Provider**
+
+---
+
+
+
 
 ### 💻 サーバーレス・Compute (Q11-Q20)
 
