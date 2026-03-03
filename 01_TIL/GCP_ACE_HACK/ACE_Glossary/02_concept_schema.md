@@ -1,413 +1,431 @@
-# GCP ACE 用語集（概念スキーマ版：最終・圧縮完全）
-
-## 0. 共通土台（まずここで全部解ける）
-
-* API Enable（API有効化）
-
-  * 定義：プロジェクトで対象APIをON
-  * 一言：土俵づくり
-  * ひっかけ：権限/コードの前にAPI無効で即死
-
-* Region / Zone
-
-  * 定義：Region=地理エリア、Zone=DC区画
-  * 一言：県 / 市
-  * ひっかけ：ゾーン冗長（複数Zone）、リージョン固定（Regional選択）
-
-* Quota（クォータ）
-
-  * 定義：利用上限（CPU/IP/API回数など）
-  * 一言：上限ブレーカー
-  * ひっかけ：作れない/増やせない→まずQuota
-
-* Label / Tag
-
-  * 定義：メタデータ（課金/管理）
-  * 一言：経費の部門コード
-  * ひっかけ：課金分析はラベル運用が最短
+# GCP ACE 用語集（構造視覚版・公開向け）
 
 ---
 
-## 1. Resource Hierarchy（権限継承と境界）
+# 🧠 0. ACEの土台
 
-* Organization
+```
+API有効？
+   ↓
+NO → 操作できない
+YES → スタート
+```
 
-  * 一言：会社
-  * ひっかけ：Org Policy/IAM一括の起点
+### API Enable
 
-* Folder
-
-  * 一言：事業部
-  * ひっかけ：部門ごと統制（ポリシー/ログ/課金）＝Folder
-
-* Project
-
-  * 一言：信頼境界（テナント）
-  * ひっかけ：課金・IAM・API・Quotaの最小単位 / App Engineリージョン固定もここ
-
-* Resource（VM/Bucket等）
-
-  * 一言：現場の資産
-  * ひっかけ：「どの階層で付与？」＝継承が本質
+最初に確認する前提条件。
 
 ---
 
-## 2. IAM（ACEの本丸：横断PJTの考え方）
+```
+Region ＝ 地理エリア
+Zone   ＝ データセンター区画
+```
 
-### 2-1. 3点セット
-
-* Principal（User/Group/SA）＝権限の受け手
-* Role（Primitive/Predefined/Custom）＝権限セット
-* Binding（どこに付けるか）＝Resource階層
-
-一言：誰が × 何できる × どこで
-
-### 2-2. Roleの使い分け
-
-* Primitive（Owner/Editor/Viewer）
-
-  * 一言：広すぎて毒
-* Predefined（例：Storage Admin）
-
-  * 一言：職務ロール
-* Custom Role
-
-  * 一言：最小権限の完成形
-  * ひっかけ：「将来の権限拡大を防ぐ」→Custom
-
-### 2-3. Service Account（SA）
-
-* 定義：ロボ用の実行主体（VM/アプリ）
-* 一言：ロボアカ
-* ひっかけ：SAキー(JSON)配布は毒（漏洩リスク）
-
-### 2-4. actAs（Service Account User）
-
-* roles/iam.serviceAccountUser
-* 一言：このロボを操縦していい許可
-* ひっかけ：SAに権限があるのに実行できない → actAs不足
-
-### 2-5. 横断プロジェクト（超重要）
-
-原則：権限は「操作される側（リソース側）」で付与
-
-例：PJT-AのSAでPJT-Bのリソース操作
-→ PJT-Bで、PJT-AのSAに必要ロールを付与
-
-### 2-6. 統制系
-
-* IAM Conditions
-
-  * 一言：条件付きドアロック（時間/IPなど）
-* Org Policy
-
-  * 一言：会社ルールで物理的に禁止（IAMより強い）
-* Google Groups / Cloud Identity
-
-  * 一言：付与は人ではなくグループ（ACE鉄則）
+冗長化＝複数Zone
+リージョン固定サービスあり（例：App Engine）
 
 ---
 
-## 3. Billing / Cost（コスト問題の解像度）
+```
+作成できない？
+   ↓
+Quota確認
+```
 
-* Billing Account
-
-  * 一言：支払い口座
-  * ひっかけ：作成/リンクに権限が要る
-
-* Budget & Alert
-
-  * 一言：使いすぎアラーム
-  * ひっかけ：PJT別に管理したい→BudgetもPJT別に作る
-
-* BigQueryコストの感覚
-
-  * 量課金（スキャン） or 予約（flat-rate）
-  * ひっかけ：爆増→クォータ/予約/クエリ設計へ誘導される
+Quota＝利用上限。
 
 ---
 
-## 4. Network（LB / NAT / Peering / Shared VPCを完全固定）
+# 🏢 1. Resource Hierarchy（境界と継承）
 
-### 4-1. 基本部品
+```
+Organization（会社）
+   ↓
+Folder（部門）
+   ↓
+Project（信頼境界）
+   ↓
+Resource（VM / Bucket）
+```
 
-* VPC（GCPはGlobal）
+## 重要原則
 
-  * 一言：社内LANの仮想版
+```
+IAMは上位から下位へ継承
+```
 
-* Subnet（リージョン単位）
-
-  * 一言：住所区画
-  * ひっかけ：IP枯渇→/20→/18（拡張）
-
-* Routes / Firewall
-
-  * Route：道案内
-  * FW：門番（ingress/egress、priority）
-  * ひっかけ：最小ポート → deny all（低優先）＋必要だけallow（高優先）
-
-### 4-2. Cloud NAT（受信できない）
-
-* 定義：外部IPなしVMの外向き出口
-* 一言：代表出口
-* ひっかけ：受信公開は不可（LBと混同するな）
-
-### 4-3. VPN / Interconnect
-
-* VPN：仮想専用線（暗号トンネル）
-* Interconnect：物理専用線（低遅延/大容量）
-* 一言：仮想 / 物理
-
-### 4-4. VPC Peering（VPC同士）
-
-* 定義：VPC-AとVPC-Bをプライベート接続
-* 一言：VPC直結
-* ひっかけ：Transitive不可（A-B, B-CでもA-C不可）
-
-### 4-5. Shared VPC（組織統制の答え）
-
-* Host PJTでVPC集中管理し、Service PJTへ貸す
-* 一言：ネットワーク本部制
-* ひっかけ：複数PJTでNW共通化/統制 → Shared VPCが薬
+Projectが基本の分離単位。
 
 ---
 
-## 5. Load Balancer 完全整理（L7/L4/内部/SSL終端）
+# 🔐 2. IAM（ACEの中核）
 
-### 5-1. 大原則
+## 基本構造
 
-* L7 = HTTP/HTTPS
-* L4 = TCP/UDP
-
-### 5-2. HTTP(S) Load Balancer（Webの正解）
-
-* 用途：Web / SSL終端 / URLルーティング / Cloud Armor / CDN
-* 一言：Webならこれ
-* ひっかけ：「SSL終端＋Web」→HTTP(S) LB
-
-### 5-3. TCP Proxy / SSL Proxy（非HTTP）
-
-* 用途：TCPアプリ / 非HTTP / SSL終端だけ欲しい
-* 一言：Web以外
-
-### 5-4. Internal LB（内部のみ）
-
-* 用途：VPC内部のアプリ
-* 一言：社内ロードバランサ
-
-### 5-5. 混同防止の最短表
-
-* Web + SSL終端 → HTTP(S) LB
-* 内部だけ → Internal LB
-* 外へ出るだけ → NAT（LBではない）
+```
+Principal × Role × Binding
+誰が     何を      どこで
+```
 
 ---
 
-## 6. Compute（VM/MIG/スナップショット）
+## ロールの考え方
 
-* Compute Engine（VM）
+```
+Primitive（広い）
+   ↓
+Predefined（職務単位）
+   ↓
+Custom（最小権限）
+```
 
-  * 一言：自由度最大（運用は自分）
-  * ひっかけ：中断不可バッチ（26h）→VMが安全
-
-* Instance Template
-
-  * 一言：型紙
-  * ひっかけ：MIGの前提
-
-* MIG
-
-  * 一言：VM群れ管理（自動増減/自己修復）
-  * ひっかけ：ステートレス＋オートスケール＝MIG
-
-* Spot / Preemptible
-
-  * 一言：安いが消える
-  * ひっかけ：やり直し不可/長時間 → 選ぶと死
-
-* Snapshot / Scheduled snapshots
-
-  * 一言：ディスクの写真
-  * ひっかけ：毎日7日保持 → Scheduled snapshots
-
-* Delete protection
-
-  * 一言：削除ボタン無効化
+原則：Predefinedから検討。
 
 ---
 
-## 7. Serverless（Run/Functions/Scheduler/Tasks）
+## Service Account 構造
 
-* Cloud Run
+```
+人 → SAを利用（actAs）
+SA → リソース操作
+```
 
-  * 一言：コンテナのサーバーレス
-  * ひっかけ：初回遅い→min-instances / 増えすぎ→max-instances
+### よくある確認ポイント
 
-* Cloud Functions
-
-  * 一言：接着剤（イベント駆動）
-  * ひっかけ：GCSに置かれたら即 → Functions（または2nd genはEventarc）
-
-* Cloud Scheduler
-
-  * 一言：目覚まし（cron）
-  * ひっかけ：イベント即時ではない
-
-* Cloud Tasks
-
-  * 一言：あとでやる箱（確実実行/リトライ/遅延）
-  * ひっかけ：3秒制限回避/非同期化/確実再試行
-
-* App Engine
-
-  * 一言：PaaS（リージョン固定）
-  * ひっかけ：リージョン変更不可→新PJT
+```
+SAに権限はある
+   ↓
+でも実行できない
+   ↓
+actAs不足の可能性
+```
 
 ---
 
-## 8. Event（Pub/Sub / Eventarc：混乱ゾーンを固定）
+## 横断プロジェクト原則
 
-### 8-1. まず結論
+```
+権限は「操作される側」で付与
+```
 
-* Pub/Sub = キュー（メッセージバス）
-* Eventarc = イベント配線（ルーティングして届ける）
+例：
 
-### 8-2. 試験の判断軸
+```
+PJT-AのSA
+    ↓
+PJT-Bのリソース操作
+    ↓
+PJT-B側でRole付与
+```
 
-* 大量データ・保持・再試行・バッファ → Pub/Sub
-* GCPサービスのイベントでRun/Functionsを起動 → Eventarc
-
-### 8-3. 混乱ポイント（これだけ覚える）
-
-* Functions 1st gen：GCS →（内部的に）Pub/Sub系の流れ
-* Functions 2nd gen / Cloud Run：Eventarc経由が基本
-
----
-
-## 9. GKE / コンテナ（差がつく中核）
-
-* Cluster / Node pool
-
-  * 一言：司令塔 / 同型ノード群
-  * ひっかけ：安定版維持 → Node Auto-Upgrades
-
-* Pod / Deployment / Service
-
-  * 一言：実体 / 管理 / 入口
-  * ひっかけ：Podは死ぬ前提、入口固定はService
-
-* Pending / Running
-
-  * 一言：席がないとPending
-  * ひっかけ：主因はCPU/メモリ不足（スケジュール不可）
-
-* HPA / VPA / Cluster Autoscaler
-
-  * HPA：Pod数（数）
-  * VPA：Podサイズ（体格）
-  * CA：Node数（席数）
-  * 一言：数 / サイズ / 物理席
-
-* DaemonSet / StatefulSet
-
-  * 一言：全員配布 / 個体管理
-  * ひっかけ：監視→DaemonSet、DB→StatefulSet
-
-* Namespace
-
-  * 一言：クラスタ内の部署（論理区画）
-  * ひっかけ：RBAC/分離の文脈で出る（完全隔離ではない）
-
-* gVisor
-
-  * 一言：怪しいコード隔離（最大隔離）
-  * ひっかけ：「最大レベルの隔離」→gVisor
+鍵ファイル配布は避ける設計が推奨。
 
 ---
 
-## 10. Storage & DB（選定問題の核）
+# 💰 3. Billing構造
 
-* GCS Storage Class（Standard / Nearline / Coldline / Archive）
+```
+Organization
+    ↓
+Billing Account
+    ↓
+Project
+```
 
-  * 一言：アクセス頻度で選ぶ
-  * ひっかけ：最初頻繁→Standard、年1→Coldline、数年→Archive
-
-* Lifecycle policy
-
-  * 一言：自動お片付け（移行/削除）
-
-* Signed URL
-
-  * 一言：期限付き鍵（30分だけ）
-
-* Persistent Disk
-
-  * 一言：VMに刺すHDD（スナップショット対象）
-
-* Cloud SQL
-
-  * 一言：RDBを運用軽く
-  * ひっかけ：最小変更で移行 → Cloud SQL
-
-* Spanner
-
-  * 一言：強整合×水平スケールRDB
-  * ひっかけ：単調増加キーNG（ホットスポット）
-
-* BigQuery
-
-  * 一言：分析はBQ
-  * ひっかけ：ログをSQL分析→Log Analytics/BQ
-
-* Bigtable / Firestore
-
-  * Bigtable：巨大・低遅延NoSQL（時系列/キー値）
-  * Firestore：アプリ向けドキュメントDB
+請求一本化＝Billing付け替え。
 
 ---
 
-## 11. Ops（監視と監査）
+## コスト監視の粒度
 
-* Cloud Monitoring
-
-  * 一言：健康診断（ダッシュボード/アラート）
-  * ひっかけ：複数PJT統合→Workspace（Monitoring account）
-
-* Cloud Logging
-
-  * 一言：記録係
-  * ひっかけ：IAM変更履歴→Admin Activity logs
-
-* Data Access audit logs
-
-  * 一言：読む操作の監査（明示的にON必要）
-  * ひっかけ：法令で「全読み取りログ」→これ
-
-* Log Sink
-
-  * 一言：ログ輸出（GCS/BQ/PubSub）
-
-* Ops Agent
-
-  * 一言：VM体内計測器（詳細メトリクス/ログ）
+```
+プロジェクト合計 → Budget
+特定サービス     → Billing Export → BigQuery
+```
 
 ---
 
-# 最短の試験判断フロー（これだけで8割拾う）
+# 🌐 4. Network構造
 
-* Web公開 + SSL終端 → HTTP(S) LB
-* 内部だけ → Internal LB / PSC（要件次第）
-* 外へ出るだけ → NAT
-* 別PJT操作 → リソース側でIAM付与（鍵配布は毒）
-* 大量データ → Pub/Sub
-* GCPイベントでRun起動 → Eventarc
-* Pending → 席不足（CPU/メモリ/Node不足）
+## 全体像
+
+```
+VPC（Global）
+   ↓
+Subnet（Region）
+   ↓
+VM
+```
 
 ---
 
-## 追加メモ（運用方針）
+## NATの位置
 
-この「圧縮版」を基準にして、解像度が低い用語が出たら、その用語だけ別紙で深掘りして増築するのが一番強い（ファイルが太らない）。
+```
+VM（外部IPなし）
+     ↓
+Cloud NAT
+     ↓
+Internet
+```
+
+NATは外向き通信のみ。
+
+---
+
+## Load Balancer 判断軸
+
+### Step1
+
+```
+HTTP/HTTPS？
+   YES → L7（HTTP(S) LB）
+   NO  → L4（TCP/SSL Proxy）
+```
+
+---
+
+### Step2
+
+```
+内部のみ？
+   YES → Internal LB
+   NO  → External LB
+```
+
+---
+
+### まとめ
+
+```
+Web + SSL終端 → HTTP(S) LB
+外向き通信    → NAT
+内部向け      → Internal LB
+```
+
+---
+
+## VPC Peering
+
+```
+VPC-A ─── VPC-B
+```
+
+A-B, B-Cでも
+A-Cは直接接続されない。
+
+---
+
+## Shared VPC
+
+```
+Host Project
+    ↓
+Service Project
+```
+
+ネットワーク統制の標準設計。
+
+---
+
+# 💻 5. Compute構造
+
+## MIG
+
+```
+Instance Template
+        ↓
+MIG
+        ↓
+Autohealing / Autoscaling
+```
+
+MIGが再生成を担当。
+
+---
+
+## Spot
+
+```
+低コスト
+   ↓
+停止の可能性あり
+```
+
+長時間・再実行困難な処理には不向き。
+
+---
+
+# ☁ 6. Serverless構造
+
+## 分類
+
+```
+コンテナ実行 → Cloud Run
+イベント処理 → Functions
+定期実行     → Scheduler
+確実実行     → Tasks
+```
+
+---
+
+## Cloud Run
+
+```
+リクエスト時に起動
+アイドル時は停止
+```
+
+トラフィックが少ない場合に有効。
+
+---
+
+# 📦 7. Event構造
+
+```
+Pub/Sub = メッセージ基盤
+Eventarc = イベントルーティング
+```
+
+---
+
+## 判断軸
+
+```
+大量メッセージ保持 → Pub/Sub
+GCPイベント起動    → Eventarc
+```
+
+---
+
+## 流れ例
+
+```
+GCS → Eventarc → Cloud Run
+```
+
+```
+App → Pub/Sub → Subscriber
+```
+
+---
+
+# 🐳 8. GKE構造
+
+```
+Cluster
+   ↓
+Node Pool
+   ↓
+Node
+   ↓
+Pod
+```
+
+---
+
+## スケーリング整理
+
+```
+Pod数      → HPA
+Podサイズ  → VPA
+Node数     → Cluster Autoscaler
+```
+
+---
+
+## Pendingの意味
+
+```
+Node不足
+   or
+CPU/メモリ不足
+```
+
+---
+
+## Serviceの役割
+
+```
+Podは入れ替わる
+入口はServiceで固定
+```
+
+---
+
+# 🗄 9. Storage選定
+
+```
+頻繁アクセス → Standard
+月1回       → Nearline
+年1回       → Coldline
+長期保管     → Archive
+```
+
+---
+
+## 自動移行
+
+```
+30日後変更？
+   ↓
+Lifecycle Policy
+```
+
+---
+
+# 🗃 10. DB選定
+
+```
+中小規模RDB → Cloud SQL
+大規模水平   → Spanner
+分析用途     → BigQuery
+```
+
+---
+
+# 📊 11. Ops
+
+```
+Monitoring = 可視化
+Logging    = 記録
+```
+
+---
+
+## ログ転送
+
+```
+Log Sink
+   ↓
+GCS / BQ / PubSub
+```
+
+---
+
+# 🎯 ACE反射フロー
+
+```
+Web公開 + SSL → HTTP(S) LB
+外向き通信    → NAT
+自動復旧      → MIG
+別PJT操作     → リソース側IAM
+少トラフィック→ Cloud Run
+大量メッセージ→ Pub/Sub
+GCPイベント   → Eventarc
+Pending       → Node不足
+```
+
+---
+
+# 学習メモ
+
+文章 → 図へ
+図 → 反射へ
+
+構造で理解し、
+その後スピードを上げる。
 
 ---
 

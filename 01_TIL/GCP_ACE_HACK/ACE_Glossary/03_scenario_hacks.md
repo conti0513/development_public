@@ -1,524 +1,770 @@
-# Appendix: GCP ACE Cheat Sheet（AA Deep Dive版）
+# Appendix: GCP ACE Master Architecture Fix（最適化版）
 
 ---
 
-# 1. Load Balancer / Network
+# 🔴 LEVEL 0：超反射（試験当日用 1枚）
 
-## 1.1 L7 vs L4（入口の層）
+## 🧠 IAM
 
 ```
-L7 = HTTP / HTTPS（URL・Hostで制御）
-L4 = TCP / UDP（ポート単位）
+横断PJT操作？
+→ リソース側でIAM付与
+
+動かない？
+→ API有効？IAM？Quota？
 ```
 
 ---
 
-## 1.2 HTTP(S) Load Balancer（Webの基本解）
+## 🌐 Network
+
+```
+Web + SSL終端 → HTTP(S) LB
+内部のみ     → Internal LB
+外向きのみ   → Cloud NAT
+HTTP以外     → L4 (TCP/SSL Proxy)
+
+VPC統制     → Shared VPC
+VPC接続     → Peering（Transitive不可）
+```
+
+---
+
+## ⚡ Serverless
+
+```
+HTTPコンテナ        → Cloud Run
+イベント起動        → Eventarc
+メッセージ保持      → Pub/Sub
+確実実行・遅延      → Cloud Tasks
+定期実行            → Scheduler
+```
+
+---
+
+## ☸ GKE
+
+```
+Pod増やす → HPA
+Node増やす → Cluster Autoscaler
+Pending → 席不足（CPU/Memory）
+入口固定 → Service
+```
+
+---
+
+## 💾 Storage / DB
+
+```
+ファイル保管 → GCS
+分析         → BigQuery
+小規模RDB    → Cloud SQL
+巨大RDB      → Spanner
+キー値       → Bigtable
+ドキュメント → Firestore
+```
+
+---
+
+---
+
+# 🟡 LEVEL 1：構造固定マップ（図で覚える層）
+
+---
+
+# 1️⃣ Load Balancer / Network 完全固定
+
+## L7 vs L4
+
+```
+HTTP/HTTPS？
+   YES → L7（HTTP(S) LB）
+   NO  → L4（TCP / SSL Proxy）
+```
+
+---
+
+## 外部Web（王道）
 
 ```
 Client
-   |
- HTTPS
-   v
-+----------------------+
-|  HTTP(S) LoadBalancer|
-|  (L7)                |
-+----------+-----------+
-           |
-           v
- Backend (MIG / GKE / Cloud Run)
+   ↓
+Global External IP
+   ↓
+HTTP(S) Load Balancer
+   ↓
+Backend Service
+   ↓
+MIG / GKE / Cloud Run
 ```
 
-特徴：
-
-* グローバル
-* SSL終端可能
-* URLルーティング可能
-* Cloud Armor連携
-* CDN連携可能
-
-選択シグナル：
-
-* Web公開
-* SSL終端
-* WAF
-* URLベース振り分け
+✔ SSL終端
+✔ URL分岐
+✔ Cloud Armor / CDN
 
 ---
 
-## 1.3 TCP / SSL Proxy（非HTTP用途）
+## Internal LB
 
 ```
-Client -- TCP/SSL --> [ TCP Proxy LB ] --> Backend
+VM（VPC内）
+   ↓
+Internal LB
+   ↓
+Backend VM
 ```
-
-用途：
-
-* 非HTTP通信
-* TCPアプリ
-* SSL終端のみ必要
-
-※Web用途の基本解ではない
 
 ---
 
-## 1.4 Internal Load Balancer（内部専用）
-
-```
-[VPC内 Client] --> [ Internal LB ] --> [内部Backend]
-```
-
-用途：
-
-* マイクロサービス間
-* 内部アプリ
-* 外部公開しない
-
----
-
-## 1.5 Cloud NAT（受信不可）
+## NAT（出口）
 
 ```
 Private VM
-   |
-   v
-+-----------+
-| Cloud NAT |
-+-----------+
-   |
-   v
+   ↓
+Cloud NAT
+   ↓
 Internet
 ```
 
-特徴：
-
-* アウトバウンド専用
-* 受信不可
-* Public IP不要
-
-混同防止：
-
-* Web公開 = LB
-* 外へ出るだけ = NAT
+✔ 受信不可
+✔ Public IP不要
 
 ---
 
-## 1.6 VPC Peering
+# 2️⃣ VPC / Peering / Shared VPC
+
+## Peering
 
 ```
-VPC-A <------> VPC-B
+VPC-A <----> VPC-B
 ```
 
-特徴：
-
-* プライベートIP接続
-* Transitive不可
-
-罠：
-A-B + B-C でも A-C 不可
+❌ Transitive不可
 
 ---
 
-## 1.7 Shared VPC（組織統制）
+## Shared VPC
 
 ```
-[Host Project]
-     |
-     +-- Shared VPC
-           |
-   -----------------------
-   |                     |
-[Service PJT A]     [Service PJT B]
+Host Project
+   ↓
+Shared VPC
+   ↓
+Service Projects
 ```
 
-用途シグナル：
-
-* 複数プロジェクト統一
-* 中央NWチーム
-* ガバナンス
+✔ 組織統制
+✔ 中央NW管理
 
 ---
 
-# 2. Pub/Sub / Eventarc
-
-## 2.1 概念分離
+# 3️⃣ IAM 横断プロジェクト固定図
 
 ```
-Pub/Sub  = キュー（保持 / 再試行 / バッファ）
-Eventarc = イベント配線（ルーティング）
+Project A (SA-A)
+       │
+       ▼
+Project B (Resource)
+```
+
+✔ 権限は Project B 側で付与
+
+---
+
+## SA 実行構造
+
+```
+User
+  ↓ (actAs)
+Service Account
+  ↓
+Resource操作
 ```
 
 ---
 
-## 2.2 Pub/Sub
+# 4️⃣ Event 系統合
+
+## Pub/Sub
 
 ```
-Event Source
-     |
-     v
-+-------------+
-|   Pub/Sub   |
-+-------------+
-     |
-     v
+Publisher
+   ↓
+Topic
+   ↓
+Subscription
+   ↓
 Subscriber
-     |
-     v
-Cloud Run / Functions / Dataflow
 ```
 
-用途：
-
-* 大量データ
-* 再試行保証
-* バッファリング
-* Pull/Push制御
-
-判断軸：
-「キュー？保持？再試行？」→ Pub/Sub
+✔ メッセージ保持
+✔ 再試行
 
 ---
 
-## 2.3 Eventarc
+## Eventarc
 
 ```
-Event Source
-     |
-     v
-+-------------+
-|   Eventarc  |
-+-------------+
-     |
-     v
-Cloud Run / Functions (2nd gen)
+GCS / AuditLog
+      ↓
+   Eventarc
+      ↓
+Cloud Run / Functions(2nd gen)
 ```
 
-用途：
-
-* GCSイベント
-* Firestore更新
-* Audit Logトリガー
-
-判断軸：
-「GCPイベントでRun起動？」→ Eventarc
+✔ GCPイベント配線
 
 ---
 
-# 3. GKE
-
-## 3.1 構造（立体固定）
+# 5️⃣ Serverless 統合
 
 ```
-+----------------------+
-|       Cluster        |
-|  (Control Plane)     |
-+-----------+----------+
-            |
-      +-----+-----+
-      | NodePool  |
-      +--+-----+---+
-         |     |
-       Node   Node
-         |
-        Pod
-```
-
-* Cluster = 制御
-* NodePool = 同型ノード群
-* Node = 席
-* Pod = 実体
-
----
-
-## 3.2 Pod / Deployment / Service
-
-```
-Deployment
-   |
-   +-- Pod
-   +-- Pod
-   +-- Pod
-
-Service (固定IP)
-   |
-   +-- Pod群
-```
-
-原則：
-
-* Podは死ぬ前提
-* 入口はServiceで固定
-
----
-
-## 3.3 Pendingの正体
-
-```
-Node1 CPU 100%
-Node2 CPU 100%
-
-Pod3 -> Pending（席不足）
-```
-
-解決：
-
-* Cluster Autoscaler
-* Node Auto-Provisioning
-
----
-
-## 3.4 HPA / VPA / CA（3階層）
-
-```
-[Cluster]  Node数  <- CA
-    |
-[Pods]     Pod数   <- HPA
-    |
-[Pod]      サイズ  <- VPA
-```
-
-覚え方：
-
-* HPA = 数
-* VPA = サイズ
-* CA  = 席
-
----
-
-## 3.5 DaemonSet / StatefulSet
-
-DaemonSet（全員配布）
-
-```
-Node1 -> Pod
-Node2 -> Pod
-Node3 -> Pod
-```
-
-StatefulSet（個体固定）
-
-```
-db-0 -> disk-0
-db-1 -> disk-1
-db-2 -> disk-2
+HTTP → Cloud Run
+GCP Event → Eventarc → Run/Functions
+遅延・保証 → Cloud Tasks
+定期 → Scheduler
 ```
 
 ---
 
-## 3.6 Namespace / gVisor
-
-Namespace
+# 6️⃣ GKE 固定図
 
 ```
 Cluster
- ├ dev
- ├ prod
- └ test
-```
-
-gVisor
-
-```
-Pod -> Sandbox -> Host
-```
-
-用途：
-
-* 信頼できないコード
-* 最大隔離
-
----
-
-# 4. Cloud DNS（ハイブリッド）
-
-## 4.1 Private Zone（疎結合）
-
-```
-App -> db.internal
-          |
-          v
-Cloud DNS Private Zone
-          |
-          v
-On-prem IP
-```
-
-原則：
-
-* アプリはIPを知らない
-* DNS更新のみで追従
-
----
-
-## 4.2 DNS Forwarding
-
-```
-GCP -> Onprem   = Outbound
-Onprem -> GCP   = Inbound
+   ↓
+NodePool
+   ↓
+Node
+   ↓
+Pod
 ```
 
 ---
 
-## 4.3 DNS Peering
+## Autoscaler 三層
 
 ```
-VPC-A の Private Zone
-        |
-        v
-VPC-B から参照
+Cluster Autoscaler → Node数
+HPA → Pod数
+VPA → Podサイズ
 ```
-
-※VPC PeeringだけではDNS共有されない
 
 ---
 
-# 5. Compute Engine
-
-## 5.1 VMリサイズ
+## Pod / Service
 
 ```
-STOP
+Deployment → Pod × n
+Service → 固定IP入口
+```
+
+---
+
+# 7️⃣ Storage / DB 1枚マップ
+
+```
+File → GCS
+Analytics → BigQuery
+RDB小規模 → Cloud SQL
+RDB大規模 → Spanner
+Key-Value → Bigtable
+Document → Firestore
+```
+
+---
+
+---
+
+# 🔵 LEVEL 2：詳細補足（深掘り層）
+
+---
+
+# 🔐 Cloud Run × Pub/Sub Push ベスト構成
+
+## 構造
+
+```
+Pub/Sub (Push Subscription)
+        ↓
+Cloud Run（認証必須）
+```
+
+---
+
+## 正しい設定
+
+1. 専用 Service Account 作成
+2. その SA に Cloud Run Invoker 付与
+3. Pub/Sub Push に SA を指定
+
+---
+
+## Push vs Pull
+
+```
+Pull → 常時起動必要（非効率）
+Push → 必要時のみ起動（効率的）
+```
+
+---
+
+# 🛡 Cloud Run Invoker の正体
+
+✔ 実行権限のみ付与
+✔ Adminは不要
+✔ 最小権限原則
+
+---
+
+# 🧊 GCS Storage Class
+
+```
+Standard → 頻繁
+Nearline → 月1
+Coldline → 年1
+Archive → 超長期
+```
+
+✔ 最低保持期間あり
+
+---
+
+## Lifecycle
+
+```
+30日 → Nearline
+90日 → Coldline
+365日 → Archive
+```
+
+---
+
+# 📜 Cloud SQL PITR
+
+✔ Binary Log 有効化が必要
+
+---
+
+# 🌐 DNS
+
+## Private Zone
+
+```
+App → db.internal → Cloud DNS → IP
+```
+
+✔ IP隠蔽
+
+---
+
+## Forwarding
+
+```
+GCP → OnPrem = Outbound
+OnPrem → GCP = Inbound
+```
+
+---
+
+---
+
+# 🧠 最終固定まとめ
+
+```
+LBは入口
+NATは出口
+IAM横断はリソース側付与
+Pub/Subは保持
+Eventarcは配線
+RunはHTTP
+Tasksは保証
+HPAは数
+CAは席
+```
+
+---
+
+# 🔚 この構造の利点
+
+✔ 反射（LEVEL 0）
+✔ 図で固定（LEVEL 1）
+✔ 深掘り（LEVEL 2）
+
+混ざらない。
+検索しやすい。
+公開にも耐える。
+
+---
+
+# Appendix：Architecture Visual Fix（図で固定する）
+
+---
+
+# 🔥 1. Load Balancer 完全固定図
+
+## 🧠 まず分岐はこれだけ
+
+```id="q9g7ea"
+HTTP/HTTPS？
+   YES → L7（HTTP(S) LB）
+   NO  → L4（TCP / SSL Proxy）
+```
+
+---
+
+## 🌍 外部向け Web（王道パターン）
+
+```id="c3k1xp"
+Client
+   ↓
+Global External IP
+   ↓
+HTTP(S) Load Balancer（L7）
+   ↓
+Backend Service
+   ↓
+MIG / GKE / Cloud Run
+```
+
+### 特徴
+
+* SSL終端できる
+* URLパス分岐できる
+* Cloud Armor / CDN 使える
+* グローバル
+
+👉 「Web + SSL終端」ならこれ。
+
+---
+
+## 🧱 L4（非HTTP）
+
+```id="v6h2zt"
+Client
+   ↓
+TCP/SSL Proxy LB
+   ↓
+Backend VM
+```
+
+* HTTP以外のTCPアプリ
+* SSL終端だけしたい
+
+---
+
+## 🏢 Internal Load Balancer
+
+```id="bz8y3l"
+VM（VPC内）
+   ↓
+Internal LB
+   ↓
+Backend VM群
+```
+
+* 外部公開しない
+* VPC内専用
+
+---
+
+## 🚪 NATとの違い（混同禁止）
+
+```id="ls8xg2"
+VM（外部IPなし）
+    ↓
+Cloud NAT
+    ↓
+Internet
+```
+
+* NATは出口専用
+* 受信不可
+* LBではない
+
+---
+
+## 🎯 LB 最短判断
+
+```id="2e4r5t"
+Web公開 + SSL終端 → HTTP(S) LB
+内部だけ          → Internal LB
+外向き通信のみ    → NAT
+HTTP以外          → L4
+```
+
+---
+
+# 🔥 2. IAM 横断プロジェクト 1枚固定図
+
+## 🧠 原則
+
+```
+権限は「操作される側」で付与
+```
+
+---
+
+## 🎯 ケース図
+
+### PJT-A の SA が PJT-B を操作
+
+```id="q8j1mh"
+[ Project A ]
+    SA-A
+      │
+      │（API呼び出し）
+      ▼
+[ Project B ]
+   Resource
+```
+
+### 正しい設定
+
+```id="l4nmks"
+Project B 側で
+   SA-A に Role付与
+```
+
+---
+
+## ❌ やりがちな誤り
+
+```id="o3k2nx"
+Project A 側でRole付与
+   ↓
+意味なし
+```
+
+---
+
+## 🔑 Service Account 操作構造
+
+```id="d9k1sl"
+User
+  ↓（actAs）
+Service Account
   ↓
-変更
-  ↓
-START
+Resource操作
 ```
 
-Live Migration ≠ リサイズ
-
----
-
-## 5.2 VM購入オプション
-
-| 種類        | 用途      |
-| --------- | ------- |
-| On-demand | 常時稼働    |
-| Spot      | 中断可能バッチ |
-| CUD       | 長期利用    |
-
----
-
-# 6. GCS
-
-## 6.1 Storage Class
-
-| クラス      | 用途    |
-| -------- | ----- |
-| Standard | 頻繁    |
-| Nearline | 月1回   |
-| Coldline | 数ヶ月   |
-| Archive  | 年1回未満 |
-
-最低保持期間あり（早期削除料金）
-
----
-
-## 6.2 Lifecycle
+### 動かないときのチェック
 
 ```
-30日後 -> Nearline
-90日後 -> Coldline
-365日後 -> Archive
-```
-
-自動移行
-
----
-
-## 6.3 Content-Type
-
-```
-application/pdf → ブラウザ表示
-octet-stream    → ダウンロード
+1. SAにRoleある？
+2. 実行者にactAsある？
 ```
 
 ---
 
-# 7. 最終判断フロー（ACE即答用）
+## 🎯 IAM横断の超圧縮
 
-```
-Web公開 + SSL?        → HTTP(S) LB
-内部のみ?             → Internal LB
-外へ出るだけ?         → NAT
-
-キュー必要?           → Pub/Sub
-GCPイベントで起動?     → Eventarc
-
-Pod Pending?          → 席不足 → CA/NAP
-
-IP変更を隠したい?     → Private DNS
-
-組織でNW統制?         → Shared VPC
+```id="9lm3zs"
+別PJT操作？
+   ↓
+リソース側でIAM付与
 ```
 
 ---
-20260303以降のついき
 
-### 🧠 Q15：Cloud Run と Pub/Sub のベストな連携（Push型）
+# 🔥 3. Event系 1枚統合図
 
-* **キーワード：** `Cloud Run`, `Pub/Sub topic`, `Activity messages`, `Best practices`.
-* **論点：** サーバーレスな Cloud Run に対して、メッセージをどう効率的かつ安全に届けるか。
-* **正解（ベストプラクティス）：** **Pub/Sub の「プッシュ（Push）サブスクリプション」** を使い、Cloud Run の URL をエンドポイントに指定する。
+## 🧠 まず役割分離
 
-#### 💡 客観的な技術評価
-
-1. **Push vs Pull の選択**:
-* **Pull（選択肢Bの毒）**: Cloud Run はリクエストがない時は「0」にスケールする性質上、メッセージを待ち受けて「自分から取りに行く（Pull）」動作には向かない（常に起動しておく必要があり、コスト増）。
-* **Push（薬）**: メッセージが来た時だけ Pub/Sub が Cloud Run を「叩き起こす（HTTP Post）」ため、リソース効率が最大化される。
-
-
-2. **認証の重要性（Invoker ロール）**:
-インターネットに公開されている Cloud Run エンドポイントを、誰でも叩ける状態にするのは「毒」。Pub/Sub サービスエージェントに **`Cloud Run Invoker`** ロールを与えたサービスアカウントを紐付けることで、正当な通知だけを受け付けるセキュアな経路が完成する。
-3. **アーキテクチャの簡素化（A, Dの毒）**:
-Cloud Functions を中継させたり（A）、GKE 上に自前でプロキシを立てたり（D）するのは、管理ポイントを増やすだけでメリットがない。
+```id="t5m9kx"
+Pub/Sub ＝ メッセージ保存バス
+Eventarc＝ イベント配線
+```
 
 ---
 
-### 🎙️ 脳に刻むための「音読用スクリプト」
+## 📦 Pub/Sub構造
 
-> 「問題は、**Cloud Run** で **Pub/Sub** のメッセージを処理することだ。
-> **Pull 型** は、サーバーを動かし続ける必要があり、サーバーレスの利点を殺す『毒』。
-> **Cloud Functions** を挟むのは、無駄な中継地点を増やすだけで、コストも遅延も増える。
-> 正解は、**Push 型サブスクリプション** だ。
-> 1. 専用の **サービスアカウント** を作る。
-> 2. そのアカウントに **Cloud Run Invoker** 権限を渡す。
-> 3. Pub/Sub の **Push エンドポイント** に Cloud Run を指定する。
-> 
-> 
-> メッセージが来た瞬間、Pub/Sub が Cloud Run を叩き起こす。
-> **『認証付きの Push』**。これが Google 推奨の黄金パターンだ。」
+```id="k1f9da"
+Publisher
+   ↓
+Topic
+   ↓
+Subscription
+   ↓
+Subscriber
+```
 
----
+* メッセージ保持
+* 再試行
+* バッファリング
 
-### 🚀 整理の進捗
-
-* **論点**: Cloud Run への通知 ＝ **Push サブスクリプション**。
-* **セキュリティ**: サービスアカウントによる **Invoker 権限** の付与。
-
-
-
-### 🧠 Cloud Run Invoker ロールの正体
-
-Cloud Run はデフォルトで **「認証が必要（Allow unauthenticated: No）」** な設定にすることが推奨されます。このとき、リクエストを投げる側には「お前は誰だ？」という証明（IDトークン）が求められます。
-
-* **役割:** 指定したサービスアカウントに対して、Cloud Run のエンドポイントを叩く（Invokeする）許可を与える。
-* **なぜ Pub/Sub 設定時に必要なのか:** 1. Pub/Sub が Cloud Run にメッセージを **Push** する。
-2. Cloud Run 側は「誰だかわからない通信は拒否する」と構えている。
-3. Pub/Sub に「このサービスアカウントのフリをして叩け」と指示を出す。
-4. そのサービスアカウントに **`Cloud Run Invoker`** が付与されていれば、Cloud Run は「あ、許可された人だ」と判断して門を開ける。
+👉 「大量」「保持」「非同期」ならPub/Sub
 
 ---
 
-### 🛡️ 2周目用：ここが「毒」と「薬」の分かれ目
+## ⚡ Eventarc構造
 
-試験でこの構成が出た際、以下のチェックポイントを音読してください。
+```id="m4g7qp"
+GCS / AuditLog / GCP Event
+        ↓
+     Eventarc
+        ↓
+Cloud Run / Functions(2nd gen)
+```
 
-| 構成要素 | 薬（正解） | 毒（不正解） |
-| --- | --- | --- |
-| **アクセス制限** | **認証が必要** (Authenticated) | **一般公開** (Unauthenticated) |
-| **叩く権限** | **`Cloud Run Invoker`** | `Cloud Run Admin` (権限強すぎ) |
-| **紐付け先** | **Pub/Sub 側**にサービスアカウントをセット | Cloud Run 側の環境変数に書く |
+* GCPイベントを拾う
+* ルーティング専門
+* 基本保持しない
 
-> **ハック：** 「Invoker（起動者）」という名前の通り、**「動かす権利」**だけをピンポイントで渡すのが最小権限の原則（Least Privilege）です。
+👉 「GCPイベント起動」ならEventarc
 
 ---
+
+## 🎯 Functions世代差
+
+```id="x7k4vr"
+1st gen → 内部的にPub/Sub寄り
+2nd gen → Eventarc経由
+```
+
+---
+
+## 🧠 使い分け超圧縮
+
+```id="p9n2sh"
+大量メッセージ処理 → Pub/Sub
+GCPイベント連携     → Eventarc
+```
+
+---
+
+# 🔥 まとめ：3大混乱ゾーン固定
+
+```id="v8l3wr"
+LBは入口
+NATは出口
+IAM横断はリソース側付与
+Pub/Subはバス
+Eventarcは配線
+```
+
+---
+
+これで、
+
+* LB
+* IAM横断
+* Event
+
+の3大混乱ゾーンは視覚固定できる。
+
+---
+
+次やるなら：
+
+了解。アペンディックスにそのまま貼れる形で、2枚だけ再提示します（マイルド語彙・1枚固定AA）。
+
+---
+
+# 🔥 VPC / NAT / Peering / Shared VPC：1枚統合マップ
+
+```text
+                    ┌──────────────────────────────┐
+                    │            VPC               │
+                    │   (Global: 社内LANの器)      │
+                    └───────────┬──────────────────┘
+                                │
+                ┌───────────────┼───────────────────────────┐
+                │               │                           │
+        ┌───────▼───────┐  ┌────▼─────┐              ┌─────▼─────┐
+        │   Subnet       │  │ Firewall  │              │   Routes   │
+        │ (Regional住所)  │  │ (門番)     │              │ (道案内)    │
+        └───────┬───────┘  └───────────┘              └────────────┘
+                │
+                │ (外に出たい：送信のみ)
+                ▼
+         ┌────────────────┐
+         │   Cloud NAT     │  ← 受信はしない（出口専用）
+         └───────┬────────┘
+                 │
+                 ▼
+              Internet
+
+
+VPCとVPCをつなぐ（プライベート直結）
+    ┌──────────────┐        ┌──────────────┐
+    │    VPC-A      │<------>│    VPC-B      │
+    └──────────────┘  Peering└──────────────┘
+         ※ Transitive不可（A-B, B-CでもA-Cは直結しない）
+
+
+複数プロジェクトでネットワーク統制（中央集権）
+               ┌────────────────────────┐
+               │       Host Project      │
+               │  (NW本部: VPCを持つ)     │
+               └───────────┬────────────┘
+                           │ Shared VPC
+           ┌───────────────┼────────────────┐
+           │               │                │
+   ┌───────▼────────┐ ┌────▼─────────┐ ┌────▼─────────┐
+   │ Service PJT-A    │ │ Service PJT-B │ │ Service PJT-C │
+   │ (アプリPJT)      │ │ (アプリPJT)   │ │ (アプリPJT)   │
+   └─────────────────┘ └──────────────┘ └──────────────┘
+```
+
+## 反射メモ（1行）
+
+* 外向き送信だけ → NAT
+* VPC同士直結 → Peering（Transitive不可）
+* 複数PJTのNW統制 → Shared VPC（Hostが握る）
+
+---
+
+# 🔥 GKE 完全1枚固定（Cluster → Pod → Autoscaler）
+
+```text
+                     ┌──────────────────────────────┐
+                     │            GKE Cluster        │
+                     │      (Control Plane/制御)     │
+                     └──────────────┬───────────────┘
+                                    │
+                                    │ 管理（API/スケジューリング）
+                                    ▼
+                         ┌───────────────────────┐
+                         │       Node Pool       │  ← 同型ノード群
+                         │ (min/max などを設定)   │
+                         └───────────┬───────────┘
+                                     │
+                   ┌─────────────────┼─────────────────┐
+                   │                 │                 │
+             ┌─────▼─────┐     ┌────▼─────┐     ┌─────▼─────┐
+             │   Node     │     │   Node    │     │   Node     │  ← = 席（VM）
+             └─────┬─────┘     └────┬─────┘     └─────┬─────┘
+                   │                │                 │
+                   ▼                ▼                 ▼
+             ┌─────────┐      ┌─────────┐       ┌─────────┐
+             │   Pod    │      │   Pod    │       │   Pod    │  ← = 実体（アプリ）
+             └─────────┘      └─────────┘       └─────────┘
+
+入口を固定する（Podが入れ替わってもOK）
+         ┌───────────────────────────────────┐
+Client → │ Service（固定IP/名前：入口）        │ → Pod群へ
+         └───────────────────────────────────┘
+
+
+よくある詰まり（Pending）
+  Podが起動できない → Nodeに空きがない（CPU/Memory不足） → 「席不足」
+```
+
+## Autoscaler 3点セット（ここだけ反射）
+
+```text
+HPA  = Pod数を増減（負荷でレプリカ調整）
+VPA  = Podサイズを調整（CPU/Memory要求）
+CA   = Node数を増減（席を増やす：Cluster Autoscaler）
+```
+
+## 反射メモ（1行）
+
+* Podを増やす → HPA
+* Node（席）を増やす → Cluster Autoscaler
+* Pending → 席不足（Node側のキャパ不足）
+* 入口固定 → Service
+
+---
+

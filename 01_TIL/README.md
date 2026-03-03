@@ -1,63 +1,104 @@
-# 🌌 Development Public / 2026 Innovation Layer
+# 📘 ACE 学習方針（自分用メモ）
 
-## 🛠️ Main Feature: OpenGemini-Lite (AI-Driven Pipeline)
-Slack を起点とし、最新の AI モデルと CI/CD パイプラインを直結させた自律型イベント駆動基盤。
+## 🧠 自分の学習特性
+
+### 1. 構造理解型（Concept-first）
+
+- 単語の丸暗記では定着しにくい
+- 「なぜそうなるか」の構造が見えると一気に理解できる
+- 思想・設計原則を軸に整理すると強い
+- 表面的なパターン暗記はストレスになりやすい
+
+→ まず概念を理解する  
+→ その後に反射化する
 
 ---
 
-## 🌌 AI-Native Development Lifecycle
-人間と AI エージェント（OpenGemini-Lite）が共作する「AI共存型ワークフロー」の実践。
+### 2. 視覚優位（構造可視化型）
 
-### 📊 開発ライフサイクル (Mermaid)
+- 文章より図・AAの方が入りやすい
+- 階層構造や関係図があると理解が安定する
+- フローや因果関係を配置で覚えるタイプ
 
-```mermaid
-sequenceDiagram
-    autonumber
-    actor Human as 👤 自分 (Local)
-    participant Shell as 🐚 Operations Shells
-    participant GitHub as 🐙 GitHub (Remote)
-    participant AI as 🧠 AI Agent (Cloud Run)
+例：
 
-    Note over Human, AI: 🛠️ 開発開始フェーズ
-    Human->>Shell: 1. ./01_sync_ai.sh
-    Shell->>GitHub: Fetch & Rebase (AI成果の回収)
-    GitHub-->>Human: 最新のTIL/成果物が手元に
-
-    Note over Human, AI: ✍️ 執筆・開発フェーズ
-    Human->>Shell: 2. ./02_create_today.sh
-    Shell-->>Human: 今日のテンプレート生成
-    Human->>Human: 開発 & ドキュメント執筆
-
-    Note over Human, AI: 🚀 公開・AI起動フェーズ
-    Human->>Shell: 3. ./03_publish_all.sh
-    Shell->>GitHub: Push to Main
-    GitHub->>AI: Webhook (Event Trigger)
-    AI->>AI: 思考・推論 (OpenGemini-Lite)
-    AI->>GitHub: 自律的な成果生成 (PR/Commit)
-
-    Note over Human, AI: 🔄 サイクル完了（翌日へ）
 ```
 
-### 🐚 運用スクリプト (標準ルーチン)
-1. **./01_sync_ai.sh** : リモートのAI成果をローカルへ同期。
-2. **./02_create_today.sh** : 今日のTILテンプレートを生成。
-3. **./03_publish_all.sh** : 成果をPushし、AIエージェントを起動。
+Pod不足  → HPA
+Node不足 → Cluster Autoscaler
+VM復旧   → MIG
+
+```
+
+文章よりも構造で覚える。
 
 ---
 
-## ⚙️ システム管理・運用ツール (Admin & Debug)
-通常ルーチン以外で、挙動の確認やメンテナンスが必要な際に使用します。
+### 3. 抽象化が得意
 
-| エイリアス | 絶対パス | 用途 |
-| :--- | :--- | :--- |
-| **ag-check** | /workspaces/development_public/02_ARCHITECTURE/04_IAC_TERRAFORM/Terraform/scripts/check.sh | **稼働確認:** Slack受信やAI推論、制限（429）の状況確認 |
-| **ag-deploy** | /workspaces/development_public/02_ARCHITECTURE/04_IAC_TERRAFORM/Terraform/scripts/deploy.sh | **再デプロイ:** Cloud Run環境への最新コードの反映 |
-| **ag-debug** | /workspaces/development_public/02_ARCHITECTURE/04_IAC_TERRAFORM/Terraform/scripts/gh-debug-run.sh | **デバッグ:** GitHub Actionsの実行エラーログの解析 |
-| **ag-clean** | /workspaces/development_public/02_ARCHITECTURE/04_IAC_TERRAFORM/Terraform/scripts/gh-clean.sh | **一括削除:** 不要になったPRやブランチの整理 |
-| **auth-gcp** | /workspaces/development_public/02_ARCHITECTURE/04_IAC_TERRAFORM/Terraform/scripts/setup_auth_min.sh | **認証更新:** GCP操作に必要な認証情報の再取得 |
+- 個別問題を「Googleの思想」に落とせる
+- 「どれが最もマネージドか」で整理できる
+- パターンの共通項を見つけるのが得意
+
+ACEは「設計思想を当てる試験」なので相性は良い。
 
 ---
-## 📝 実装のポイント
-- **セキュア通信**: Base64エンコードにより特殊記号によるエラーを回避。
-- **モデル追従**: \`gemini-flash-latest\` 指定により最新モデルへ自動追従。
-- **制限緩和**: 安全フィルター設定を調整し、技術的な出力を最適化。
+
+### 4. 暗記耐性は低め
+
+- ゴロ合わせは刺さりにくい
+- 単語帳の単純反復は疲れる
+- 意味が通らない暗記は定着しない
+
+→ 理解 → 図式化 → 反射化  
+この順番で進める。
+
+---
+
+## 🎯 学習戦略
+
+### フェーズ1：構造理解
+
+- 用語を階層・関係性で整理
+- 「なぜそれが正解か」を説明できる状態にする
+- 文章を一度深く読む
+
+### フェーズ2：可視化
+
+- AAやフロー図に変換
+- 文章を削減し、図だけ残す
+- 判断軸を1行に圧縮する
+
+### フェーズ3：反射化
+
+- 問題文からシグナル単語を抽出
+- 図を思い出して即答
+- 深掘りせず、思想で選ぶ
+
+---
+
+## 🧩 ACEの判断軸（常に意識する）
+
+1. マネージドを優先
+2. サーバーレスを優先
+3. 手作業より自動化
+4. 最小構成を選ぶ
+5. 鍵配布よりIAM
+6. スケールは自動
+
+---
+
+## 🚀 最重要メモ
+
+ACEは実装試験ではない。
+
+- 深掘り設計力より
+- Googleのベストプラクティス理解
+
+構造で理解し、
+図で定着し、
+反射で解く。
+
+---
+
+
