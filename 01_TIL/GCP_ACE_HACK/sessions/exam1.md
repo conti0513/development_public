@@ -6,56 +6,53 @@
 
 * キーワード: `on-premises`, `no public IP`, `restrict internet access`, `Google Cloud APIs`
 * 正解（薬）:
-
-  * **DNS を `restricted.googleapis.com` に向ける**（CNAME/Private DNS）
-  * **VIP `199.36.153.4/30` への経路を Cloud Router(BGP) でオンプレへ広報**
+  * **Google APIs（`*.googleapis.com`）を `restricted.googleapis.com` に解決させる**（CNAME/Private DNS）
+  * **VIP `199.36.153.4/30` への経路を Cloud Router（BGP）でオンプレへ広報**
 * ハック（裏口の作り方）:
   インターネット（公道）ではなく、**VPN/Interconnect（地下通路） + DNS書き換え + 専用VIP**で Google APIs に入る。
 
 #### ✅ AA（最小構成イメージ）
 
 ```
+
 [On-Prem DNS]  storage.googleapis.com
-      |        (CNAME -> restricted.googleapis.com)
-      v
+|        (CNAME -> restricted.googleapis.com)
+v
 [On-Prem App] -----> (VPN / Interconnect) -----> [VPC]
-                           |                       |
-                           |                  [Cloud Router]
-                           |                 (BGP advertise)
-                           |                       |
-                           +---- route to 199.36.153.4/30 ----+
-                                                             |
-                                                [restricted.googleapis.com VIP]
-                                                             |
-                                                           [GCS]
+|                       |
+|                  [Cloud Router]
+|                 (BGP advertise)
+|                       |
++---- route to 199.36.153.4/30 ----+
+|
+[restricted.googleapis.com VIP]
+|
+[GCS]
+
 ```
 
 #### 🧠 なぜこれか（試験で刺さる理由）
 
 1. DNS（名前の書き換え）
-
-* `storage.googleapis.com` をそのまま引くと、通常は公開経路に寄りがち。
-* そこで **`*.googleapis.com` を `restricted.googleapis.com` に向ける**（CNAME/Private DNS）ことで、API宛先を「制限付き」側へ寄せる。
+* `storage.googleapis.com` をそのまま引くと、通常は公開インターネット経路に出やすい。
+* そこで **Google APIs（`*.googleapis.com`）を `restricted.googleapis.com` に向ける**（CNAME/Private DNS）ことで、API宛先を「制限付き」側へ寄せる。
 
 2. VIP（199.36.153.4/30）
-
 * `restricted.googleapis.com` の **VIP レンジが `199.36.153.4/30`**。このIP帯へ「社内から行ける」ようにするのがコア。
 
 3. 経路広報（Cloud Router / BGP）
-
 * オンプレ側に「`199.36.153.4/30` は VPN/Interconnect へ流せ」を教えるために、**Cloud Router で BGP 広報**する。
 
 #### 🛡️ 類似ワードの整理（混同ポイント）
 
-| 用語                          | どこから叩く？ | 典型要件                                          |
-| --------------------------- | ------- | --------------------------------------------- |
-| Private Google Access (PGA) | VPC内VM  | サブネットで PGA を有効化、など                            |
-| PGA for on-premises         | オンプレ    | VPN/Interconnect + DNS + VIP(199.36.153.4/30) |
+| 用語 | どこから叩く？ | 典型要件 |
+| --- | --- | --- |
+| Private Google Access | VPC内VM | サブネットで Private Google Access を有効化、など |
+| Private Google Access for on-premises | オンプレ | VPN/Interconnect + DNS + VIP(199.36.153.4/30) |
 
 * 毒になりやすい選択肢（典型）
-
   * Squid等のプロキシを新設
-  * ILBで無理やり中継
+  * ILBで無理やり中継  
     → **要件が「Google推奨・管理最小」なら外しやすい**
 
 #### 💡 2周目用 反射メモ（1行）
@@ -69,7 +66,6 @@
 * キーワード: `administrative access`, `tracked to individual`, `manage efficiently`
 * 正解（薬）: **OS Login**（例: `compute.osAdminLogin`）
 * ハック:
-
   * 共有鍵は「誰が入ったか」追えない → 毒
   * OS Login は **IAM（Googleアカウント）でSSH制御**でき、退職・異動に強い
 
@@ -84,7 +80,6 @@
 * キーワード: `personal credit cards`, `consolidating`, `single billing account`
 * 正解（薬）: **新しい Billing Account を作成**し、各プロジェクトを紐付け
 * ハック:
-
   * Project（箱）と Billing（財布）は別
   * 「組織配下へ移動」だけで請求は切り替わらない（管理構造の話）
 
@@ -97,9 +92,8 @@
 ### 🧠 Q4：低CPU / 高メモリ / コスト最小（in-memory cache）
 
 * キーワード: `almost no CPU`, `30 GB in-memory cache`, `lowest costs`
-* 正解（薬）: **Custom machine type**（CPU最小 + メモリ32GB級）
+* 正解（薬）: **Custom machine type**（CPU最小（例: 2vCPU）+ メモリ32GB）
 * ハック:
-
   * Standard はCPU:メモリ比が固定 → メモリ目的だとCPU過剰でコスト増
   * “in-memory” は **RAM**。SSD（ディスク）増設は筋違いになりやすい
 
@@ -113,11 +107,9 @@
 
 * キーワード: `Kubernetes cluster configuration`, `inactive environments`, `minimal steps`
 * 正解（薬）:
-
   * `kubectl config use-context <ctx>`
   * `kubectl config view`
 * ハック:
-
   * `get-contexts` は「一覧」寄り（名前と現在地）
   * “configuration をチェック” は **中身(view)** を求めていることが多い
 
@@ -132,7 +124,6 @@
 * キーワード: `consolidate all costs`, `single invoice`, `as of tomorrow`
 * 正解（薬）: **買収先プロジェクトを自社の Billing Account に付け替え**
 * ハック:
-
   * 組織(Organization)移行は重い（IAM/ポリシー再設計が発生しやすい）
   * “明日まで” があるなら、財布（Billing）を先に揃える
 
@@ -147,7 +138,6 @@
 * キーワード: `upload images`, `processed by converting`, `most efficient and cost-effective`
 * 正解（薬）: **Cloud Storage → Cloud Functions（GCSイベントで起動）**
 * ハック:
-
   * 画像/動画/PDF は **GCS**
   * 「置かれたら動く」= Functions の定番
 
@@ -162,7 +152,6 @@
 * キーワード: `launching production`, `apply the same IAM roles`, `fewest possible steps`
 * 正解（薬）: **`gcloud iam roles copy`**（コピー先をProd Project）
 * ハック:
-
   * 手作業で作り直しはミス源＆最小ステップではない
   * 組織レベルへコピーは影響範囲が広がりやすく、最小権限と衝突しがち
 
@@ -177,7 +166,6 @@
 * キーワード: `custom VPC`, `single subnet`, `largest possible IP address range`, `future scaling`
 * 正解（薬）: **`10.0.0.0/8`**
 * ハック:
-
   * CIDRは **/の数字が小さいほど大きい**
   * `/32` はIP1個（サブネットとしてはほぼ使い物にならない）
 
@@ -197,17 +185,17 @@
 * キーワード: `GKE cluster`, `DaemonSet`, `fewest services`, `Deployment Manager`
 * 正解（薬）: **Type Provider で K8s API を登録し、Deployment Manager から DaemonSet を作る**
 * ハック:
-
   * Deployment Manager は基本 GCP リソース向け
-  * **Type Provider** を使うと、外部/別API（K8s API含む）を “型” として扱える ([Google Cloud Documentation][1])
+  * **Type Provider** を使うと、外部/別API（K8s API含む）を “型” として扱える  
+    （参考: [Google Cloud Documentation](https://cloud.google.com/deployment-manager/docs/configuration/supported-resource-types#type_providers)）
 * 毒になりやすい選択肢
-
   * Runtime Configurator: 変数/同期用途で、K8sマニフェスト適用の本道ではない
   * `kubectl` を叩くためだけのVM維持: “fewest services” に反しがち
 
 #### 現場メモ（重要）
 
-* Deployment Manager は **2026-03-31 でサポート終了**が明記されているため、実務では Infrastructure Manager / Terraform 等へ寄せる前提で考えるのが安全。 ([Google Cloud Documentation][1])
+* Deployment Manager は **2026-03-31 でサポート終了**が明記されているため、実務では Infrastructure Manager / Terraform 等へ寄せる前提で考えるのが安全。  
+  （参考: [Google Cloud Documentation](https://cloud.google.com/deployment-manager/docs/deprecations/deprecation)）
 
 #### 2周目用メモ
 
@@ -218,101 +206,380 @@
 
 
 
-### 💻 サーバーレス・Compute (Q11-Q20)
+## 💻 サーバーレス・Compute (Q11-Q20)
 
-**Q11：コンテナ / ユーザー極少 / コスト最小**
+### Q11：コンテナ / ユーザー極少 / コスト最小
+この問題の論点は**「サーバーレス(Serverless) vs 常駐型(Always-on)のコスト境界線」**です。
 
-* **キーワード：** `container image`, `very few daily users`, `cost-efficient`.
-* **正解：** **Cloud Run**。
-* **ハック：** リクエストがない時は「0円」になる。Scale-to-zeroが低トラフィックに最強。
+* キーワード： `container image`, `HTTP endpoint`, `very few daily users`, `cost-efficient`
+* 正解（薬）： **Cloud Run**（完全マネージド）
+* ハック（「使った分だけ」の極致）：
+  * ユーザーがいない時間は **「0円」** にしたいなら、迷わず **Cloud Run**
+  * リクエストが来た時だけコンテナが立ち上がり、終われば消える（few usersに最強）
 
-**Q12：ログをSQLで詳細分析したい**
+#### 💡 なぜ他の選択肢が「毒」なのか？
 
-* **キーワード：** `collect logs`, `further analysis`, `cost efficiency`.
-* **正解：** **BigQuery への Sink**（エクスポート）。
-* **ハック：** 「分析(Analysis)」「SQL」が出たら、ログの送り先は BigQuery。
+1. **GKE（B, Dの毒）**: ノード（VM）が動く限り課金が発生。極少ユーザーには過剰。
+2. **App Engine Flexible（Cの毒）**: VMが常駐し最低料金がかかる。起動も遅め。
 
-**Q13：ログを3年間保管（激安）**
+#### 🛡️ 2周目用：毒と薬の見分け方
 
-* **キーワード：** `store log files for 3 years`, `cost-effective`.
-* **正解：** **Coldline Storage** への Sink。
-* **ハック：** 「3年」などの長期保管で、分析もしないなら GCS の安いクラス（Coldline）が最適。
+| 状況 | 薬（正解） | 毒（不正解） |
+| --- | --- | --- |
+| トラフィックが極少・不定期 | Cloud Run（Scale to zero） | GKE, Compute Engine |
+| 24時間安定した大量アクセス | GKE, Compute Engine | Cloud Run（単価が不利になる可能性） |
+| 標準的なWebアプリ（コンテナなし） | App Engine Standard | App Engine Flexible |
 
-**Q14：災害復旧（DR）用バックアップ**
+#### 🚀 2周目のリズム
 
-* **キーワード：** `disaster recovery`, `long-term backup retention`, `best practices`.
-* **正解：** **Coldline Storage**。
-* **ハック：** 災害（めったに起きない）＝ アクセス頻度が極めて低い ➔ Coldline。
-
-**Q15：Pub/Sub ➔ Cloud Run 連携**
-
-* **キーワード：** `Cloud Run`, `processes messages from Cloud Pub/Sub`, `best practices`.
-* **正解：** **Push Subscription** + **Invoker** ロール。
-* **ハック：** Runは受動的。Pub/Subから「投げてもらう(Push)」のが定石。
-
-**Q16：指定された内部IP（10.194...）を固定**
-
-* **キーワード：** `specific IP 10.194.3.41`, `proprietary software hard-coded`.
-* **正解：** **Static Internal IP** を予約。
-* **ハック：** アプリがIP指定なら、予約して固定するしかない。
-
-**Q17：特定アプリ（Apache等）の「下り通信費」のみ監視**
-
-* **キーワード：** `egress network costs for the Apache server`, `not for entire project`.
-* **正解：** **Billing Export + BigQuery**。
-* **ハック：** 予算アラートは「PJT単位」。特定リソースだけの細かな費用は BigQuery で分析が必要。
-
-**Q18：VMが死んだら自動再生成（Autohealing）**
-
-* **キーワード：** `unresponsive`, `automatically re-created`, `minimum number of steps`.
-* **正解：** **Managed Instance Group (MIG)** + **Autohealing Health Check**。
-* **ハック：** 作り直すのは MIG の仕事。LBはトラフィックを止めるだけ。
-
-**Q19：GKEインフラを自動拡張**
-
-* **キーワード：** `GKE cluster`, `scale automatically`, `minimize manual configuration`.
-* **正解：** **Node Pool の Autoscaling 有効化**（Cluster Autoscaler）。
-* **ハック：** Podを増やすのがHPA。インフラ（Node/VM）自体を増やすのが CA。
-
-**Q20：CLIでVM作成の前提条件**
-
-* **キーワード：** `Compute Engine instance using the CLI`, `prerequisite`.
-* **正解：** **`compute.googleapis.com` API の有効化**。
-* **ハック：** GCPはAPIを「有効化」しないと何も始まらない。
+「コンテナ ＋ ユーザー少ない ➔ Cloud Run」
 
 ---
 
-### 📦 Storage & Database (Q21-Q30)
+### 🧠 Q12：Cloud Logging におけるログ転送（Log Sink）の設計
 
-**Q21：App Engineで「予備」を常に待機**
+* キーワード： `collect logs`, `BigQuery`, `cost efficiency`, `Compute Engine`
+* 論点： ログ収集・転送にカスタムコードを書くのは運用負荷増のアンチパターン
+* 正解（ベストプラクティス）： **Cloud Logging のログルーター（Log Sink）で BigQuery へ直接エクスポート**
 
-* **キーワード：** `App Engine`, `4 unoccupied instances ready`, `sudden increases`.
-* **正解：** **Automatic Scaling** + **`min_idle_instances`**。
-* **ハック：** スパイクに備えて「暇な(Idle)」インスタンスをキープ。
+#### 💡 客観的な技術評価
 
-**Q22：30日経った画像を安く（消さない）**
+1. **マネージド機能の活用**: 標準のログルーターで中継不要
+2. **フィルタリングでコスト最適化**: 例）Compute Engineログに絞る
+3. **反映が速い**: バッチよりストリーミング寄りの転送
 
-* **キーワード：** `older than 30 days`, `minimize costs`, `automatically managing`.
-* **正解：** **Lifecycle Management** で **Archive Storage** へ移動。
-* **ハック：** 「削除」ではなく「安く維持」なら Archive。
+#### 🛡️ ログ転送先（Sink）の選定基準
 
-**Q23：DBのポイントインタイムリカバリ(PITR)**
+| 宛先 | 主な目的 | 選定のシグナル |
+| --- | --- | --- |
+| BigQuery | 高度な分析・SQL | `Analysis`, `Trends`, `Dashboard` |
+| Cloud Storage | 長期アーカイブ（低コスト） | `Compliance`, `Archive`, `Security audit` |
+| Pub/Sub | 外部連携・リアルタイム処理 | `Third-party`, `Splunk`, `SIEM` |
 
-* **キーワード：** `Cloud SQL (MySQL)`, `point-in-time recovery`, `accidental deletions`.
-* **正解：** **Binary Logging** の有効化。
-* **ハック：** 過去の特定の瞬間に戻すための必須設定。
+---
 
-**Q24：Cassandra を最速導入**
+### 🧠 Q13：長期ログ保存のコスト最適化（アーカイブ設計）
 
-* **キーワード：** `Cassandra`, `isolated development environment`, `migration quickly`.
-* **正解：** **Cloud Marketplace** でプリセット画像を使用。
-* **ハック：** 自分で入れるのは手間。ポチるのが最速。
+* キーワード： `store for 3 years`, `hundreds of projects`, `cost-effective`
+* 論点： 長期・低頻度アクセスは分析用ストレージだとコスト過多
+* 正解（ベストプラクティス）： **Cloud Logging Sink → Cloud Storage（Coldline / Archive）**
 
-**Q25：他チームと独立した環境で作りたい**
+#### 💡 客観的な技術評価
 
-* **キーワード：** `organized independently`, `separate resources`.
-* **正解：** **新しい Project を作成**。
-* **ハック：** GCPの「独立」の最小単位はプロジェクト。IAMで分けるのは不十分。
+1. **クラス選定**: Coldline/Archiveで大幅に安い
+2. **集約エクスポート**: プロジェクト多数なら Organization レベルでSinkを作るのが効率的
+3. **ライフサイクル**: 3年後削除も自動化可能
+
+#### 🛡️ ログ保存先の比較（コストと目的）
+
+| 宛先 | コスト | 主な用途 | 保持期間の目安 |
+| --- | --- | --- | --- |
+| Cloud Storage | 極低 | コンプライアンス、監査、長期保管 | 数ヶ月〜数年 |
+| BigQuery | 中〜高 | 直近の分析、可視化 | 数週間〜数ヶ月 |
+| Cloud Logging | 高 | リアルタイムのデバッグ、監視 | 標準30日（最大10年だが高額） |
+
+---
+
+### 🧠 Q14：ディザスタリカバリ（DR）用バックアップの選定
+
+* キーワード： `critical data backups`, `disaster recovery`, `long-term retention`, `best practices`
+* 論点： めったに取り出さない長期保管＝最安クラスが基本
+* 正解（ベストプラクティス）： **Coldline Storage**（選択肢になければ Archive がより安い）
+
+#### 💡 客観的な技術評価
+
+1. **アクセス頻度とクラスの相関**
+   * Multi-Regional / Regional: 常時アクセス用（高い）
+   * Nearline: 月1回程度
+   * Coldline: 年1回程度（DR向き）
+2. **取り出し料金**: 高いがDR用途ならトータルは安くなりやすい
+3. **耐久性**: どのクラスも 11 nines は同等
+
+---
+
+### 🧠 Q15：Cloud Run と Pub/Sub のベストな連携（Push型）
+
+* キーワード： `Cloud Run`, `Pub/Sub topic`, `Activity messages`, `Best practices`
+* 論点： Cloud Run（scale-to-zero）にメッセージを効率的に届ける
+* 正解（ベストプラクティス）： **Pub/Sub の Push サブスクリプションで Cloud Run URL を叩く**
+
+#### 💡 客観的な技術評価
+
+1. **Push vs Pull**
+   * Pull: 常時起動が必要になりがち（毒）
+   * Push: 必要時だけ叩き起こす（薬）
+2. **認証（Invoker）**
+   * 誰でも叩ける公開は毒
+   * Pub/Sub 側のSAに `Cloud Run Invoker` を付与して保護
+3. **中継の増加は毒**
+   * Functions中継やGKEプロキシは管理点が増える
+
+---
+
+### 🧠 Q16：Compute Engine 固定（内部）IP の指定（クライアントがハードコード）
+
+**【実質的な問題文】**
+
+> Deploy a Compute Engine instance with a specific fixed internal IP (10.194.3.41) because the client software is hard-coded and cannot be changed.
+
+#### 🛡️ 構造（シグナル）の見極め
+
+1. **特定IPの指定（薬）**
+   * `10.194.3.41` を指名して予約（Static Internal IP）
+2. **自動割り当ての罠（毒）**
+   * Ephemeral / Automatic は番号を選べない
+3. **Promote の罠（毒）**
+   * 既存の番号を固定にするだけで、番号自体を `41` に変えられない
+
+#### 💡 2周目用：最短チェックリスト
+
+| 状況（シグナル） | 薬（正解） | 理由 |
+| --- | --- | --- |
+| IPが直書きされている | Static Internal IP 予約 | 番号を指名する必要がある |
+| ネット越しに固定したい | Static External IP | 外向き（パブリック）が必要 |
+| 番号はどうでもいい | Ephemeral IP | 簡単で無料 |
+
+---
+
+### Q17：特定アプリ（Apache等）の「下り通信費」のみ監視
+
+#### 🧠 Q17：ACE論点への超圧縮（骨組み抽出）
+
+**【実質的な問題文】**
+
+> Notify via email when a specific service cost (egress for a specific VM) exceeds $100. The project has many other services running.
+
+#### 🛡️ 構造（シグナル）の見極め
+
+1. **標準アラートの限界（毒）**
+   * Budget Alerts は合計金額向け。特定VMのEgressだけは難しい
+2. **詳細分析には BigQuery（薬）**
+   * Billing Export → BigQuery で明細を抽出して判定
+3. **ログからの推測（毒）**
+   * Apacheログから推測は手間・ズレが出る
+
+#### 💡 2周目用：最短チェックリスト
+
+| 監視したい対象 | 薬（正解） | 理由 |
+| --- | --- | --- |
+| プロジェクト全体の合計 | Budget Alerts | 最短 |
+| 特定サービス/リソース | BigQuery Export + Function | 標準だけでは粒度不足 |
+
+---
+
+### Q18：VMがDownしたら自動再生成（Autohealing）
+
+#### 🧠 Q18：ACE論点への超圧縮（骨組み抽出）
+
+**【実質的な問題文】**
+
+> Configure Autohealing for Compute Engine instances to automatically re-create any instance that fails health checks.
+
+#### 🛡️ 構造（シグナル）の見極め
+
+1. **自己修復の主体は MIG（正解）**
+   * MIG + Autohealing Health Check で削除・再生成
+2. **LBの役割（誤り）**
+   * 不健全への転送停止まで（再生成しない）
+3. **Autoscaling の役割（誤り）**
+   * 台数増減（再生成とは別）
+
+#### 💡 2周目用：最短チェックリスト
+
+| 実現したいこと | 解決策（正解） | 理由 |
+| --- | --- | --- |
+| インスタンスを再生成したい | MIG + Autohealing | ライフサイクル管理はMIG |
+| 通信を止めたいだけ | Load Balancer | 交通整理 |
+| 負荷で数を変えたい | Autoscaling | 需要に応じて増減 |
+
+---
+
+### Q19：GKEインフラを自動拡張
+
+#### 🧠 Q19：ACE論点への超圧縮（骨組み抽出）
+
+**【実質的な問題文】**
+
+> Scale a GKE cluster infrastructure automatically to accommodate new microservices (more pods) with minimal manual configuration.
+
+#### 🛡️ 構造（シグナル）の見極め
+
+1. **ノード（VM）を増やすのは Cluster Autoscaler（正解）**
+   * Node pool に min/max を設定
+2. **HPA はPodの数だけ（誤り）**
+   * ノード不足だと Pending
+3. **VPA はPodサイズだけ（誤り）**
+4. **ノードプール分割の乱立は毒（誤り）**
+   * 管理が増える
+
+#### 💡 2周目用：最短チェックリスト
+
+| 何をスケーリングしたい？ | 解決策（正解） | 役割 |
+| --- | --- | --- |
+| ノード（VM） | Cluster Autoscaler | 土台の拡張 |
+| Podの数 | HPA | レプリカ増 |
+| Podのサイズ | VPA | 個別最適化 |
+
+---
+
+### Q20：CLIでVM作成の前提条件
+
+#### 🧠 Q20：ACE論点への超圧縮（骨組み抽出）
+
+**【実質的な問題文】**
+
+> What is the prerequisite step to create a Compute Engine instance using gcloud CLI in a newly created project?
+
+#### 🛡️ 構造（シグナル）の見極め
+
+1. **最初に必要なのは API 有効化（正解）**
+   * `compute.googleapis.com` を enable
+2. **ネットワークは default がある（誤り）**
+   * 推奨だが必須ではない
+3. **権限は作成者が Owner 前提（誤り）**
+4. **監視は運用フェーズ（誤り）**
+
+#### 💡 2周目用：最短チェックリスト
+
+| 操作フェーズ | 必須アクション | 理由 |
+| --- | --- | --- |
+| 最初（ゼロ状態） | Enable API | サービスの蛇口を開く |
+| 次（作成時） | VPC/Subnet 指定 | 未指定なら default |
+| 後（運用時） | Monitoring/Logging | 可視化 |
+
+---
+
+
+
+
+## 📦 Storage & Database (Q21-Q30)
+
+### Q21：App Engineで「予備」を常に待機
+
+#### 🧠 Q21：ACE論点への超圧縮（骨組み抽出）
+
+**【実質的な問題文】**
+
+> Maintain at least 4 idle (unoccupied) instances at all times in App Engine to handle sudden traffic spikes, while scaling automatically with demand.
+
+#### 🛡️ 構造（シグナル）の見極め
+
+1. **待機（Idle）を操るのは Automatic Scaling（正解）**
+   * `min_idle_instances` で「暇なインスタンス」を最低何台維持するか指定
+2. **Manual Scaling は固定台数（誤り）**
+3. **Basic Scaling には idle 維持の概念がない（誤り）**
+
+#### 💡 2周目用：最短チェックリスト
+
+| 要件 | 薬（正解設定） | 特徴 |
+| --- | --- | --- |
+| スパイクに即応したい | `min_idle_instances` | 予備を確保（コスト増） |
+| 0円運用（リクエストなしは0） | Automatic / Basic | Cold Start あり |
+| 常に4台で固定 | Manual Scaling | 予測可能な負荷向け |
+
+---
+
+### Q22：30日経った画像を安く（消さない）
+
+### 🧠 Q22：ACE論点への超圧縮（骨組み抽出）
+
+**【実質的な問題文】**
+
+> Minimize costs for Cloud Storage objects by automatically handling files older than 30 days that are no longer frequently accessed.
+
+#### 🛡️ 構造（シグナル）の見極め
+
+1. **自動ならライフサイクル（正解）**
+   * Object Lifecycle Management でクラス変更（例: Archive）を自動化
+2. **自作スクリプトは運用負荷増（誤り）**
+3. **Retention Policy は削除禁止（誤り）**
+4. **Versioning は履歴保持でコスト増（誤り）**
+
+#### 💡 2周目用：最短チェックリスト
+
+| 要件 | 薬（正解） | 特徴 |
+| --- | --- | --- |
+| 時間が経ったら安く/消したい | Lifecycle Management | 設定して放置 |
+| 消さないを強制したい | Retention Policy | コンプライアンス |
+| 上書き前も残したい | Object Versioning | 履歴管理 |
+
+---
+
+### Q23：DBのポイントインタイムリカバリ（PITR）
+
+### 🧠 Q23：ACE論点への超圧縮（骨組み抽出）
+
+**【実質的な問題文】**
+
+> Select a cost-effective relational database for a small dataset in a single region that supports Point-in-Time Recovery (PITR).
+
+#### 🛡️ 構造（シグナル）の見極め
+
+1. **小規模・単一リージョンなら Cloud SQL（正解）**
+   * PITR は **binary logging**（例: MySQL の binlog / PostgreSQL の WAL）を有効化して実現
+2. **Failover replicas はHA（誤り）**
+3. **Spanner は過剰（誤り）**
+
+#### 💡 2周目用：最短チェックリスト
+
+| 要件 | 薬（正解） | 理由 |
+| --- | --- | --- |
+| 小〜中規模 / リージョン内 / SQL | Cloud SQL | コスト効率 |
+| 過去の時点に戻したい | PITR（ログ） | ログ再生 |
+| 世界規模 / 強整合 / 無制限スケール | Spanner | 必要時のみ |
+
+---
+
+### Q24：Cassandra を最速導入
+
+#### 🧠 Q24：ACE論点への超圧縮（骨組み抽出）
+
+**【実質的な問題文】**
+
+> Provide multiple isolated dev environments for a specific software (Cassandra) quickly with minimal operational overhead.
+
+#### 🛡️ 構造（シグナル）の見極め
+
+1. **最短・最小の手間なら Marketplace（正解）**
+   * 検証済みセットを即デプロイできる
+2. **マニュアル配布は毒（誤り）**
+3. **自作イメージ/スナップショット管理は毒（誤り）**
+
+#### 💡 2周目用：最短チェックリスト
+
+| 課題 | 薬（正解） | 特徴 |
+| --- | --- | --- |
+| 有名ソフトをすぐ使いたい | Cloud Marketplace | 即デプロイ |
+| 独自のOS設定を配布したい | Custom Images | 社内標準の型 |
+| 一時的に状態を保存したい | Snapshots | 保存と復元 |
+
+---
+
+### Q25：他チームと独立した環境で作りたい
+
+#### 🧠 Q25：ACE論点への超圧縮（骨組み抽出）
+
+**【実質的な問題文】**
+
+> Create a separate environment for a new team (Design Team) that is independent of the existing project.
+
+#### 🛡️ 構造（シグナル）の見極め
+
+1. **独立なら新プロジェクト（正解）**
+   * セキュリティ・課金・権限の分離単位は Project
+2. **既存PJTへの権限追加は共有（誤り）**
+3. **Project ID は全世界で一意（誤り）**
+
+#### 💡 2周目用：最短チェックリスト
+
+| 要件 | 薬（正解） | 理由 |
+| --- | --- | --- |
+| チームごとに独立させたい | New Project の作成 | 境界線を明確化 |
+| 表示名を決めたい | Project Name（任意） | 人間向け |
+| システム識別子 | Project ID（一意） | 全世界で唯一 |
+
+---
+
 
 **Q26：CPU 90%超えで通知**
 
