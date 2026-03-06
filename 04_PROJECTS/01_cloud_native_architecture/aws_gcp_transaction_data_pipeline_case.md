@@ -1,4 +1,3 @@
-# Cloud Transaction Data Pipeline Case
 （AWS → GCP → External System）
 
 ## 概要
