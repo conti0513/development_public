@@ -1,4 +1,3 @@
-```md
 # Case Study 05  
 ## Identity and Device Management Support Framework  
 (Microsoft 365 / Entra ID / Intune / SSO)
@@ -152,5 +151,3 @@ This experience provided deeper insight into:
 * the difference between **configuration correctness** and **operational sustainability**
 
 These perspectives later influenced how I approach cloud architecture and identity system design.
-
-```
