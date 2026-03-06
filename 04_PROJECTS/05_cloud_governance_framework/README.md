@@ -134,18 +134,16 @@ Knowledge --> Entra[Entra ID]
 Knowledge --> Intune[Intune Device Management]
 
 Knowledge --> SSO[SAML / SSO Integration]
+````
 
-```
 ---
 
 ## Outcome
 
-The support structure helped:
-
-* reduce escalation frequency
-* clarify identity and authentication behavior
-* improve frontline troubleshooting capability
-* support stable enterprise identity environments
+* reduced escalation frequency
+* clarified identity and authentication behavior
+* improved frontline troubleshooting capability
+* supported stable enterprise identity environments
 
 ---
 
@@ -158,5 +156,6 @@ This experience provided deeper insight into:
 * the difference between **configuration correctness** and **operational sustainability**
 
 These perspectives later influenced how I approach cloud architecture and identity system design.
+
 
 ---
