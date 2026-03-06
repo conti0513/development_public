@@ -18,34 +18,23 @@ The architecture combined:
 
 ## Architecture
 
+```mermaid
+graph TD
+
+Users --> ALB[Application Load Balancer]
+
+ALB --> ASG[Auto Scaling Group]
+
+ASG --> EC2[EC2 Instances]
+
+EC2 --> Metrics[CloudWatch Metrics]
+
+Metrics --> Alarm[CloudWatch Alarm]
+
+Alarm --> Lambda[AWS Lambda]
+
+Lambda --> Notify[Sales Team Notification]
 ````
-
-Users
-│
-▼
-ALB
-│
-▼
-Auto Scaling Group
-│
-▼
-EC2 Instances
-
-```
-
-Monitoring pipeline:
-
-```
-
-CloudWatch Metrics
-↓
-CloudWatch Alarm
-↓
-AWS Lambda
-↓
-Sales Team Notification
-
-```
 
 ---
 
@@ -53,11 +42,11 @@ Sales Team Notification
 
 Key metrics included:
 
-- CPU utilization
-- memory usage
-- disk usage
-- ALB health checks
-- HTTP 5xx errors
+* CPU utilization
+* memory usage
+* disk usage
+* ALB health checks
+* HTTP 5xx errors
 
 ---
 
@@ -68,11 +57,9 @@ Campaign sites were managed by subdomain.
 Example:
 
 ```
-
 aa.example.com
 bb.example.com
 campaign-x.example.com
-
 ```
 
 A routing table was used to identify the responsible sales representative for each domain.
@@ -91,19 +78,16 @@ The Lambda function performed:
 Before
 
 ```
-
 Customer detects issue
 ↓
 Sales contacted
 ↓
 Engineering investigates
-
 ```
 
 After
 
 ```
-
 CloudWatch detects anomaly
 ↓
 Lambda sends alert
@@ -111,26 +95,26 @@ Lambda sends alert
 Sales team immediately informed
 ↓
 Engineering response initiated
-
 ```
 
 ---
 
 ## Outcome
 
-- faster incident detection
-- reduced recovery time
-- improved campaign stability
-- improved coordination between engineering and sales teams
+* faster incident detection
+* reduced recovery time
+* improved campaign stability
+* improved coordination between engineering and sales teams
 
 ---
 
 ## Key Technical Elements
 
-- AWS Auto Scaling
-- Application Load Balancer
-- CloudWatch monitoring
-- Lambda-based event automation
+* AWS Auto Scaling
+* Application Load Balancer
+* CloudWatch monitoring
+* Lambda-based event automation
+
 ```
 
 ---

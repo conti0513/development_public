@@ -2,6 +2,8 @@
 ## Identity and Device Management Support Framework  
 (Microsoft 365 / Entra ID / Intune / SSO)
 
+---
+
 ## Overview
 
 This project involved providing technical support within a large telecommunications group supporting enterprise customers.
@@ -114,17 +116,24 @@ The objective was to allow frontline teams to operate more independently.
 
 ```mermaid
 graph TD
-    Sales[Sales / Presales] --> PoC[Technical Validation]
-    PoC --> Delivery[Implementation]
-    Delivery --> L1[Frontline Support]
 
-    L1 --> L2[Technical Escalation (L2)]
-    L2 --> Analysis[Log Analysis / Behavior Investigation]
-    Analysis --> Knowledge[Documentation / Automation]
+Sales[Sales / Presales] --> PoC[Technical Validation]
 
-    Knowledge --> Entra[Entra ID]
-    Knowledge --> Intune[Intune]
-    Knowledge --> SSO[SAML / SSO]
+PoC --> Delivery[Implementation]
+
+Delivery --> L1[Frontline Support]
+
+L1 --> L2[Technical Escalation (L2)]
+
+L2 --> Analysis[Log Analysis / Behavior Investigation]
+
+Analysis --> Knowledge[Documentation / Automation]
+
+Knowledge --> Entra[Entra ID]
+
+Knowledge --> Intune[Intune Device Management]
+
+Knowledge --> SSO[SAML / SSO Integration]
 ````
 
 ---
@@ -149,34 +158,5 @@ This experience provided deeper insight into:
 * the difference between **configuration correctness** and **operational sustainability**
 
 These perspectives later influenced how I approach cloud architecture and identity system design.
-
----
-
-## Summary
-
-Providing technical clarity behind customer-facing teams in complex enterprise identity environments.
-
-````
-
----
-
-# README.md（概要）
-
-```md
-# Cloud Governance Framework
-
-Technical support role focused on identity and device management in enterprise cloud environments.
-
-Key areas included:
-
-- Microsoft 365
-- Entra ID
-- Intune device management
-- SAML / SSO integration
-
-See detailed documentation:
-
-- [CASE_STUDY.md](./CASE_STUDY.md)
-````
 
 ---

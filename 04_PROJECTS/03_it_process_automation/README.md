@@ -176,26 +176,3 @@ It reinforced the importance of viewing IT operations as a system of processes r
 ````
 
 ---
-
-# README.md（短い概要）
-
-03のREADMEはこうしておくと  
-**ポートフォリオとして綺麗です。**
-
-```md
-# IT Process Automation
-
-Operational improvement project for corporate IT infrastructure in a growing healthcare organization.
-
-Focus areas included:
-
-- Microsoft 365 operations
-- identity lifecycle management
-- device provisioning automation
-- operational workflow standardization
-
-See detailed documentation:
-
-- [CASE_STUDY.md](./CASE_STUDY.md)
-````
-

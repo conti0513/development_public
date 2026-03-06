@@ -1,120 +1,150 @@
-# Case Study 02：大規模企業における ID・メール基盤の運用対応
+# Case Study 02
 
-## プロジェクト概要
+## Enterprise Identity and Email Infrastructure Operations
 
-* **対象:** 国内大手製造業（数万人規模）
-* **環境:** 厳格なガバナンス・監査前提
-* **担当:** 運用担当（既存設計基盤の安定運用）
-* **対象領域:**
+(Entra ID / Exchange / Governance-Based Operations)
 
-  * Microsoft Entra ID（ID / 認証 / 権限管理）
-  * メール基盤（Exchange 系 / Mail Flow）
+## Overview
 
-本案件では、
-**既に設計・承認された統制環境のもとで、ID およびメール基盤の運用を担当**しました。
+This project involved operational management of enterprise identity and email infrastructure within a large manufacturing organization.
 
-ツール選定や独自自動化の裁量は限定的でしたが、
-結果として **運用事故・監査指摘が発生しない状態を継続**しています。
+The environment operated under strict governance and audit requirements, with an identity platform serving tens of thousands of users.
+
+Responsibilities focused on maintaining the stability and reliability of existing identity and email systems that had already been formally designed and approved.
+
+Although architectural decisions and tool selection were outside the operational scope, the role required maintaining **consistent operations without security incidents or audit findings**.
 
 ---
 
-## 実務として担当した運用領域
+## Environment
 
-### ID 管理（Entra ID）
+Industry: Large manufacturing enterprise
 
-* ユーザーライフサイクル管理
+Operational scope included:
 
-  * 作成 / 変更 / 無効化 / 削除
-* 権限付与・剥奪の手順運用
-* 申請内容と実設定の突合確認
-* 操作ログ・監査ログの整合性維持
+* Microsoft Entra ID (identity and authentication platform)
+* enterprise email infrastructure (Exchange / Mail Flow)
+* identity governance and audit-compliant operational processes
 
-運用上は、
-「**誰が・いつ・なぜ付与されたか説明できない権限を作らない**」
-ことを最優先としていました。
+The system supported a large user population and required strict operational discipline.
 
 ---
 
-### メール基盤・Mail Flow 運用
+## Operational Responsibilities
 
-* メールアドレスの付与・変更・削除対応
-* 配信ルール（Mail Flow）の管理
-* 誤配信・なりすまし・情報漏洩を想定した確認手順
-* 障害・問い合わせ時のログトレース対応
+### Identity Management (Entra ID)
 
-メールは ID と直結しており、
-**一度のミスが業務・信用に直結する領域**であるため、
-常に説明可能性と再現性を重視した運用を行っていました。
+Operational tasks included:
+
+* user lifecycle management
+
+  * account creation
+  * modification
+  * deactivation
+  * deletion
+* role and permission assignment / revocation
+* validation between access requests and actual configuration
+* operational log verification and audit trace consistency
+
+Operational policy emphasized:
+
+**No permissions should exist without a clear explanation of who granted them, when, and why.**
 
 ---
 
-## 運用構造の整理（事後整理）
+### Email Infrastructure and Mail Flow Operations
 
-以下は、
-**当時の実運用を後から構造として整理したもの**です。
+Responsibilities included:
 
-新規に設計したものではなく、
-「なぜこの運用が破綻しなかったか」を説明するための整理図です。
+* email account provisioning and modification
+* mail routing and mail flow rule management
+* verification procedures to prevent misdelivery, spoofing, or information leakage
+* log tracing and troubleshooting during incidents or user inquiries
+
+Because email infrastructure is directly linked to identity systems, operational mistakes could have significant organizational impact.
+
+For this reason, operations emphasized **traceability and reproducibility**.
+
+---
+
+## Operational Structure (Retrospective Analysis)
+
+The following diagram summarizes the operational structure based on actual day-to-day processes.
+
+This was not a newly designed architecture, but rather a structured explanation of why the operational model remained stable.
 
 ```mermaid
 graph TD
-    subgraph Governance [統制・規程]
-        Policy[IT規程 / ITGC]
-        Policy --> Workflow[標準申請フロー]
+    subgraph Governance
+        Policy[IT Policy / ITGC]
+        Policy --> Workflow[Standard Access Request Process]
     end
 
-    subgraph Operation [日常運用]
-        Workflow --> Tool[標準ツール]
+    subgraph Operations
+        Workflow --> Tool[Standard Administrative Tools]
         Tool --> Entra[Entra ID]
-        Tool --> Mail[Mail / Mail Flow]
+        Tool --> Mail[Email / Mail Flow]
     end
 
-    subgraph Evidence [証跡]
-        Entra --> Log1[操作ログ]
-        Mail --> Log2[メール関連ログ]
-        Log1 --> Archive[証跡保管]
+    subgraph Evidence
+        Entra --> Log1[Operational Logs]
+        Mail --> Log2[Mail System Logs]
+        Log1 --> Archive[Audit Evidence Storage]
         Log2 --> Archive
     end
 ```
 
-### この構造が意味していること
+---
 
-* 判断は人が行うが、恣意的な操作が入り込まない
-* 日常運用の結果がそのまま監査証跡になる
-* 特定の担当者に依存しない（誰が対応しても説明できる）
+## Operational Principles
+
+### Prioritize Explainable Operations
+
+All configuration changes required clear explanations:
+
+* why the configuration exists
+* why specific permissions are necessary
+
+Every operational decision needed to remain explainable in future audits.
 
 ---
 
-## 運用で意識していた点
+### Treat Audits as Normal Operations
 
-### 説明できる操作を優先する
+Rather than preparing special documentation during audit periods, the operational process itself generated the required evidence.
 
-* なぜその設定が存在するのか
-* なぜその権限が必要なのか
-  → 後から必ず説明できる状態を維持
+This approach ensured that:
 
-### 監査対応を特別扱いしない
-
-* 監査前に慌てて資料を作らない
-* 日常運用の積み重ねをそのまま提出できる状態を維持
-
-### 例外対応を増やさない
-
-* 一時対応・特例対応を極力作らない
-* 例外が出た場合は、必ず正規フローへ戻す
+* operational logs served as audit records
+* documentation remained consistent with daily operations
 
 ---
 
-## 現在の業務への活用
+### Avoid Exceptional Processes
 
-* クラウドや自動化を扱う際も
-  **壊れない前提・説明できる前提**から構成を考える
-* 監査・セキュリティ案件においても
-  ドキュメント整理やレビュー対応に抵抗がない
-* 自動化を行う場合も
-  「なぜこの方法で問題ないか」を言語化できる
+Temporary or special-case operational procedures were avoided whenever possible.
 
-大規模かつ統制の厳しい環境での運用経験は、
-現在の **監査・セキュリティを前提としたクラウド運用・設計の基盤** になっています。
+If exceptions occurred, they were returned to the standard operational workflow.
+
+This maintained long-term system consistency.
+
+---
+
+## Impact on Current Work
+
+Experience operating identity and email infrastructure in a highly governed environment provided several long-term benefits:
+
+* designing systems based on **operational reliability and auditability**
+* comfort working within security and compliance frameworks
+* ability to document and explain operational decisions
+* designing automation while preserving governance requirements
+
+This experience now supports work involving **cloud operations, security-conscious system design, and governance-aware infrastructure architecture**.
+
+---
+
+## Summary
+
+Operating enterprise identity and email infrastructure within a governance-heavy environment, ensuring stable operations while maintaining audit-ready processes and traceable system management.
 
 ---

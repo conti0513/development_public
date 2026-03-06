@@ -132,24 +132,3 @@ Establishing operational processes and automation tools for one of the first lar
 ````
 
 ---
-
-README 用の短い版も置いておきます。
-
-```md
-# WAN Network Operations
-
-Operational experience supporting large-scale wide area network infrastructure in a telecommunications environment.
-
-Focus areas included:
-
-- network incident automation
-- log collection standardization
-- operational knowledge management
-- infrastructure reliability improvement
-
-See detailed documentation:
-
-- [CASE_STUDY.md](./CASE_STUDY.md)
-````
-
----

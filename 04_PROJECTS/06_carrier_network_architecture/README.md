@@ -11,5 +11,4 @@ Focus areas included:
 
 See detailed documentation:
 
-- [CASE_STUDY.md](./CASE_STUDY.md)
 - [DATA_PIPELINE_CASES.md](./DATA_PIPELINE_CASES.md)
