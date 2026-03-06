@@ -1,3 +1,4 @@
+```md
 # Case Study 05  
 ## Identity and Device Management Support Framework  
 (Microsoft 365 / Entra ID / Intune / SSO)
@@ -118,21 +119,16 @@ The objective was to allow frontline teams to operate more independently.
 graph TD
 
 Sales[Sales / Presales] --> PoC[Technical Validation]
-
 PoC --> Delivery[Implementation]
-
 Delivery --> L1[Frontline Support]
 
 L1 --> L2[Technical Escalation (L2)]
-
 L2 --> Analysis[Log Analysis / Behavior Investigation]
 
 Analysis --> Knowledge[Documentation / Automation]
 
 Knowledge --> Entra[Entra ID]
-
 Knowledge --> Intune[Intune Device Management]
-
 Knowledge --> SSO[SAML / SSO Integration]
 ````
 
@@ -157,5 +153,4 @@ This experience provided deeper insight into:
 
 These perspectives later influenced how I approach cloud architecture and identity system design.
 
-
----
+```
