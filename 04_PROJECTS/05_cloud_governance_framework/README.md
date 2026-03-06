@@ -134,7 +134,7 @@ Knowledge --> Entra[Entra ID]
 Knowledge --> Intune[Intune Device Management]
 
 Knowledge --> SSO[SAML / SSO Integration]
-````
+```
 
 ---
 
