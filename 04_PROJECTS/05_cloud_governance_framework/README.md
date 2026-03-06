@@ -114,31 +114,42 @@ The objective was to allow frontline teams to operate more independently.
 
 ## Support Architecture
 
-```mermaid
-graph TD
+```
 
-Sales[Sales / Presales] --> PoC[Technical Validation]
-PoC --> Delivery[Implementation]
-Delivery --> L1[Frontline Support]
+Sales / Presales
+│
+▼
+Technical Validation (PoC)
+│
+▼
+Implementation / Delivery
+│
+▼
+Frontline Support (L1)
+│
+▼
+Technical Escalation (L2)
+│
+▼
+Log Analysis / Behavior Investigation
+│
+▼
+Knowledge Base / Documentation
+│
+┌─────┼───────────────┐
+▼     ▼               ▼
+Entra ID   Intune Device Mgmt   SAML / SSO
 
-L1 --> L2[Technical Escalation (L2)]
-L2 --> Analysis[Log Analysis / Behavior Investigation]
-
-Analysis --> Knowledge[Documentation / Automation]
-
-Knowledge --> Entra[Entra ID]
-Knowledge --> Intune[Intune Device Management]
-Knowledge --> SSO[SAML / SSO Integration]
-````
+```
 
 ---
 
 ## Outcome
 
-* reduced escalation frequency
-* clarified identity and authentication behavior
-* improved frontline troubleshooting capability
-* supported stable enterprise identity environments
+- reduced escalation frequency
+- clarified identity and authentication behavior
+- improved frontline troubleshooting capability
+- supported stable enterprise identity environments
 
 ---
 
@@ -146,8 +157,8 @@ Knowledge --> SSO[SAML / SSO Integration]
 
 This experience provided deeper insight into:
 
-* enterprise identity architecture
-* operational realities of SSO systems
-* the difference between **configuration correctness** and **operational sustainability**
+- enterprise identity architecture
+- operational realities of SSO systems
+- the difference between **configuration correctness** and **operational sustainability**
 
 These perspectives later influenced how I approach cloud architecture and identity system design.
