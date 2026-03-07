@@ -232,6 +232,7 @@ Service Project
 # 💻 5. Compute構造
 
 ## MIG
+MIG：Managed Instance Group
 
 ```
 Instance Template

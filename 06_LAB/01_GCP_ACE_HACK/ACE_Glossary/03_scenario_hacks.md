@@ -249,6 +249,10 @@ HPA → Pod数
 VPA → Podサイズ
 ```
 
+略称	正式名称	イメージ
+HPA	Horizontal Pod Autoscaler	**「横（Horizontal）」に増やす。負荷に合わせてPodの「台数」**を増減させる。
+VPA	Vertical Pod Autoscaler	**「縦（Vertical）」に伸ばす。PodのCPU/メモリの「割り当て（サイズ）」**を最適化する。
+
 ---
 
 ## Pod / Service

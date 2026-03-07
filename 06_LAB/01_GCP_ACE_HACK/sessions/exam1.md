@@ -180,28 +180,39 @@ v
 
 ---
 
-### 🧠 Q10：GKEリソース（DaemonSet）を Deployment Manager で展開（最小サービス）
+### 🧠 Q10：コア抜き出し＆速攻ハック
 
-* キーワード: `GKE cluster`, `DaemonSet`, `fewest services`, `Deployment Manager`
-* 正解（薬）: **Type Provider で K8s API を登録し、Deployment Manager から DaemonSet を作る**
-* ハック:
-  * Deployment Manager は基本 GCP リソース向け
-  * **Type Provider** を使うと、外部/別API（K8s API含む）を “型” として扱える  
-    （参考: [Google Cloud Documentation](https://cloud.google.com/deployment-manager/docs/configuration/supported-resource-types#type_providers)）
-* 毒になりやすい選択肢
-  * Runtime Configurator: 変数/同期用途で、K8sマニフェスト適用の本道ではない
-  * `kubectl` を叩くためだけのVM維持: “fewest services” に反しがち
+#### **【問題文コア（英）】**
 
-#### 現場メモ（重要）
+> Deploy a **GKE cluster** AND a **DaemonSet**... in the **simplest way** using the **fewest services**.
 
-* Deployment Manager は **2026-03-31 でサポート終了**が明記されているため、実務では Infrastructure Manager / Terraform 等へ寄せる前提で考えるのが安全。  
-  （参考: [Google Cloud Documentation](https://cloud.google.com/deployment-manager/docs/deprecations/deprecation)）
+#### **【問題文コア（和）】**
 
-#### 2周目用メモ
-
-> DMでK8s操作 = **Type Provider**
+> **GKEクラスタ**と**DaemonSet**（K8sリソース）を、**最小限のサービス**で同時にデプロイしたい。
 
 ---
+
+#### **【正解ハック（薬）】**
+
+**Type Provider で K8s API を登録する**
+
+* **理由:** 本来「K8s内部」を触れないDeployment Manager(DM)に、**Type Provider** という「拡張プラグイン」を入れて、直接DaemonSetを作らせるのが、追加サービス（踏み台サーバー等）なしの最短ルート。
+
+---
+
+#### **【選択肢の毒（排除理由）】**
+
+* **Runtime Configurator:** 「設定値の保存箱」であり、デプロイツールではない。
+* **Startup Script で `kubectl`:** VMを立てる手間が増えるため、「fewest services（最小サービス）」に反する。
+
+---
+
+#### **【一言で覚える】**
+
+> **「DMからK8s操作」＝「Type Provider（型プロバイダ）」**
+
+---
+
 
 
 
@@ -238,25 +249,38 @@ v
 
 ### 🧠 Q12：Cloud Logging におけるログ転送（Log Sink）の設計
 
-* キーワード： `collect logs`, `BigQuery`, `cost efficiency`, `Compute Engine`
-* 論点： ログ収集・転送にカスタムコードを書くのは運用負荷増のアンチパターン
-* 正解（ベストプラクティス）： **Cloud Logging のログルーター（Log Sink）で BigQuery へ直接エクスポート**
+#### **【問題文コア（英）】**
 
-#### 💡 客観的な技術評価
+> Send **all logs** from Compute Engine to **BigQuery** for analysis **cost-efficiently**.
 
-1. **マネージド機能の活用**: 標準のログルーターで中継不要
-2. **フィルタリングでコスト最適化**: 例）Compute Engineログに絞る
-3. **反映が速い**: バッチよりストリーミング寄りの転送
+#### **【問題文コア（和）】**
 
-#### 🛡️ ログ転送先（Sink）の選定基準
-
-| 宛先 | 主な目的 | 選定のシグナル |
-| --- | --- | --- |
-| BigQuery | 高度な分析・SQL | `Analysis`, `Trends`, `Dashboard` |
-| Cloud Storage | 長期アーカイブ（低コスト） | `Compliance`, `Archive`, `Security audit` |
-| Pub/Sub | 外部連携・リアルタイム処理 | `Third-party`, `Splunk`, `SIEM` |
+> Compute Engine のログを、**分析用（BigQuery）**に**最も安く（標準機能で）**転送したい。
 
 ---
+
+#### **【正解ハック（薬）：C】**
+
+**Cloud Logging の「ログのルーター（Log Sink）」を使う**
+
+* **理由:** 「ログの転送（Sink）」は Cloud Logging の標準機能です。
+* **手順:** フィルターで対象を絞る ➔ **Create Sink** ➔ 宛先に **BigQuery** を選ぶ。これだけで、全自動・リアルタイム・ノーコードで転送が始まります。
+
+---
+
+#### **【選択肢の毒（排除理由）】**
+
+* **B, D (Cloud Functions / Scheduler):** 自作コードの管理コスト、実行コストがかかるため、標準機能がある場合は「毒」となります。
+* **A (Metadata):** ログの転送設定をインスタンスのメタデータで管理する仕組みは存在しません（架空の毒）。
+
+---
+
+#### **【一言で覚える】**
+
+> **「ログを他へ送る」＝「Sink（シンク）を作る」**
+
+---
+
 
 ### 🧠 Q13：長期ログ保存のコスト最適化（アーカイブ設計）
 
@@ -325,7 +349,7 @@ v
 #### 🛡️ 構造（シグナル）の見極め
 
 1. **特定IPの指定（薬）**
-   * `10.194.3.41` を指名して予約（Static Internal IP）
+   * `10.194.3.41` を指名して予約（Static Internal IP）：プライベートIP
 2. **自動割り当ての罠（毒）**
    * Ephemeral / Automatic は番号を選べない
 3. **Promote の罠（毒）**
