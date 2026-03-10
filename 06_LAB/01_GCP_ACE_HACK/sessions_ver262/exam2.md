@@ -12,6 +12,9 @@
 * **【コンセプト】**: リアルタイム転送 ➔ **Pub/Sub**。蓄積用のGCSやBigQueryはバッチ処理になるため「毒」。
 * **【結論】**: **Log Sink ➔ Pub/Sub**
 
+---
+
+
 #### **Q2: 課金データの詳細分析**
 
 * **【元の文】**: Finance team needs itemized visibility into monthly cloud spending across multiple projects to run advanced SQL queries in BigQuery.
@@ -24,6 +27,10 @@
 * **【コンセプト】**: 課金分析のデファクト ➔ **BigQuery Export**。手動抽出やAPI開発は運用負荷が高いため「毒」。
 * **【結論】**: **Cloud Billing ➔ BigQuery Export有効化**
 
+
+---
+
+
 #### **Q3: Cloud Runの起動遅延対策**
 
 * **【元の文】**: Deploy version 3.4. Guarantee at least two instances are already running and idle so requests experience no cold starts.
@@ -35,6 +42,10 @@
 
 * **【コンセプト】**: **リビジョン単位**の最小インスタンス設定。サービス全体設定（B）は新旧混在時に新版が動かないリスクがあるため「毒」。
 * **【結論】**: **Revision-level autoscaling ➔ min-instances = 2**
+
+
+---
+
 
 *
 #### **Q4: グローバルな動画配信最適化**
@@ -49,6 +60,10 @@
 * **【コンセプト】**: 世界規模の負荷分散 ➔ **Global ALB**。物理的な距離短縮 ➔ **マルチリージョン配備**。
 * **【結論】**: **Multi-region VM deployment + Global Application Load Balancer**
 
+
+---
+
+
 *
 #### **Q5: GKEでのステートフルワークロード**
 
@@ -62,6 +77,10 @@
 * **【コンセプト】**: 永続性が必要なDB ➔ **StatefulSet**。ノード不足解消 ➔ **Cluster Autoscaler**。
 * **【結論】**: **StatefulSet + Cluster Autoscaler**
 
+
+---
+
+
 #### **Q6: プロジェクトを跨ぐイメージ共有**
 
 * **【元の文】**: GKE cluster in Project B needs to pull container images from Artifact Registry in Project A.
@@ -73,6 +92,10 @@
 
 * **【コンセプト】**: **GKEノードのSA**に権限付与。JSONキー（C）は管理負荷があるため「毒」。
 * **【結論】**: **Artifact Registry Reader (assigned to GKE service account)**
+
+
+---
+
 
 #### **Q7: Windows VMの初回ログイン**
 
@@ -86,6 +109,10 @@
 * **【コンセプト】**: Windows用の標準パスワード管理 ➔ **reset-windows-password**。
 * **【結論】**: **gcloud compute reset-windows-password**
 
+
+---
+
+
 #### **Q8: オブジェクトのライフサイクル最適化**
 
 * **【元の文】**: Compliance requires 3-year retention. Frequent access for 7 months, then audit-only (cheapest).
@@ -97,6 +124,10 @@
 
 * **【コンセプト】**: 自動クラス変更 ➔ **Lifecycle Management**。7ヶ月後に安い **Coldline**。
 * **【結論】**: **GCS Lifecycle Policy ➔ 7 months ➔ Coldline**
+
+
+---
+
 
 #### **Q9: App Engineのトラフィック分割**
 
@@ -110,6 +141,10 @@
 * **【コンセプト】**: App Engineの標準機能 ➔ **Traffic Splitting**。GKEへの移行（A）などはオーバースペックで「毒」。
 * **【結論】**: **App Engine ➔ Traffic Splitting (1% to new version)**
 
+
+---
+
+
 #### **Q10: グローバル規模の強整合性DB**
 
 * **【元の文】**: ChatterNest needs a managed database that supports automatic scaling, multi-region, and consistently low latency.
@@ -121,6 +156,10 @@
 
 * **【コンセプト】**: グローバル強整合性 ➔ **Cloud Spanner**。Cloud SQL（C）はリージョン内サービスのため「毒」。
 * **【結論】**: **Cloud Spanner**
+
+
+---
+
 
 #### **Q11: 部門別の予算管理**
 
@@ -134,6 +173,10 @@
 * **【コンセプト】**: 標準アラート ➔ **Budget threshold alerts**。標準連携 ➔ **BigQuery Export**。
 * **【結論】**: **Budget threshold alerts + Cloud Billing export to BigQuery**
 
+
+---
+
+
 #### **Q12: 有効化済みAPIの確認**
 
 * **【元の文】**: Produce a list of all the enabled Google Cloud Platform APIs for their GCP project.
@@ -146,6 +189,10 @@
 * **【コンセプト】**: サービス一覧 ➔ **services list**。`--available`（B）は有効化されていないものも含むため「毒」。
 * **【結論】**: **gcloud services list**
 
+
+
+---
+
 #### **Q13: GCSの変更イベント通知**
 
 * **【元の文】**: Regulatory requirement: notified whenever any file is created, updated, or deleted. Minimal management.
@@ -157,6 +204,10 @@
 
 * **【コンセプト】**: ストレージイベント ➔ **Pub/Sub連携**。手動ログチェック（A）は遅延と漏れがあるため「毒」。
 * **【結論】**: **Cloud Storage ➔ Pub/Sub notifications**
+
+
+
+---
 
 
 *
@@ -172,6 +223,10 @@
 * **【コンセプト】**: 標準的なL7公開 ➔ **Ingress**。ClusterIP（B）は内部専用のため「毒」。
 * **【結論】**: **Service (NodePort) ➔ Ingress (Load Balancer)**
 
+
+---
+
+
 #### **Q15: 読み取り専用の監査権限**
 
 * **【元の文】**: Auditor needs access to review all aspects of the project but should not make changes.
@@ -183,6 +238,10 @@
 
 * **【コンセプト】**: 標準的な閲覧者権限 ➔ **Project Viewer**。カスタムロール（A）は管理が煩雑になるため「毒」。
 * **【結論】**: **Built-in IAM project Viewer role**
+
+
+
+---
 
 
 *
@@ -198,6 +257,10 @@
 * **【コンセプト】**: 金型（イメージ）から製品（インスタンス）を作る。スナップショットからの直接作成（B）は非効率なため「毒」。
 * **【結論】**: **Create instances from that image**
 
+
+---
+
+
 #### **Q17: ローカルログの収集設定**
 
 * **【元の文】**: Application writes logs to local disk. Need to investigate cause of errors.
@@ -209,6 +272,10 @@
 
 * **【コンセプト】**: ログの吸い上げ ➔ **Logging Agent**。インストールしないとCloud Loggingには反映されないため「毒」。
 * **【結論】**: **Install Cloud Logging Agent**
+
+
+---
+
 
 #### **Q18: プロジェクト間ストレージアクセス**
 
@@ -222,6 +289,10 @@
 * **【コンセプト】**: **ターゲット側のバケット**でSAに権限付与。プロジェクト移動（A）は不要なため「毒」。
 * **【結論】**: **Grant Storage Object Creator on the bucket to the VM Service Account**
 
+
+---
+
+
 #### **Q19: プロジェクト間のネットワーク共有**
 
 * **【元の文】**: Two applications in separate projects and VPCs need to communicate.
@@ -233,6 +304,10 @@
 
 * **【コンセプト】**: 組織内ネットワークハブ ➔ **Shared VPC**。全インスタンスの作り直し（A）は非現実的なため「毒」。
 * **【結論】**: **Shared VPC (Host/Service project)**
+
+
+
+---
 
 
 *
@@ -249,6 +324,10 @@
 * **【結論】**: **Local SSD + Persistent Disk storage + Snapshot storage**
 
 
+
+---
+
+
 *
 #### **Q21: Pod異常状態の調査**
 
@@ -261,6 +340,10 @@
 
 * **【コンセプト】**: 詳細情報・イベントの確認 ➔ **kubectl describe**。
 * **【結論】**: **kubectl describe pod <name>**
+
+
+---
+
 
 
 
@@ -278,6 +361,10 @@
 * **【結論】**: **enable-oslogin=true + compute.osLogin役割**
 
 
+---
+
+
+
 
 *
 #### **Q23: 新規プロジェクトへのリソース配置**
@@ -293,6 +380,10 @@
 * **【結論】**: **Create project ➔ Enable Compute Engine API ➔ Create instance**
 
 
+---
+
+
+
 *
 #### **Q24: 長時間バッチとコスト最適化**
 
@@ -306,6 +397,10 @@
 * **【コンセプト】**: 完走重視 ➔ **Standard VMをStart/Stop**。安さだけでPreemptible（A, B）を選ぶのは、40時間完走できないため「毒」。
 * **【結論】**: **Standard VM ➔ Start and Stop as needed**
 
+
+---
+
+
 #### **Q25: IoT高頻度データストレージ**
 
 * **【元の文】**: Thousands of events per hour. Consistent data based on timestamp, atomic updates.
@@ -317,6 +412,10 @@
 
 * **【コンセプト】**: 大規模時系列 ➔ **Cloud Bigtable**。ファイル保存（A, B）は検索性が悪いため「毒」。
 * **【結論】**: **Cloud Bigtable (Row key based on timestamp)**
+
+
+---
+
 
 #### **Q26: バッチ処理の自動リトライ設定**
 
@@ -330,6 +429,10 @@
 * **【コンセプト】**: バッチ専用 ➔ **Cloud Run Job**。HTTPサービスのCloud Run Service（B）はタイムアウト制限が強いためバッチには「毒」。
 * **【結論】**: **Cloud Run Job + Cloud Scheduler**
 
+
+---
+
+
 #### **Q27: DockerイメージのGKE展開**
 
 * **【元の文】**: Package app into a Docker image. Deploy this as a workload on GKE.
@@ -341,6 +444,10 @@
 
 * **【コンセプト】**: 倉庫（Registry）へ置く。GCS（A, B）はコンテナリポジトリではないため「毒」。
 * **【結論】**: **Container Registry ➔ Kubernetes Deployment**
+
+
+---
+
 
 *
 #### **Q28: 組織内ポリシーの継承管理**
@@ -355,6 +462,10 @@
 * **【コンセプト】**: 共通設定の箱 ➔ **Folders**。ラベル（A）は「目印」にすぎないため「毒」。
 * **【結論】**: **Folders**
 
+
+---
+
+
 #### **Q29: 公開IPなしでのSSH管理**
 
 * **【元の文】**: Connect to Linux VMs securely via SSH without exposing public IP addresses.
@@ -366,6 +477,10 @@
 
 * **【コンセプト】**: 踏み台不要のセキュアアクセス ➔ **IAP (Identity-Aware Proxy)**。
 * **【結論】**: **IAP for TCP forwarding (SSH)**
+
+
+---
+
 
 *
 #### **Q30: 複数プロジェクトの一元監視**
@@ -380,6 +495,10 @@
 * **【コンセプト】**: 複数プロジェクト統合 ➔ **Monitoring Workspace**。
 * **【結論】**: **Monitoring Workspace に他プロジェクトを追加**
 
+
+---
+
+
 *
 #### **Q31: ワークロード別のノードプール最適化**
 
@@ -393,6 +512,10 @@
 * **【コンセプト】**: 適材適所 ➔ **Node Poolの分離**。高CPUにはCompute-optimized。
 * **【結論】**: **Compute-optimized node pool + General-purpose node pool**
 
+
+---
+
+
 #### **Q32: 高可用性VPNの設定**
 
 * **【元の文】**: Secure VPN between VPC and data center. Dynamic routing, no extra tunnels during failover.
@@ -404,6 +527,10 @@
 
 * **【コンセプト】**: HA VPN ➔ **Cloud Router (BGP)**。
 * **【結論】**: **Custom mode VPC + Cloud Router BGP routes + Active-passive routing**
+
+
+
+---
 
 *
 #### **Q33: VM上のアプリ認証（Best Practice）**
@@ -418,6 +545,10 @@
 * **【コンセプト】**: 権限の委譲 ➔ **VMのサービスアカウントに適切な権限を付与**。
 * **【結論】**: **Assign appropriate access to the VM's service account**
 
+
+---
+
+
 #### **Q34: BigQueryデータ更新のデバッグ**
 
 * **【元の文】**: Nightly summary table recalculation failed, charts not displaying. Investigate.
@@ -429,6 +560,10 @@
 
 * **【コンセプト】**: ジョブ履歴の確認 ➔ **BigQuery UIでジョブ履歴を確認**。
 * **【結論】**: **Use the BigQuery interface to review the nightly job**
+
+
+---
+
 
 #### **Q35: 世界規模のリレーショナルデータ管理**
 
@@ -442,6 +577,10 @@
 * **【コンセプト】**: 世界規模×SQL×強整合性 ➔ **Cloud Spanner**。
 * **【結論】**: **Cloud Spanner**
 
+
+---
+
+
 #### **Q36: gcloudプロキシ認証情報の保護**
 
 * **【元の文】**: Prevent proxy credentials from being logged in CLI logs.
@@ -453,6 +592,10 @@
 
 * **【コンセプト】**: 設定ファイルに書かない ➔ **環境変数 (CLOUDSDK_PROXY_...) を使う**。
 * **【結論】**: **Set CLOUDSDK_PROXY properties using environment variables**
+
+
+---
+
 
 #### **Q37: GKEのコスト・可用性ミックス**
 
@@ -466,6 +609,10 @@
 * **【コンセプト】**: ワークロードに応じたVM ➔ **注文用(Standard VM) と 推奨用(Spot VM) でノードプールを分ける**。
 * **【結論】**: **Separate node pools for Spot and Standard VMs**
 
+
+---
+
+
 #### **Q38: サーバーレスでのカナリアテスト**
 
 * **【元の文】**: Test new backend version with a small % of users before full rollout. Serverless.
@@ -477,6 +624,10 @@
 
 * **【コンセプト】**: トラフィック制御 ➔ **Cloud Run ➔ Gradual rollouts (Traffic splitting)**。
 * **【結論】**: **Cloud Run ➔ Traffic splitting**
+
+
+---
+
 
 *
 #### **Q39: OS脆弱性のスキャン**
@@ -491,6 +642,10 @@
 * **【コンセプト】**: OS情報の収集 ➔ **OS Config agent をインストール + VulnerabilityReportViewer 権限**。
 * **【結論】**: **OS Config agent + osconfig.vulnerabilityReportViewer role**
 
+
+---
+
+
 #### **Q40: Cloud Runのリスク低減デプロイ**
 
 * **【元の文】**: Minimize customers affected by potential outages during new revision deployment.
@@ -503,6 +658,10 @@
 * **【コンセプト】**: 安全な展開 ➔ **Gradually roll out + Traffic splitting**。
 * **【結論】**: **Gradually roll out and split traffic**
 
+
+---
+
+
 #### **Q41: 予測不能な成長に対応するDB**
 
 * **【元の文】**: Fitness app. Unpredictable user base. Scale seamlessly without significant configuration updates.
@@ -514,6 +673,10 @@
 
 * **【コンセプト】**: 水平スケール最強 ➔ **Cloud Spanner**。
 * **【結論】**: **Cloud Spanner**
+
+
+---
+
 
 *
 #### **Q42: Google垢なし業者へのSSH提供**
@@ -528,6 +691,10 @@
 * **【コンセプト】**: 公開鍵の直接登録 ➔ **業者の公開鍵を受け取り、手動でVMメタデータに追加する**。
 * **【結論】**: **Add contractor's public key to the instance metadata**
 
+
+---
+
+
 *
 #### **Q43: ファイアウォール変更の監視**
 
@@ -541,6 +708,10 @@
 * **【コンセプト】**: ログからのアラート ➔ **Cloud Logging でログベースの指標を作成し、アラートを設定**。
 * **【結論】**: **Log-based metrics + Monitoring alerts**
 
+
+
+---
+
 #### **Q44: L4でのIPアドレス保持**
 
 * **【元の文】**: Application on port 389 needs to ensure original IP address of clients is preserved.
@@ -552,6 +723,10 @@
 
 * **【コンセプト】**: パススルー型（L4） ➔ **External Network Load Balancer**。Proxy型（L7）はIPを書き換えるため「毒」。
 * **【結論】**: **External TCP Network Load Balancer**
+
+
+
+---
 
 #### **Q45: 最小権限でのBigQueryアクセス**
 
@@ -565,6 +740,10 @@
 * **【コンセプト】**: 必要な権限のみ付与 ➔ **Project Bで、SAに bigquery.dataViewer を付与**。
 * **【結論】**: **Grant bigquery.dataViewer role in the destination project**
 
+
+---
+
+
 #### **Q46: サブネットのIP拡張**
 
 * **【元の文】**: Subnetwork has no available private IP addresses. Add new VMs with minimum steps.
@@ -576,6 +755,10 @@
 
 * **【コンセプト】**: 箱を広げる ➔ **Modify subnet range**。VPCピアリングなどは工数が多いため「毒」。
 * **【結論】**: **Modify the existing subnet range**
+
+
+---
+
 
 #### **Q47: gcloudのデフォルトゾーン設定**
 
@@ -589,6 +772,10 @@
 * **【コンセプト】**: コンフィグ設定 ➔ **gcloud config set compute/zone**。
 * **【結論】**: **gcloud config set compute/zone**
 
+
+---
+
+
 #### **Q48: Jenkinsの最速導入**
 
 * **【元の文】**: Automate Jenkins installation as quickly and easily as possible.
@@ -601,6 +788,10 @@
 * **【コンセプト】**: 出来合いのものを利用 ➔ **Google Cloud Marketplace**。
 * **【結論】**: **Google Cloud Marketplace**
 
+
+---
+
+
 #### **Q49: 部門別請求の確実な分離**
 
 * **【元の文】**: Ensure Marketing team is billed ONLY for their services for a new app.
@@ -612,6 +803,10 @@
 
 * **【コンセプト】**: 請求の箱（Account）を分ける ➔ **新プロジェクト作成 ➔ マーケティング専用の請求先アカウントに紐付け**。
 * **【結論】**: **Link new project to a dedicated Marketing Billing Account**
+
+
+
+---
 
 #### **Q50: 大規模ライドシェアのDB**
 
@@ -626,4 +821,6 @@
 * **【結論】**: **Multi-region Cloud Spanner**
 
 ---
+
+
 
