@@ -267,31 +267,6 @@ CPU監視 → Cloud Monitoring
 
 ---
 
-# 最終ディレクトリ（完成形）
-
-あなたの構成はこれになります。
-
-```
-
-00_readme.md
-
-01_iam.md
-02_network.md
-03_compute-engine.md
-04_gke.md
-05_storage.md
-06_database.md
-07_logging-monitoring.md
-
-08_exam1.md
-09_exam2.md
-10_exam3.md
-
-```
-
----
-
-
 
 ---
 
