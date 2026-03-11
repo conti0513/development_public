@@ -1,4 +1,3 @@
-````markdown
 # GKE 試験対策（ACE 2026 / 実務整理版）
 
 GKEは **6領域で整理**すると試験・実務ともに理解しやすい。
@@ -11,15 +10,17 @@ A --> D[Scaling]
 A --> E[Networking]
 A --> F[Security]
 A --> G[Operations]
-````
+```
 
 ---
 
 # 1. Cluster
 
-GKEの基本単位。
+## 1.1 GKE基本構造
 
-## 構造
+GKEはKubernetesクラスタをマネージドで提供するサービス。
+
+### 構造
 
 ```
 Cluster
@@ -38,17 +39,17 @@ Cluster
 ### ACE暗記
 
 ```
-Pod = 最小実行単位
+Pod = Kubernetes最小実行単位
 ```
 
 ---
 
-## Clusterタイプ
+## 1.2 Clusterタイプ
 
 | タイプ       | 特徴               |
 | --------- | ---------------- |
 | Autopilot | Node管理をGoogleが実施 |
-| Standard  | Node管理を自分        |
+| Standard  | Node管理をユーザー      |
 
 ```mermaid
 graph LR
@@ -59,7 +60,7 @@ Autopilot --> GoogleManage
 Standard --> UserManage
 ```
 
-### 判断
+### ACE判断
 
 ```
 運用最小 → Autopilot
@@ -68,21 +69,14 @@ Node制御必要 → Standard
 
 ### 2026実務
 
-Autopilot採用が増加（SRE運用削減）
+Autopilot採用が増加。
+SRE運用削減のため標準選択になるケースが多い。
 
 ---
 
-## Node Pool
+## 1.3 Node Pool
 
 GKEでは **Node pool分離が基本設計**
-
-| ノード               | 用途    |
-| ----------------- | ----- |
-| General-purpose   | Web   |
-| Compute-optimized | CPU処理 |
-| Memory-optimized  | DB    |
-
-### 構造
 
 ```
 Cluster
@@ -90,6 +84,12 @@ Cluster
  ├ NodePool-B (C2)
  └ NodePool-C (M2)
 ```
+
+| ノード               | 用途    |
+| ----------------- | ----- |
+| General-purpose   | Web   |
+| Compute-optimized | CPU処理 |
+| Memory-optimized  | DB    |
 
 ### ACE
 
@@ -102,7 +102,7 @@ Cluster
 
 # 2. Workload
 
-Pod管理。
+## 2.1 Pod管理
 
 ```mermaid
 graph TD
@@ -121,9 +121,9 @@ Deployment --> Pod3
 
 ---
 
-## Deployment
+## 2.2 Deployment
 
-最も一般的。
+最も一般的なPod管理。
 
 | 機能             | 内容     |
 | -------------- | ------ |
@@ -140,9 +140,9 @@ Pod安定管理
 
 ---
 
-## StatefulSet
+## 2.3 StatefulSet
 
-DB用。
+DB系ワークロード。
 
 ```
 Pod-0 ↔ Disk-0
@@ -165,7 +165,7 @@ DB
 
 ---
 
-## DaemonSet
+## 2.4 DaemonSet
 
 全NodeにPod配置。
 
@@ -189,14 +189,12 @@ Node3 → Pod
 
 ---
 
-## Job / CronJob
+## 2.5 Job / CronJob
 
-バッチ処理。
-
-| 種類      | 用途 |
-| ------- | -- |
-| Job     | 一回 |
-| CronJob | 定期 |
+| 種類      | 用途   |
+| ------- | ---- |
+| Job     | 一回処理 |
+| CronJob | 定期処理 |
 
 ---
 
@@ -212,7 +210,7 @@ GKEのスケールは **3種類**
 
 ---
 
-## HPA
+## 3.1 HPA
 
 Pod数スケール
 
@@ -229,7 +227,7 @@ Pod増やす
 
 ---
 
-## VPA
+## 3.2 VPA
 
 Podリソース調整
 
@@ -246,7 +244,7 @@ resource最適化
 
 ---
 
-## Cluster Autoscaler
+## 3.3 Cluster Autoscaler
 
 Node増減
 
@@ -265,7 +263,7 @@ Node不足
 
 # 4. Networking
 
-GKE通信構造
+## 4.1 通信構造
 
 ```mermaid
 graph TD
@@ -276,26 +274,26 @@ Service --> Pods
 
 ---
 
-## Service
+## 4.2 Service
 
 Pod公開。
 
 | タイプ          | 用途     |
 | ------------ | ------ |
-| ClusterIP    | 内部     |
+| ClusterIP    | 内部通信   |
 | NodePort     | Node公開 |
 | LoadBalancer | 外部公開   |
 
 ### ACE
 
 ```
-GKE公開
+GKE外部公開
 → Service LoadBalancer
 ```
 
 ---
 
-## Ingress
+## 4.3 Ingress
 
 HTTPルーティング
 
@@ -320,9 +318,9 @@ URL routing
 
 ---
 
-## Gateway API（2026）
+## 4.4 Gateway API（2026）
 
-Ingress後継。
+Ingressの後継。
 
 | 機能        | 内容        |
 | --------- | --------- |
@@ -339,9 +337,9 @@ Ingress → Gateway API移行中
 
 # 5. Security
 
-## Workload Identity
+## 5.1 Workload Identity
 
-PodからGCP API。
+PodからGCP APIアクセス。
 
 ```
 Pod → Workload Identity → GCP API
@@ -350,7 +348,7 @@ Pod → Workload Identity → GCP API
 理由
 
 * JSONキー不要
-* IAM管理
+* IAM統合
 
 ### ACE
 
@@ -361,14 +359,14 @@ Pod→GCP
 
 ---
 
-## Private Cluster
+## 5.2 Private Cluster
 
-Nodeを非公開。
+Nodeを非公開化。
 
 | 項目            | 内容         |
 | ------------- | ---------- |
 | Node          | private IP |
-| control plane | Google     |
+| control plane | Google管理   |
 
 ### ACE
 
@@ -379,7 +377,7 @@ Nodeを非公開。
 
 ---
 
-## Binary Authorization
+## 5.3 Binary Authorization
 
 コンテナ署名検証。
 
@@ -387,7 +385,7 @@ Nodeを非公開。
 | ------- | ----- |
 | Image検証 | 未署名拒否 |
 
-実務
+実務用途
 
 ```
 Supply chain security
@@ -397,7 +395,7 @@ Supply chain security
 
 # 6. Operations
 
-## Rolling Update
+## 6.1 Rolling Update
 
 Deployment更新。
 
@@ -414,7 +412,7 @@ OldPod → NewPod
 
 ---
 
-## Rollback
+## 6.2 Rollback
 
 ```
 kubectl rollout undo
@@ -429,7 +427,7 @@ kubectl rollout undo
 
 ---
 
-## Cluster接続
+## 6.3 Cluster接続
 
 ```
 gcloud container clusters get-credentials CLUSTER
@@ -444,7 +442,7 @@ kubectl接続
 
 ---
 
-## kubectl 基本
+## 6.4 kubectl基本
 
 | コマンド                 | 用途       |
 | -------------------- | -------- |
@@ -456,7 +454,7 @@ kubectl接続
 
 ---
 
-# Artifact Registry
+# 7. Artifact Registry
 
 コンテナ保存。
 
@@ -477,7 +475,7 @@ Container registry
 
 ---
 
-# GKE ストレージ
+# 8. GKE Storage
 
 | 種類              | 用途  |
 | --------------- | --- |
@@ -494,7 +492,7 @@ Container registry
 
 ---
 
-# GKE StorageClass
+# 9. StorageClass
 
 動的ボリューム作成。
 
@@ -510,7 +508,7 @@ CSI driver
 
 ---
 
-# ACEで最も出るGKE
+# 10. ACEで最も出るGKE
 
 ```
 Autopilot vs Standard
@@ -525,7 +523,7 @@ get-credentials
 
 ---
 
-# 最終チート
+# 11. 最終チート
 
 ```
 運用減らす → Autopilot
@@ -540,7 +538,7 @@ rollback → rollout undo
 
 ---
 
-# 2026 GKE実務トレンド
+# 12. 2026 GKE実務トレンド
 
 | 技術                   | 状況                    |
 | -------------------- | --------------------- |
@@ -552,7 +550,7 @@ rollback → rollout undo
 
 ---
 
-# GKE 最終構造
+# 13. GKE構造
 
 ```mermaid
 graph TD
@@ -566,7 +564,38 @@ Cluster --> Security
 Cluster --> Operations
 ```
 
-```
+---
+
+# 14. ACE頻出用語集（2026）
+
+| 用語                                 | 定義                               |
+| ---------------------------------- | -------------------------------- |
+| **GKE (Google Kubernetes Engine)** | Google CloudのマネージドKubernetesサービス |
+| **Cluster**                        | Kubernetes環境の単位                  |
+| **Node**                           | Podを実行するCompute Engine VM        |
+| **Pod**                            | Kubernetesの最小実行単位                |
+| **Container**                      | Pod内で動くアプリ                       |
+| **Node Pool**                      | 同一構成Nodeのグループ                    |
+| **Deployment**                     | statelessアプリ管理                   |
+| **StatefulSet**                    | DB等のstatefulアプリ                  |
+| **DaemonSet**                      | 全Nodeで実行されるPod                   |
+| **Job**                            | 一回実行バッチ                          |
+| **CronJob**                        | 定期バッチ                            |
+| **HPA**                            | Pod数自動スケール                       |
+| **VPA**                            | Podリソース自動調整                      |
+| **Cluster Autoscaler**             | Node自動スケール                       |
+| **Service**                        | Pod公開                            |
+| **Ingress**                        | HTTPルーティング                       |
+| **Gateway API**                    | Ingress後継L7ルーティング                |
+| **Workload Identity**              | PodからGCP APIアクセス                 |
+| **Private Cluster**                | Nodeをprivate IP化                 |
+| **Binary Authorization**           | コンテナ署名検証                         |
+| **Artifact Registry**              | コンテナイメージ保存                       |
+| **StorageClass**                   | 動的ボリューム作成                        |
+| **Persistent Volume (PV)**         | Kubernetesストレージ                  |
+| **Persistent Volume Claim (PVC)**  | PV要求                             |
+| **Rolling Update**                 | 無停止更新                            |
+| **Rollback**                       | 更新取り消し                           |
 
 ---
 

@@ -1,22 +1,38 @@
-```markdown
 # GCP Service Selection（ACE 2026）
-
-ACE試験の核心は
-
-適切なGCPサービスの選択
-
-である。
-
-試験では
-
-要件 → キーワード → サービス
-
-で判断する。
 
 ---
 
-# Service Selection構造
+# 1. Service Selection 概要
 
+## 1.1 ACE試験の核心
+
+ACE試験では **適切なGCPサービスを選択する能力**が問われる。
+
+問題の基本構造は以下。
+
+```
+要件
+↓
+キーワード
+↓
+GCPサービス
+```
+
+つまり
+
+```
+Workload → Service
+```
+
+の対応関係を理解することが重要。
+
+---
+
+## 1.2 サービス分類
+
+GCPサービスは大きく以下のカテゴリに分かれる。
+
+```
 Compute
 Storage
 Database
@@ -24,368 +40,523 @@ Analytics
 Networking
 Security
 Operations
+Cost Management
+```
 
 ---
 
-# Compute
+# 2. Compute サービス
 
-| 用途 | サービス |
-|-----|-----|
-VM | Compute Engine
-コンテナ | Cloud Run / GKE
-HTTPサーバレス | Cloud Run
-イベント処理 | Cloud Functions
-バッチ | Compute Engine / Batch
+## 2.1 Compute概要
 
-ACE判断
+Computeは **アプリケーションを実行するための計算リソース**。
 
-VM必要  
+---
+
+## 2.2 主なComputeサービス
+
+| 用途        | サービス                   |
+| --------- | ---------------------- |
+| VM        | Compute Engine         |
+| コンテナ      | Cloud Run / GKE        |
+| HTTPサーバレス | Cloud Run              |
+| イベント処理    | Cloud Functions        |
+| バッチ処理     | Compute Engine / Batch |
+
+---
+
+## 2.3 ACE判断
+
+```
+VM必要
 → Compute Engine
 
-Docker container  
+Docker container
 → Cloud Run
 
-大規模Kubernetes  
+大規模Kubernetes
 → GKE
+```
 
 ---
 
-# Storage
+# 3. Storage サービス
 
-| 用途 | サービス |
-|-----|-----|
-オブジェクト | Cloud Storage
-共有ファイル | Filestore
-ブロック | Persistent Disk
-アーカイブ | Archive Storage
+## 3.1 Storage概要
 
-ACE判断
+Storageは **データ保存のためのサービス群**。
 
-画像保存  
+---
+
+## 3.2 主なStorageサービス
+
+| 用途        | サービス            |
+| --------- | --------------- |
+| オブジェクト保存  | Cloud Storage   |
+| 共有ファイル    | Filestore       |
+| ブロックストレージ | Persistent Disk |
+| 長期保存      | Archive Storage |
+
+---
+
+## 3.3 ACE判断
+
+```
+画像保存
 → Cloud Storage
 
-VMディスク  
+VMディスク
 → Persistent Disk
 
-共有NFS  
+共有NFS
 → Filestore
+```
 
 ---
 
-# Database
+# 4. Database サービス
 
-| 用途 | サービス |
-|-----|-----|
-MySQL / PostgreSQL | Cloud SQL
-グローバルRDB | Cloud Spanner
-大規模NoSQL | Bigtable
-モバイルDB | Firestore
-分析 | BigQuery
+## 4.1 Database概要
 
-ACE判断
+Databaseサービスは **データ管理・トランザクション処理**を行う。
 
-PostgreSQL  
+---
+
+## 4.2 主なDatabaseサービス
+
+| 用途                 | サービス          |
+| ------------------ | ------------- |
+| MySQL / PostgreSQL | Cloud SQL     |
+| グローバルRDB           | Cloud Spanner |
+| 大規模NoSQL           | Bigtable      |
+| モバイルDB             | Firestore     |
+| 分析DB               | BigQuery      |
+
+---
+
+## 4.3 ACE判断
+
+```
+PostgreSQL
 → Cloud SQL
 
-グローバルDB  
+グローバルDB
 → Spanner
 
-モバイルアプリ  
+モバイルアプリ
 → Firestore
 
-分析  
+分析
 → BigQuery
+```
 
 ---
 
-# Analytics / Messaging
+# 5. Analytics / Messaging
 
-| 用途 | サービス |
-|-----|-----|
-データ分析 | BigQuery
-ログ分析 | BigQuery
-ストリーミング | Pub/Sub
-ETL | Dataflow
+## 5.1 Analytics概要
 
-ACE判断
+Analyticsは **データ分析・イベント処理**のためのサービス群。
 
-ログ分析  
+---
+
+## 5.2 主なサービス
+
+| 用途      | サービス     |
+| ------- | -------- |
+| データ分析   | BigQuery |
+| ログ分析    | BigQuery |
+| ストリーミング | Pub/Sub  |
+| ETL     | Dataflow |
+
+---
+
+## 5.3 ACE判断
+
+```
+ログ分析
 → BigQuery
 
-イベント処理  
+イベント処理
 → Pub/Sub
 
-データ処理  
+データ処理
 → Dataflow
+```
 
 ---
 
-# Networking
+# 6. Networking
 
-| 用途 | サービス |
-|-----|-----|
-仮想ネットワーク | VPC
-ロードバランス | Cloud Load Balancing
-Private接続 | Private Service Connect
-VPN | Cloud VPN
-専用線 | Interconnect
+## 6.1 Networking概要
 
-ACE判断
+Networkingは **ネットワーク接続と通信制御**を提供する。
 
-オンプレ接続  
+---
+
+## 6.2 主なサービス
+
+| 用途        | サービス                    |
+| --------- | ----------------------- |
+| 仮想ネットワーク  | VPC                     |
+| ロードバランシング | Cloud Load Balancing    |
+| Private接続 | Private Service Connect |
+| VPN接続     | Cloud VPN               |
+| 専用線       | Interconnect            |
+
+---
+
+## 6.3 ACE判断
+
+```
+オンプレ接続
 → Cloud VPN
 
-Google API private access  
+Google API private access
 → Private Google Access
 
-内部サービス公開  
+内部サービス公開
 → Private Service Connect
+```
 
 ---
 
-# Security
+# 7. Security
 
-| 用途 | サービス |
-|-----|-----|
-アクセス制御 | IAM
-アプリ認証 | Service Account
-秘密管理 | Secret Manager
-鍵管理 | Cloud KMS
-データ境界 | VPC Service Controls
+## 7.1 Security概要
 
-ACE判断
+Securityサービスは **アクセス管理・データ保護**を提供する。
 
-API認証  
+---
+
+## 7.2 主なサービス
+
+| 用途     | サービス                 |
+| ------ | -------------------- |
+| アクセス制御 | IAM                  |
+| アプリ認証  | Service Account      |
+| 秘密管理   | Secret Manager       |
+| 鍵管理    | Cloud KMS            |
+| データ境界  | VPC Service Controls |
+
+---
+
+## 7.3 ACE判断
+
+```
+API認証
 → Service Account
 
-パスワード保存  
+パスワード保存
 → Secret Manager
 
-暗号鍵  
-→ KMS
+暗号鍵
+→ Cloud KMS
+```
 
 ---
 
-# Serverless
+# 8. Serverless
 
-| 用途 | サービス |
-|-----|-----|
-HTTP API | Cloud Run
-イベント処理 | Cloud Functions
-オーケストレーション | Workflows
-メッセージ処理 | Pub/Sub
+## 8.1 Serverless概要
 
-ACE判断
+Serverlessは **インフラ管理なしで実行できるサービス群**。
 
-HTTP container  
+---
+
+## 8.2 主なServerlessサービス
+
+| 用途       | サービス            |
+| -------- | --------------- |
+| HTTP API | Cloud Run       |
+| イベント処理   | Cloud Functions |
+| ワークフロー   | Workflows       |
+| メッセージ処理  | Pub/Sub         |
+
+---
+
+## 8.3 ACE判断
+
+```
+HTTP container
 → Cloud Run
 
-イベント処理  
+イベント処理
 → Cloud Functions
 
-複数サービス連携  
+複数サービス連携
 → Workflows
+```
 
 ---
 
-# Operations
+# 9. Operations
 
-| 用途 | サービス |
-|-----|-----|
-ログ | Cloud Logging
-監視 | Cloud Monitoring
-アラート | Alert Policy
-ログ分析 | BigQuery
+## 9.1 Operations概要
 
-ACE判断
+Operationsは **運用監視とログ管理**を行う。
 
-CPU監視  
-→ Monitoring
+---
 
-ログ検索  
-→ Logging
+## 9.2 主なサービス
 
-ログ分析  
+| 用途   | サービス             |
+| ---- | ---------------- |
+| ログ管理 | Cloud Logging    |
+| 監視   | Cloud Monitoring |
+| アラート | Alert Policy     |
+| ログ分析 | BigQuery         |
+
+---
+
+## 9.3 ACE判断
+
+```
+CPU監視
+→ Cloud Monitoring
+
+ログ検索
+→ Cloud Logging
+
+ログ分析
 → BigQuery Export
+```
 
 ---
 
-# Cost Management
+# 10. Cost Management
 
-| 用途 | サービス |
-|-----|-----|
-費用見積 | Pricing Calculator
-予算通知 | Budget Alerts
-コスト分析 | Billing Export
+## 10.1 Cost概要
 
-ACE判断
+Cost Managementは **クラウド利用コストの管理機能**。
 
-コスト可視化  
+---
+
+## 10.2 主なサービス
+
+| 用途    | サービス               |
+| ----- | ------------------ |
+| 費用見積  | Pricing Calculator |
+| 予算通知  | Budget Alerts      |
+| コスト分析 | Billing Export     |
+
+---
+
+## 10.3 ACE判断
+
+```
+コスト可視化
 → Billing Export
 
-予算通知  
+予算通知
 → Budget Alerts
+```
 
 ---
 
-# Service Selection Flow
+# 11. Service Selection Flow
 
-問題  
-↓  
+サービス選択の基本フロー
+
+```
+問題
+↓
 ワークロード分類
 
-Compute  
-Storage  
-Database  
-Analytics  
-Networking  
-Security  
+Compute
+Storage
+Database
+Analytics
+Networking
+Security
 
-↓  
-
+↓
 サービス選択
+```
 
 ---
 
-# ACE重要マッピング
+# 12. ACE重要マッピング
 
-VM → Compute Engine
+```
+VM
+→ Compute Engine
 
-Container API  
+Container API
 → Cloud Run
 
-Kubernetes  
+Kubernetes
 → GKE
 
-Object Storage  
+Object Storage
 → Cloud Storage
 
-RDB  
+RDB
 → Cloud SQL
 
-Global DB  
+Global DB
 → Spanner
 
-NoSQL  
+NoSQL
 → Firestore
 
-Analytics  
+Analytics
 → BigQuery
 
-Messaging  
+Messaging
 → Pub/Sub
 
-Secrets  
+Secrets
 → Secret Manager
+```
 
 ---
 
-# ACEトラップ
+# 13. ACEトラップ
 
 ## Trap1
 
+```
 PostgreSQL
+```
 
-Spanner → ❌  
+Spanner → ❌
 Cloud SQL → ✅
 
 ---
 
 ## Trap2
 
+```
 ログ分析
+```
 
-Cloud Logging → ❌  
+Cloud Logging → ❌
 BigQuery → ✅
 
 ---
 
 ## Trap3
 
+```
 API container
+```
 
-Compute Engine → ❌  
+Compute Engine → ❌
 Cloud Run → ✅
 
 ---
 
 ## Trap4
 
+```
 パスワード保存
+```
 
-Env variable → ❌  
+Env variable → ❌
 Secret Manager → ✅
 
 ---
 
-# 試験攻略
+# 14. 試験攻略
 
-ACE問題は
+ACE問題は以下の思考で解く。
 
-要件  
-↓  
-ワークロード分類  
-↓  
+```
+要件
+↓
+ワークロード分類
+↓
 サービス選択
-
-で解く。
+```
 
 例
 
-Docker  
+```
+Docker
 → Cloud Run
 
-PostgreSQL  
+PostgreSQL
 → Cloud SQL
 
-Analytics  
+Analytics
 → BigQuery
 
-Messaging  
+Messaging
 → Pub/Sub
 
-Secrets  
+Secrets
 → Secret Manager
+```
 
 ---
 
-# 2026 ACE頻出サービス
+# 15. 2026 ACE頻出サービス
 
-Compute Engine  
-Cloud Run  
-Cloud Storage  
-Cloud SQL  
-BigQuery  
-Pub/Sub  
-Secret Manager  
-IAM  
-Cloud Monitoring  
+ACE試験で頻出のサービス。
+
+```
+Compute Engine
+Cloud Run
+Cloud Storage
+Cloud SQL
+BigQuery
+Pub/Sub
+Secret Manager
+IAM
+Cloud Monitoring
+```
 
 ---
 
-# まとめ
+# 16. まとめ
 
-Compute  
+```
+Compute
 → Compute Engine
 
-Container  
+Container
 → Cloud Run
 
-Storage  
+Storage
 → Cloud Storage
 
-Database  
+Database
 → Cloud SQL
 
-Analytics  
+Analytics
 → BigQuery
 
-Messaging  
+Messaging
 → Pub/Sub
 
-Security  
+Security
 → IAM / Secret Manager
 ```
 
 ---
 
+# GCP Service Selection 用語集（ACE 2026）
+
+| 用語                 | 定義               | 用途                  |
+| ------------------ | ---------------- | ------------------- |
+| Compute Engine     | GCPの仮想マシンサービス    | VM実行                |
+| Cloud Run          | サーバレスコンテナ実行環境    | HTTP API / マイクロサービス |
+| GKE                | Kubernetes管理サービス | コンテナオーケストレーション      |
+| Cloud Storage      | オブジェクトストレージ      | 画像・ファイル保存           |
+| Persistent Disk    | VM用ブロックストレージ     | VMディスク              |
+| Cloud SQL          | マネージドRDB         | MySQL / PostgreSQL  |
+| Cloud Spanner      | 分散リレーショナルDB      | グローバルシステム           |
+| Firestore          | Document型NoSQL   | モバイルアプリ             |
+| BigQuery           | データウェアハウス        | 分析                  |
+| Pub/Sub            | メッセージングサービス      | イベント処理              |
+| Dataflow           | ストリーム / バッチデータ処理 | ETL                 |
+| IAM                | アクセス管理サービス       | 権限管理                |
+| Service Account    | アプリケーション用ID      | API認証               |
+| Secret Manager     | 機密情報管理           | パスワード保存             |
+| Cloud Monitoring   | メトリクス監視          | CPU / Latency監視     |
+| Cloud Logging      | ログ管理             | ログ検索                |
+| Pricing Calculator | GCP費用見積ツール       | コスト試算               |
+| Billing Export     | 課金データ分析機能        | コスト可視化              |
+
+---

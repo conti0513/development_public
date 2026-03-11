@@ -1,9 +1,20 @@
-````markdown
 # GCP CLI Cheatsheet（ACE 2026）
 
-GCP操作は **gcloud CLI** を使用する。
+---
 
-CLI構造
+# 1. gcloud CLI 概要
+
+## 1.1 gcloud CLIとは
+
+**gcloud CLI** は Google Cloud をコマンドラインから操作するための公式ツール。
+
+インフラ管理、デプロイ、監視、IAM設定などを実行できる。
+
+---
+
+## 1.2 CLIコマンド構造
+
+gcloud CLIは以下のような階層構造で構成される。
 
 ```
 gcloud
@@ -17,7 +28,7 @@ gcloud
 
 ---
 
-# CLI構造
+## 1.3 CLI構造図
 
 ```mermaid
 graph TD
@@ -32,22 +43,30 @@ gcloud --> config
 
 ---
 
-# 認証
+# 2. 認証（Authentication）
 
-ログイン
+## 2.1 ユーザーログイン
+
+Googleアカウントを使った認証。
 
 ```
 gcloud auth login
 ```
 
-サービスアカウント
+---
+
+## 2.2 サービスアカウント認証
+
+CI/CDや自動化ではサービスアカウントを使用する。
 
 ```
 gcloud auth activate-service-account \
 --key-file=key.json
 ```
 
-現在の認証確認
+---
+
+## 2.3 現在の認証確認
 
 ```
 gcloud auth list
@@ -55,30 +74,20 @@ gcloud auth list
 
 ---
 
-# プロジェクト設定
+# 3. プロジェクト設定
 
-現在の設定確認
+## 3.1 現在の設定確認
 
 ```
 gcloud config list
 ```
 
-プロジェクト設定
+---
+
+## 3.2 プロジェクト変更
 
 ```
 gcloud config set project PROJECT_ID
-```
-
-リージョン設定
-
-```
-gcloud config set compute/region REGION
-```
-
-ゾーン設定
-
-```
-gcloud config set compute/zone ZONE
 ```
 
 ACE問題
@@ -90,23 +99,47 @@ ACE問題
 
 ---
 
-# Configuration管理
+## 3.3 リージョン設定
 
-設定セット切替
+```
+gcloud config set compute/region REGION
+```
 
-一覧
+---
+
+## 3.4 ゾーン設定
+
+```
+gcloud config set compute/zone ZONE
+```
+
+---
+
+# 4. Configuration管理
+
+## 4.1 Configurationsとは
+
+複数のプロジェクト設定を切り替えるための仕組み。
+
+---
+
+## 4.2 設定一覧
 
 ```
 gcloud config configurations list
 ```
 
-作成
+---
+
+## 4.3 設定作成
 
 ```
 gcloud config configurations create dev
 ```
 
-切替
+---
+
+## 4.4 設定切替
 
 ```
 gcloud config configurations activate dev
@@ -114,15 +147,17 @@ gcloud config configurations activate dev
 
 ---
 
-# API有効化
+# 5. API有効化
 
-API一覧
+## 5.1 API一覧確認
 
 ```
 gcloud services list
 ```
 
-API有効化
+---
+
+## 5.2 API有効化
 
 ```
 gcloud services enable compute.googleapis.com
@@ -137,39 +172,49 @@ VM作れない
 
 ---
 
-# Compute Engine
+# 6. Compute Engine
 
-VM一覧
+## 6.1 VM一覧
 
 ```
 gcloud compute instances list
 ```
 
-VM作成
+---
+
+## 6.2 VM作成
 
 ```
 gcloud compute instances create vm-1
 ```
 
-VM停止
+---
+
+## 6.3 VM停止
 
 ```
 gcloud compute instances stop vm-1
 ```
 
-VM起動
+---
+
+## 6.4 VM起動
 
 ```
 gcloud compute instances start vm-1
 ```
 
-VM削除
+---
+
+## 6.5 VM削除
 
 ```
 gcloud compute instances delete vm-1
 ```
 
-SSH接続
+---
+
+## 6.6 SSH接続
 
 ```
 gcloud compute ssh vm-1
@@ -184,21 +229,25 @@ VM操作
 
 ---
 
-# GKE
+# 7. Google Kubernetes Engine（GKE）
 
-クラスタ一覧
+## 7.1 クラスタ一覧
 
 ```
 gcloud container clusters list
 ```
 
-クラスタ作成
+---
+
+## 7.2 クラスタ作成
 
 ```
 gcloud container clusters create cluster-1
 ```
 
-kubectl接続
+---
+
+## 7.3 kubectl接続
 
 ```
 gcloud container clusters get-credentials cluster-1
@@ -213,29 +262,33 @@ kubectl接続
 
 ---
 
-# kubectl
+# 8. kubectl 基本操作
 
-Kubernetes操作
-
-Pod一覧
+## 8.1 Pod一覧
 
 ```
 kubectl get pods
 ```
 
-Node確認
+---
+
+## 8.2 Node確認
 
 ```
 kubectl get nodes
 ```
 
-Service確認
+---
+
+## 8.3 Service確認
 
 ```
 kubectl get services
 ```
 
-Pod詳細
+---
+
+## 8.4 Pod詳細
 
 ```
 kubectl describe pod POD_NAME
@@ -243,9 +296,9 @@ kubectl describe pod POD_NAME
 
 ---
 
-# IAM
+# 9. IAM操作
 
-ロール追加
+## 9.1 IAMロール追加
 
 ```
 gcloud projects add-iam-policy-binding PROJECT_ID \
@@ -253,13 +306,17 @@ gcloud projects add-iam-policy-binding PROJECT_ID \
 --role=roles/viewer
 ```
 
-Service Account作成
+---
+
+## 9.2 Service Account作成
 
 ```
 gcloud iam service-accounts create SA_NAME
 ```
 
-SA一覧
+---
+
+## 9.3 Service Account一覧
 
 ```
 gcloud iam service-accounts list
@@ -267,29 +324,51 @@ gcloud iam service-accounts list
 
 ---
 
-# Cloud Storage
+# 10. Cloud Storage
 
-2026は **gcloud storage CLI** が主流。
+## 10.1 2026 CLI仕様
 
-bucket作成
+現在は **gcloud storage CLI** が主流。
+
+旧ツール
+
+```
+gsutil
+```
+
+新CLI
+
+```
+gcloud storage
+```
+
+---
+
+## 10.2 バケット作成
 
 ```
 gcloud storage buckets create gs://bucket-name
 ```
 
-ファイルアップロード
+---
+
+## 10.3 ファイルアップロード
 
 ```
 gcloud storage cp file.txt gs://bucket-name
 ```
 
-ファイルダウンロード
+---
+
+## 10.4 ファイルダウンロード
 
 ```
 gcloud storage cp gs://bucket/file.txt .
 ```
 
-bucket一覧
+---
+
+## 10.5 バケット一覧
 
 ```
 gcloud storage buckets list
@@ -297,15 +376,17 @@ gcloud storage buckets list
 
 ---
 
-# Logging
+# 11. Logging操作
 
-ログ検索
+## 11.1 ログ検索
 
 ```
 gcloud logging read
 ```
 
-フィルタ例
+---
+
+## 11.2 フィルタ例
 
 ```
 gcloud logging read "resource.type=gce_instance"
@@ -313,15 +394,17 @@ gcloud logging read "resource.type=gce_instance"
 
 ---
 
-# Monitoring
+# 12. Monitoring操作
 
-アラート作成
+## 12.1 アラート作成
 
 ```
 gcloud alpha monitoring policies create
 ```
 
-ダッシュボード一覧
+---
+
+## 12.2 ダッシュボード一覧
 
 ```
 gcloud monitoring dashboards list
@@ -329,7 +412,7 @@ gcloud monitoring dashboards list
 
 ---
 
-# CLI構造
+# 13. CLI構造図
 
 ```mermaid
 graph TD
@@ -349,7 +432,9 @@ storage --> buckets
 
 ---
 
-# ACE最重要CLI
+# 14. ACE最重要CLI
+
+ACE試験で頻出のコマンド。
 
 ```
 gcloud config set project
@@ -361,7 +446,7 @@ kubectl get pods
 
 ---
 
-# ACE判断
+# 15. ACE判断パターン
 
 ```
 cluster接続
@@ -379,9 +464,9 @@ API未有効
 
 ---
 
-# CLI自動化（実務）
+# 16. CLI自動化（実務）
 
-CI/CDでは
+CI/CDではサービスアカウントを利用する。
 
 ```
 Service Account
@@ -402,9 +487,9 @@ gcloud config set project prod
 
 ---
 
-# CLIベストプラクティス
+# 17. CLIベストプラクティス
 
-実務では
+実務では最初に以下を設定する。
 
 ```
 config set project
@@ -412,11 +497,9 @@ config set region
 config set zone
 ```
 
-を最初に固定する。
-
 ---
 
-# CLI実務フロー
+# 18. CLI実務フロー
 
 ```
 auth login
@@ -432,7 +515,7 @@ monitoring
 
 ---
 
-# ACEまとめ
+# 19. ACEまとめ
 
 ```
 プロジェクト変更
@@ -450,58 +533,35 @@ API未有効
 Storage操作
 → gcloud storage
 ```
-````
 
 ---
 
-# 2026で変わった重要点
+# 20. 2026変更点
 
-| 旧           | 2026             |
-| ----------- | ---------------- |
-| gsutil      | gcloud storage   |
-| Stackdriver | Cloud Operations |
-| kubectl接続   | get-credentials  |
-
----
-
-# ACEで出るCLIは実際これだけ
-
-覚えるのは **5個**
-
-```
-gcloud config set project
-gcloud services enable
-gcloud compute instances create
-gcloud container clusters get-credentials
-kubectl get pods
-```
+| 旧                    | 2026             |
+| -------------------- | ---------------- |
+| gsutil               | gcloud storage   |
+| Stackdriver          | Cloud Operations |
+| Monitoring Workspace | Metrics Scope    |
+| Logging Agent        | Ops Agent        |
 
 ---
 
-# あなた向け補足（重要）
+# GCP CLI 用語集（ACE 2026）
 
-あなたはすでに
-
-* GCP実務
-* Cloud Run
-* VPC
-* NAT
-* FTPS
-* IaC
-
-までやっているので
-**ACEのCLI問題は完全にボーナス問題です。**
-
-試験の9割は
-
-```
-config
-services
-compute
-container
-```
-
-だけです。
+| 用語               | 定義                       | 用途                 |
+| ---------------- | ------------------------ | ------------------ |
+| gcloud CLI       | Google Cloud公式コマンドラインツール | GCPリソース管理          |
+| Authentication   | CLI利用時の認証機構              | ユーザーまたはサービスアカウント認証 |
+| Configuration    | CLI設定プロファイル              | 複数プロジェクト管理         |
+| Service Account  | GCPリソース用の機械アカウント         | CI/CD認証            |
+| API Enable       | GCPサービスの有効化              | Compute / GKE利用    |
+| Compute Engine   | GCPの仮想マシンサービス            | VM作成・管理            |
+| GKE              | Google Kubernetes Engine | Kubernetesクラスタ     |
+| kubectl          | Kubernetes管理CLI          | Pod / Service操作    |
+| Cloud Storage    | GCPオブジェクトストレージ           | ファイル保存             |
+| gcloud storage   | Cloud Storage操作CLI       | bucket / object管理  |
+| Cloud Logging    | GCPログ管理サービス              | ログ検索               |
+| Cloud Monitoring | メトリクス監視サービス              | CPU / Latency監視    |
 
 ---
-

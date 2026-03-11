@@ -1,27 +1,27 @@
-# 09_cost.md（2026完全版）
-
-```markdown
 # GCP Cost Management（ACE 2026）
 
-GCPのコスト管理は  
-**Cloud Billing** を中心に行う。
+---
 
-主な機能
+# 1. Cloud Billing 概要
+
+## 1.1 GCPのコスト管理
+
+GCPのコスト管理は **Cloud Billing** を中心に行う。
+
+Cloud Billingは以下の機能を提供する。
 
 ```
-
 Pricing Calculator
 Budgets & Alerts
 Billing Reports
 Billing Export
 Committed Use Discounts
 Sustained Use Discounts
-
-````
+```
 
 ---
 
-# Cost管理構造
+## 1.2 Cost管理の基本構造
 
 ```mermaid
 graph TD
@@ -33,15 +33,21 @@ Billing --> Export
 
 Export --> BigQuery
 BigQuery --> Looker
-````
+```
 
 ---
 
-# Pricing Calculator
+# 2. Pricing Calculator
 
-新規システムの費用見積。
+## 2.1 Pricing Calculator 概要
 
-用途
+Pricing Calculatorは **GCPサービスの費用見積ツール**。
+
+新規システムのコスト試算に使用する。
+
+---
+
+## 2.2 主な用途
 
 | 用途     | 例      |
 | ------ | ------ |
@@ -49,7 +55,9 @@ BigQuery --> Looker
 | 提案資料   | 顧客見積   |
 | PoCコスト | 概算     |
 
-ACE問題
+---
+
+## 2.3 ACE試験ポイント
 
 ```
 費用見積
@@ -58,11 +66,15 @@ ACE問題
 
 ---
 
-# Billing Reports
+# 3. Billing Reports
 
-現在のコスト確認。
+## 3.1 Billing Reports 概要
 
-確認できる内容
+Billing Reportsは **現在のクラウド利用コストを確認する機能**。
+
+---
+
+## 3.2 確認できる項目
 
 | 項目      | 内容                |
 | ------- | ----------------- |
@@ -70,7 +82,9 @@ ACE問題
 | プロジェクト別 | Project           |
 | 期間      | 日 / 月             |
 
-ACE問題
+---
+
+## 3.3 ACE試験ポイント
 
 ```
 現在のコスト確認
@@ -79,11 +93,15 @@ ACE問題
 
 ---
 
-# Budgets & Alerts
+# 4. Budgets & Alerts
 
-予算監視。
+## 4.1 Budget 概要
 
-例
+Budgetsは **予算設定と通知機能**。
+
+---
+
+## 4.2 例
 
 ```
 予算 $1000
@@ -93,39 +111,51 @@ ACE問題
 100% 通知
 ```
 
-通知方法
+---
+
+## 4.3 通知方法
 
 * Email
 * Pub/Sub
 
-ACE問題
+---
+
+## 4.4 ACE試験ポイント
 
 ```
 予算超過通知
 → Budget Alert
 ```
 
-重要
+---
+
+## 4.5 重要注意点
 
 ```
 Budgetはリソース停止しない
 ```
 
+Budgetsは通知のみを行う。
+
 ---
 
-# Billing Export
+# 5. Billing Export
 
-詳細コスト分析。
+## 5.1 Billing Export 概要
 
-Billingデータを
+Billing Exportは **詳細なコストデータを外部分析する機能**。
+
+---
+
+## 5.2 Export先
 
 ```
 BigQuery
 ```
 
-へ出力する。
+---
 
-用途
+## 5.3 主な用途
 
 | 用途     | 例      |
 | ------ | ------ |
@@ -133,7 +163,9 @@ BigQuery
 | コスト可視化 | Looker |
 | 社内レポート | BI     |
 
-ACE問題
+---
+
+## 5.4 ACE試験ポイント
 
 ```
 詳細分析
@@ -142,7 +174,7 @@ ACE問題
 
 ---
 
-# Billing Export構造
+## 5.5 Billing Export構造
 
 ```mermaid
 graph TD
@@ -154,11 +186,15 @@ BigQuery --> Looker
 
 ---
 
-# Sustained Use Discount（SUD）
+# 6. Sustained Use Discount（SUD）
 
-長時間利用割引。
+## 6.1 SUD概要
 
-特徴
+Sustained Use Discountは **長時間利用による自動割引**。
+
+---
+
+## 6.2 特徴
 
 | 特徴   | 内容             |
 | ---- | -------------- |
@@ -166,14 +202,18 @@ BigQuery --> Looker
 | 対象   | Compute Engine |
 | 条件   | 長時間利用          |
 
-例
+---
+
+## 6.3 例
 
 ```
 1ヶ月VM稼働
 → 自動割引
 ```
 
-ACE問題
+---
+
+## 6.4 ACE試験ポイント
 
 ```
 自動割引
@@ -182,26 +222,34 @@ ACE問題
 
 ---
 
-# Committed Use Discount（CUD）
+# 7. Committed Use Discount（CUD）
 
-長期契約割引。
+## 7.1 CUD概要
 
-契約
+Committed Use Discountは **長期契約による割引**。
+
+---
+
+## 7.2 契約期間
 
 ```
 1年
 3年
 ```
 
-特徴
+---
+
+## 7.3 特徴
 
 | 特徴   | 内容            |
 | ---- | ------------- |
-| 事前購入 | Yes           |
+| 事前契約 | Yes           |
 | 対象   | Compute / GKE |
 | 割引   | 最大70%         |
 
-ACE問題
+---
+
+## 7.4 ACE試験ポイント
 
 ```
 長期利用確定
@@ -210,11 +258,15 @@ ACE問題
 
 ---
 
-# Preemptible / Spot VM
+# 8. Spot VM（旧 Preemptible VM）
 
-低価格VM。
+## 8.1 Spot VM 概要
 
-特徴
+Spot VMは **低価格の短時間利用VM**。
+
+---
+
+## 8.2 特徴
 
 | 特徴 | 内容         |
 | -- | ---------- |
@@ -222,7 +274,9 @@ ACE問題
 | 停止 | 24時間以内     |
 | 用途 | Batch / CI |
 
-ACE問題
+---
+
+## 8.3 ACE試験ポイント
 
 ```
 安いVM
@@ -231,18 +285,20 @@ ACE問題
 
 ---
 
-# Storageコスト
+# 9. Storageコスト管理
 
-ストレージクラス
+## 9.1 Storageクラス
 
 | Class    | 用途     |
 | -------- | ------ |
 | Standard | 頻繁アクセス |
-| Nearline | 月1回    |
+| Nearline | 月1回程度  |
 | Coldline | 年数回    |
 | Archive  | 長期保存   |
 
-ACE問題
+---
+
+## 9.2 ACE試験ポイント
 
 ```
 長期保存
@@ -251,16 +307,18 @@ ACE問題
 
 ---
 
-# Networkコスト
+# 10. Networkコスト
 
-通信費
+## 10.1 ネットワーク課金
 
 | 種類      | 課金 |
 | ------- | -- |
 | Ingress | 無料 |
 | Egress  | 有料 |
 
-ACE問題
+---
+
+## 10.2 ACE試験ポイント
 
 ```
 通信コスト
@@ -269,9 +327,9 @@ ACE問題
 
 ---
 
-# Cost最適化
+# 11. Cost最適化
 
-代表例
+## 11.1 代表的な最適化手法
 
 ```
 停止VM
@@ -282,7 +340,7 @@ Autoscaling
 
 ---
 
-# ACE重要ポイント
+# 12. ACE重要ポイント
 
 ```
 費用見積
@@ -306,7 +364,7 @@ Autoscaling
 
 ---
 
-# ACE判断フロー
+# 13. ACE判断フロー
 
 ```mermaid
 flowchart TD
@@ -322,7 +380,7 @@ A -->|長期割引| CUD
 
 ---
 
-# ACEトラップ
+# 14. ACEトラップ
 
 ## Trap1
 
@@ -368,29 +426,27 @@ Spot VM → ✅
 
 ---
 
-# 実務TIP
+# 15. 実務TIP
 
-実務では
+実務では以下の構成が一般的。
 
 ```
 Billing Export → BigQuery
 ```
-
-が基本。
 
 そこから
 
 ```
 Looker
 Grafana
-BI
+BIツール
 ```
 
 へ接続する。
 
 ---
 
-# まとめ
+# 16. まとめ
 
 ```
 見積 → Pricing Calculator
@@ -400,6 +456,22 @@ BI
 割引 → CUD / SUD
 ```
 
-```
+---
+
+# GCP Cost Management 用語集（ACE 2026）
+
+| 用語                           | 定義                    | 用途             |
+| ---------------------------- | --------------------- | -------------- |
+| Cloud Billing                | GCPの課金管理サービス          | コスト管理          |
+| Pricing Calculator           | GCPサービスの費用見積ツール       | 新規システム見積       |
+| Billing Reports              | 現在の利用料金を確認する機能        | コスト可視化         |
+| Budgets                      | 予算設定と通知機能             | 予算監視           |
+| Budget Alert                 | 予算超過時の通知機能            | コスト管理          |
+| Billing Export               | 課金データをBigQueryへ出力する機能 | 詳細分析           |
+| Sustained Use Discount (SUD) | 長時間利用による自動割引          | Compute Engine |
+| Committed Use Discount (CUD) | 長期契約による割引             | Compute / GKE  |
+| Spot VM                      | 低価格で利用できる短時間VM        | Batch処理        |
+| Storage Class                | Cloud Storageの保存クラス   | コスト最適化         |
+| Network Egress               | 外部通信のデータ転送            | ネットワーク課金       |
 
 ---

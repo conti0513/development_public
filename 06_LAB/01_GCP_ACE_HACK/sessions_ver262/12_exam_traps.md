@@ -1,462 +1,754 @@
-```markdown
 # ACE Exam Traps（2026）
 
-ACEは
+---
 
+# 1. ACE試験の特徴
+
+## 1.1 ACEは知識試験ではない
+
+ACE試験は単なる知識問題ではなく、**適切なGCPサービスを選択できるか**が問われる。
+
+試験の基本構造
+
+```text
+要件
+↓
+キーワード
+↓
+GCPサービス選択
 ```
 
-知識
-ではなく
-サービス選択トラップ
+つまり
 
+```text
+Workload → Service
 ```
 
-が中心。
+の対応を理解することが重要。
 
 ---
 
-# Compute traps
+# 2. Compute Traps
 
-### Trap 1
+## 2.1 Trap 1 — VMコスト削減
+
+要件
 
 ```
-
 VMコスト削減
-
 ```
 
-delete VM → ❌  
-stop VM → ✅
+誤り
 
-理由  
-deleteはデータ消える
+```
+delete VM
+```
+
+正解
+
+```
+stop VM
+```
+
+理由
+
+deleteすると **ディスクなどのデータが消える可能性がある**。
 
 ---
 
-### Trap 2
+## 2.2 Trap 2 — Docker API
+
+要件
 
 ```
-
-Docker API
-
+Docker container API
 ```
 
-Compute Engine → ❌  
-Cloud Run → ✅
+誤り
+
+```
+Compute Engine
+```
+
+正解
+
+```
+Cloud Run
+```
+
+理由
+
+Cloud Runは **コンテナをサーバレスで実行できる**。
 
 ---
 
-### Trap 3
+## 2.3 Trap 3 — Auto Scaling Container
+
+要件
 
 ```
-
-Auto scaling container
-
+コンテナの自動スケーリング
 ```
 
-VM → ❌  
-Cloud Run / GKE → ✅
+誤り
+
+```
+VM
+```
+
+正解
+
+```
+Cloud Run
+GKE
+```
 
 ---
 
-### Trap 4
+## 2.4 Trap 4 — 短時間バッチ
+
+要件
 
 ```
-
 短時間バッチ
-
 ```
 
-Standard VM → ❌  
-Spot VM → ✅
+誤り
+
+```
+Standard VM
+```
+
+正解
+
+```
+Spot VM
+```
+
+理由
+
+Spot VMは **低コストの短時間実行向けVM**。
 
 ---
 
-# Storage traps
+# 3. Storage Traps
 
-### Trap 5
+## 3.1 Trap 5 — 画像保存
+
+要件
 
 ```
-
 画像保存
-
 ```
 
-Persistent Disk → ❌  
-Cloud Storage → ✅
+誤り
+
+```
+Persistent Disk
+```
+
+正解
+
+```
+Cloud Storage
+```
 
 ---
 
-### Trap 6
+## 3.2 Trap 6 — 長期保存
+
+要件
 
 ```
-
 長期保存
-
 ```
 
-Standard → ❌  
-Archive → ✅
+誤り
+
+```
+Standard Storage
+```
+
+正解
+
+```
+Archive Storage
+```
 
 ---
 
-### Trap 7
+## 3.3 Trap 7 — 共有ファイル
+
+要件
 
 ```
-
 共有ファイル
-
 ```
 
-Cloud Storage → ❌  
-Filestore → ✅
+誤り
+
+```
+Cloud Storage
+```
+
+正解
+
+```
+Filestore
+```
+
+理由
+
+Filestoreは **NFS共有ストレージ**。
 
 ---
 
-# Database traps
+# 4. Database Traps
 
-### Trap 8
+## 4.1 Trap 8 — PostgreSQL移行
+
+要件
 
 ```
-
 PostgreSQL移行
-
 ```
 
-Spanner → ❌  
-Cloud SQL → ✅
+誤り
+
+```
+Spanner
+```
+
+正解
+
+```
+Cloud SQL
+```
 
 ---
 
-### Trap 9
+## 4.2 Trap 9 — 巨大RDB
+
+要件
 
 ```
-
 巨大RDB
-
 ```
 
-Cloud SQL → ❌  
-Spanner → ✅
+誤り
+
+```
+Cloud SQL
+```
+
+正解
+
+```
+Cloud Spanner
+```
 
 ---
 
-### Trap 10
+## 4.3 Trap 10 — モバイルアプリDB
+
+要件
 
 ```
-
 モバイルアプリDB
-
 ```
 
-Bigtable → ❌  
-Firestore → ✅
+誤り
+
+```
+Bigtable
+```
+
+正解
+
+```
+Firestore
+```
 
 ---
 
-### Trap 11
+## 4.4 Trap 11 — 分析DB
+
+要件
 
 ```
-
 分析DB
-
 ```
 
-Cloud SQL → ❌  
-BigQuery → ✅
+誤り
+
+```
+Cloud SQL
+```
+
+正解
+
+```
+BigQuery
+```
 
 ---
 
-# Analytics traps
+# 5. Analytics Traps
 
-### Trap 12
+## 5.1 Trap 12 — ログ分析
+
+要件
 
 ```
-
 ログ分析
-
 ```
 
-Cloud Logging → ❌  
-BigQuery → ✅
+誤り
+
+```
+Cloud Logging
+```
+
+正解
+
+```
+BigQuery
+```
 
 ---
 
-### Trap 13
+## 5.2 Trap 13 — メッセージング
+
+要件
 
 ```
-
-メッセージング
-
+イベントメッセージング
 ```
 
-Cloud Tasks → ❌  
-Pub/Sub → ✅
+誤り
+
+```
+Cloud Tasks
+```
+
+正解
+
+```
+Pub/Sub
+```
 
 ---
 
-### Trap 14
+## 5.3 Trap 14 — ETL
+
+要件
 
 ```
-
-ETL
-
+ETL処理
 ```
 
-Compute → ❌  
-Dataflow → ✅
+誤り
+
+```
+Compute Engine
+```
+
+正解
+
+```
+Dataflow
+```
 
 ---
 
-# Networking traps
+# 6. Networking Traps
 
-### Trap 15
+## 6.1 Trap 15 — オンプレ接続
+
+要件
 
 ```
-
 オンプレ接続
-
 ```
 
-Public IP → ❌  
-Cloud VPN → ✅
+誤り
+
+```
+Public IP
+```
+
+正解
+
+```
+Cloud VPN
+```
 
 ---
 
-### Trap 16
+## 6.2 Trap 16 — Private Google API
+
+要件
 
 ```
-
-Private Google API
-
+Private Google API access
 ```
 
-External IP → ❌  
-Private Google Access → ✅
+誤り
+
+```
+External IP
+```
+
+正解
+
+```
+Private Google Access
+```
 
 ---
 
-### Trap 17
+## 6.3 Trap 17 — グローバルLB
+
+要件
 
 ```
-
-グローバルLB
-
+グローバルロードバランシング
 ```
 
-VM LB → ❌  
-Cloud Load Balancer → ✅
+誤り
+
+```
+VM Load Balancer
+```
+
+正解
+
+```
+Cloud Load Balancing
+```
 
 ---
 
-# Security traps
+# 7. Security Traps
 
-### Trap 18
+## 7.1 Trap 18 — アプリ認証
+
+要件
 
 ```
-
 アプリ認証
-
 ```
 
-User account → ❌  
-Service Account → ✅
+誤り
+
+```
+User account
+```
+
+正解
+
+```
+Service Account
+```
 
 ---
 
-### Trap 19
+## 7.2 Trap 19 — パスワード保存
+
+要件
 
 ```
-
 パスワード保存
-
 ```
 
-Env variable → ❌  
-Secret Manager → ✅
+誤り
+
+```
+Environment variable
+```
+
+正解
+
+```
+Secret Manager
+```
 
 ---
 
-### Trap 20
+## 7.3 Trap 20 — 最小権限
+
+要件
 
 ```
-
-最小権限
-
+Least privilege
 ```
 
-Owner → ❌  
-Predefined role → ✅
+誤り
+
+```
+Owner
+```
+
+正解
+
+```
+Predefined roles
+```
 
 ---
 
-### Trap 21
+## 7.4 Trap 21 — 鍵管理
+
+要件
 
 ```
-
-鍵管理
-
+暗号鍵管理
 ```
 
-Manual key → ❌  
-Cloud KMS → ✅
+誤り
+
+```
+Manual key
+```
+
+正解
+
+```
+Cloud KMS
+```
 
 ---
 
-### Trap 22
+## 7.5 Trap 22 — データ持ち出し防止
+
+要件
 
 ```
-
 データ持ち出し防止
-
 ```
 
-Firewall → ❌  
-VPC Service Controls → ✅
+誤り
+
+```
+Firewall
+```
+
+正解
+
+```
+VPC Service Controls
+```
 
 ---
 
-# Monitoring traps
+# 8. Monitoring Traps
 
-### Trap 23
+## 8.1 Trap 23 — CPU監視
+
+要件
 
 ```
-
 CPU監視
-
 ```
 
-Logging → ❌  
-Monitoring → ✅
+誤り
+
+```
+Cloud Logging
+```
+
+正解
+
+```
+Cloud Monitoring
+```
 
 ---
 
-### Trap 24
+## 8.2 Trap 24 — ログ検索
+
+要件
 
 ```
-
 ログ検索
-
 ```
 
-Monitoring → ❌  
-Logging → ✅
+誤り
+
+```
+Cloud Monitoring
+```
+
+正解
+
+```
+Cloud Logging
+```
 
 ---
 
-### Trap 25
+## 8.3 Trap 25 — ログ分析
+
+要件
 
 ```
-
 ログ分析
-
 ```
 
-Logging → ❌  
-BigQuery Export → ✅
+誤り
+
+```
+Cloud Logging
+```
+
+正解
+
+```
+BigQuery Export
+```
 
 ---
 
-# Cost traps
+# 9. Cost Traps
 
-### Trap 26
+## 9.1 Trap 26 — 費用見積
+
+要件
 
 ```
-
 費用見積
-
 ```
 
-Spreadsheet → ❌  
-Pricing Calculator → ✅
+誤り
+
+```
+Spreadsheet
+```
+
+正解
+
+```
+Pricing Calculator
+```
 
 ---
 
-### Trap 27
+## 9.2 Trap 27 — 予算通知
+
+要件
 
 ```
-
 予算通知
-
 ```
 
-Monitoring → ❌  
-Budget Alerts → ✅
+誤り
+
+```
+Cloud Monitoring
+```
+
+正解
+
+```
+Budget Alerts
+```
 
 ---
 
-### Trap 28
+## 9.3 Trap 28 — コスト分析
+
+要件
 
 ```
-
 コスト分析
-
 ```
 
-Billing console → ❌  
-Billing Export → ✅
+誤り
+
+```
+Billing console
+```
+
+正解
+
+```
+Billing Export
+```
 
 ---
 
-### Trap 29
+## 9.4 Trap 29 — 長期割引
+
+要件
 
 ```
-
-長期割引
-
+長期利用割引
 ```
 
-SUD → ❌  
-CUD → ✅
+誤り
+
+```
+Sustained Use Discount
+```
+
+正解
+
+```
+Committed Use Discount
+```
 
 ---
 
-### Trap 30
+## 9.5 Trap 30 — 自動割引
+
+要件
 
 ```
-
 自動割引
-
 ```
 
-CUD → ❌  
-SUD → ✅
+誤り
+
+```
+Committed Use Discount
+```
+
+正解
+
+```
+Sustained Use Discount
+```
 
 ---
 
-# 試験攻略
+# 10. 試験攻略
 
-ACE問題は
+ACE問題は以下の思考で解く。
 
-```
-
+```text
 要件
 ↓
 キーワード
 ↓
 GCPサービス
-
 ```
-
-で解く。
 
 例
 
-```
-
+```text
 Docker → Cloud Run
 PostgreSQL → Cloud SQL
 Analytics → BigQuery
 Secrets → Secret Manager
-
 ```
 
 ---
 
-# ACE頻出サービス
+# 11. ACE頻出サービス
 
-```
+ACE試験で特に頻出のサービス。
 
+```text
 Cloud Run
 Compute Engine
 Cloud Storage
@@ -465,72 +757,55 @@ BigQuery
 Pub/Sub
 Secret Manager
 IAM
-Monitoring
-
+Cloud Monitoring
 ```
 
 ---
 
-# 最重要トラップ
+# 12. 最重要トラップ
 
-```
-
+```text
 PostgreSQL → Cloud SQL
 ログ分析 → BigQuery
 Container API → Cloud Run
 Secrets → Secret Manager
-
 ```
 
 ---
 
-# まとめ
+# 13. まとめ
 
-ACEは
+ACE試験は **GCPらしいサービスを選ぶ試験**。
 
-```
-
-GCPっぽいサービス
-
-```
-
-を選ぶ試験。
-
-```
-
-VM → Compute
+```text
+VM → Compute Engine
 Container → Cloud Run
 DB → Cloud SQL
 Analytics → BigQuery
 Secrets → Secret Manager
-
-```
 ```
 
 ---
 
-# 正直な評価
+# GCP ACE Exam Trap 用語集（2026）
 
-あなたのこの教材
-
-```
-sessions_ver262
-```
-
-かなり良いです。
-
-構造
-
-```
-01-08 基礎
-09 cost
-10 security
-11 service selection
-12 traps
-13-15 exam
-```
-
-これは **かなり完成度高いACE教材構造**です。
+| 用語                 | 定義              | 用途                 |
+| ------------------ | --------------- | ------------------ |
+| Compute Engine     | GCPの仮想マシンサービス   | VM実行               |
+| Cloud Run          | サーバレスコンテナ実行サービス | API / マイクロサービス     |
+| Cloud Storage      | オブジェクトストレージ     | ファイル保存             |
+| Persistent Disk    | VM用ブロックストレージ    | VMディスク             |
+| Filestore          | NFS共有ファイルストレージ  | 共有ファイル             |
+| Cloud SQL          | マネージドRDB        | MySQL / PostgreSQL |
+| Cloud Spanner      | 分散リレーショナルDB     | グローバルDB            |
+| Firestore          | Document型NoSQL  | モバイルアプリ            |
+| BigQuery           | データウェアハウス       | 分析                 |
+| Pub/Sub            | メッセージングサービス     | イベント処理             |
+| Dataflow           | データ処理サービス       | ETL                |
+| Secret Manager     | 機密情報管理          | パスワード / APIキー      |
+| Cloud Monitoring   | メトリクス監視         | CPU / Latency      |
+| Cloud Logging      | ログ管理            | ログ検索               |
+| Pricing Calculator | 費用見積ツール         | コスト試算              |
+| Billing Export     | 課金データ分析機能       | コスト分析              |
 
 ---
-

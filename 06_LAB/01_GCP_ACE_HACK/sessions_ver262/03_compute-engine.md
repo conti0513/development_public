@@ -1,4 +1,3 @@
-````markdown
 # GCP Compute 選択（ACE 2026）
 
 GCPのComputeは **5種類で判断**すると試験が解きやすい。
@@ -513,14 +512,65 @@ Kubernetes --> GKE
 
 ---
 
-# 最終ACE暗記
+
+# 27. 用語集（ACE頻出）
+
+| 用語                                 | 定義                                                           |
+| ---------------------------------- | ------------------------------------------------------------ |
+| **Compute Engine**                 | Google Cloud の IaaS VMサービス。OSレベルの管理が可能。                      |
+| **Machine Type**                   | VMのCPU・メモリ構成。Standard / High-CPU / High-Memory / Custom がある。 |
+| **Custom Machine Type**            | CPUとRAMを自由に組み合わせたVM構成。                                       |
+| **Managed Instance Group (MIG)**   | 同一構成のVMを自動スケール・自動復旧するグループ。                                   |
+| **Autoscaling**                    | 負荷に応じてVM数を自動増減する機能。                                          |
+| **Autohealing**                    | VMのヘルスチェックにより自動再作成する機能。                                      |
+| **Persistent Disk (PD)**           | Compute Engineの標準ブロックストレージ。                                  |
+| **Local SSD**                      | VMに直結する高IOPSストレージ。揮発性。                                       |
+| **Filestore**                      | NFSベースのマネージドファイルストレージ。                                       |
+| **Snapshot**                       | Persistent Diskのバックアップイメージ。                                  |
+| **Custom Image**                   | VMテンプレート用のOSイメージ。                                            |
+| **Startup Script**                 | VM起動時に実行される初期化スクリプト。                                         |
+| **Spot VM**                        | 割引価格で利用できるプリエンプティブルVM。いつでも停止される可能性あり。                        |
+| **Service Account**                | GCPリソースがAPIを利用するためのIAMアイデンティティ。                              |
+| **OS Login**                       | IAMでSSHアクセスを管理する機能。                                          |
+| **Cloud Run**                      | コンテナを実行するサーバレスサービス。HTTPトリガーが基本。                              |
+| **Cloud Run Jobs**                 | コンテナのバッチ処理を実行するCloud Run機能。                                  |
+| **GKE (Google Kubernetes Engine)** | Kubernetesクラスタのマネージドサービス。                                    |
+| **GKE Autopilot**                  | Node管理をGoogleが行うサーバレス型GKE。                                   |
+| **App Engine**                     | Google CloudのPaaS型Webアプリ実行環境。                                |
+| **Batch**                          | 大規模並列バッチ処理のマネージドサービス。                                        |
+| **Load Balancer**                  | トラフィックを複数VMやサービスに分散する仕組み。                                    |
+| **Pub/Sub**                        | メッセージングサービス。イベント駆動処理で利用。                                     |
+
+---
+
+# ACE試験で重要な対比
+
+| 概念        | 対比         |
+| --------- | ---------- |
+| Snapshot  | Diskバックアップ |
+| Image     | VMテンプレート   |
+| MIG       | VMオートスケール  |
+| Cloud Run | HTTPコンテナ   |
+| GKE       | Kubernetes |
+| Batch     | 大量バッチ      |
+
+---
+
+# 最終ACE暗記（実務ベース）
 
 ```
 VM → Compute Engine
 Container → Cloud Run
 Kubernetes → GKE
-Web app → App Engine
-Batch → Batch
+Web App → App Engine
+Large batch → Batch
+
+VM autoscale → Managed Instance Group
+Disk backup → Snapshot
+VM template → Image
+High IO → Local SSD
+API access → Service Account
 ```
 
-```
+---
+

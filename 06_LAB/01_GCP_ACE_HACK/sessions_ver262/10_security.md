@@ -1,13 +1,26 @@
-```markdown
 # GCP Security（ACE 2026）
 
-GCPのセキュリティは  
-**IAM + Network + Data Protection** で構成される。
+---
 
-主なサービス
+# 1. GCP Security 概要
+
+## 1.1 セキュリティの基本構造
+
+GCPのセキュリティは **Identity / Network / Data Protection** の3領域で構成される。
 
 ```
+Identity
+Network
+Data Protection
+```
 
+---
+
+## 1.2 主なセキュリティサービス
+
+GCPには以下のセキュリティサービスがある。
+
+```
 IAM
 Service Accounts
 Secret Manager
@@ -15,12 +28,11 @@ Cloud KMS
 VPC Firewall
 VPC Service Controls
 Security Command Center
-
-````
+```
 
 ---
 
-# Security構造
+# 2. Security 全体構造
 
 ```mermaid
 graph TD
@@ -35,15 +47,19 @@ Data --> SecretManager
 Data --> CloudKMS
 
 Security --> SecurityCommandCenter
-````
+```
 
 ---
 
-# IAM（Identity and Access Management）
+# 3. IAM（Identity and Access Management）
 
-アクセス管理の中心。
+## 3.1 IAM 概要
 
-基本構造
+IAMは **GCPのアクセス管理の中心サービス**。
+
+---
+
+## 3.2 IAMの基本構造
 
 ```
 Member
@@ -61,7 +77,9 @@ user:test@example.com
 → project
 ```
 
-ACE問題
+---
+
+## 3.3 ACE試験ポイント
 
 ```
 アクセス権付与
@@ -70,17 +88,19 @@ ACE問題
 
 ---
 
-# IAM Roles
+# 4. IAM Roles
 
-ロール種類
+## 4.1 ロールの種類
 
 | 種類               | 内容                      |
 | ---------------- | ----------------------- |
 | Basic roles      | Owner / Editor / Viewer |
-| Predefined roles | サービス専用                  |
-| Custom roles     | 自作                      |
+| Predefined roles | サービス専用ロール               |
+| Custom roles     | ユーザー定義ロール               |
 
-ACE問題
+---
+
+## 4.2 ACE試験ポイント
 
 ```
 最小権限
@@ -89,17 +109,15 @@ ACE問題
 
 ---
 
-# IAM Policy
+# 5. IAM Policy
 
-ポリシーは
+## 5.1 IAM Policy 概要
 
-```
-binding
-```
+IAMポリシーは **Binding** で構成される。
 
-で構成。
+---
 
-例
+## 5.2 Binding構造
 
 ```
 member
@@ -107,7 +125,9 @@ role
 condition
 ```
 
-CLI
+---
+
+## 5.3 CLI例
 
 ```
 gcloud projects add-iam-policy-binding
@@ -115,9 +135,15 @@ gcloud projects add-iam-policy-binding
 
 ---
 
-# Principle of Least Privilege
+# 6. Principle of Least Privilege
 
-最小権限。
+## 6.1 最小権限原則
+
+ユーザーやサービスには **必要最小限の権限のみ付与**する。
+
+---
+
+## 6.2 推奨設定
 
 NG
 
@@ -133,7 +159,9 @@ Editor
 Service roles
 ```
 
-ACE問題
+---
+
+## 6.3 ACE試験ポイント
 
 ```
 最小権限
@@ -142,25 +170,33 @@ ACE問題
 
 ---
 
-# Service Account
+# 7. Service Account
 
-アプリ用ID。
+## 7.1 Service Account 概要
 
-用途
+Service Accountは **アプリケーション用のID**。
 
-| 用途        | 例          |
-| --------- | ---------- |
-| VMアクセス    | GCE        |
-| Cloud Run | APIアクセス    |
-| CI/CD     | Automation |
+---
 
-作成
+## 7.2 主な用途
+
+| 用途        | 例              |
+| --------- | -------------- |
+| VMアクセス    | Compute Engine |
+| Cloud Run | APIアクセス        |
+| CI/CD     | Automation     |
+
+---
+
+## 7.3 作成CLI
 
 ```
 gcloud iam service-accounts create
 ```
 
-ACE問題
+---
+
+## 7.4 ACE試験ポイント
 
 ```
 アプリ認証
@@ -169,11 +205,15 @@ ACE問題
 
 ---
 
-# Workload Identity
+# 8. Workload Identity
 
-GKE認証。
+## 8.1 Workload Identity 概要
 
-特徴
+Workload Identityは **GKEのPod認証機能**。
+
+---
+
+## 8.2 認証構造
 
 ```
 GKE Pod
@@ -183,7 +223,9 @@ Service Account
 IAM
 ```
 
-ACE問題
+---
+
+## 8.3 ACE試験ポイント
 
 ```
 GKE認証
@@ -192,11 +234,15 @@ GKE認証
 
 ---
 
-# Secret Manager
+# 9. Secret Manager
 
-秘密情報管理。
+## 9.1 Secret Manager 概要
 
-用途
+Secret Managerは **機密情報の安全な保存サービス**。
+
+---
+
+## 9.2 主な用途
 
 | 用途      | 例        |
 | ------- | -------- |
@@ -204,7 +250,9 @@ GKE認証
 | DBパスワード | password |
 | トークン    | OAuth    |
 
-ACE問題
+---
+
+## 9.3 ACE試験ポイント
 
 ```
 パスワード管理
@@ -213,24 +261,32 @@ ACE問題
 
 ---
 
-# Cloud KMS
+# 10. Cloud KMS
 
-暗号鍵管理。
+## 10.1 Cloud KMS 概要
 
-用途
+Cloud KMSは **暗号鍵管理サービス**。
+
+---
+
+## 10.2 主な用途
 
 ```
 Encryption key
 ```
 
-利用例
+---
 
-| 用途                 | 例       |
-| ------------------ | ------- |
-| Disk encryption    | Compute |
-| Storage encryption | GCS     |
+## 10.3 利用例
 
-ACE問題
+| 用途                 | 例              |
+| ------------------ | -------------- |
+| Disk encryption    | Compute Engine |
+| Storage encryption | Cloud Storage  |
+
+---
+
+## 10.4 ACE試験ポイント
 
 ```
 鍵管理
@@ -239,24 +295,30 @@ ACE問題
 
 ---
 
-# Encryption
+# 11. Encryption
 
-GCP暗号化
+## 11.1 GCP暗号化
+
+GCPはデフォルトで暗号化を提供する。
 
 ```
-At rest
-In transit
+Encryption at rest
+Encryption in transit
 ```
 
-キー種類
+---
 
-| 種類                    | 内容    |
-| --------------------- | ----- |
-| Google managed key    | デフォルト |
-| Customer managed key  | KMS   |
-| Customer supplied key | 自前    |
+## 11.2 鍵の種類
 
-ACE問題
+| 種類                    | 内容     |
+| --------------------- | ------ |
+| Google-managed key    | デフォルト  |
+| Customer-managed key  | KMS    |
+| Customer-supplied key | ユーザー提供 |
+
+---
+
+## 11.3 ACE試験ポイント
 
 ```
 顧客管理鍵
@@ -265,18 +327,24 @@ ACE問題
 
 ---
 
-# VPC Firewall
+# 12. VPC Firewall
 
-ネットワーク制御。
+## 12.1 Firewall 概要
 
-ルール
+VPC Firewallは **ネットワーク通信制御**を行う。
+
+---
+
+## 12.2 ルール
 
 ```
 allow
 deny
 ```
 
-対象
+---
+
+## 12.3 ルール対象
 
 | 対象              | 例            |
 | --------------- | ------------ |
@@ -284,7 +352,9 @@ deny
 | Tag             | instance tag |
 | Service account | identity     |
 
-ACE問題
+---
+
+## 12.4 ACE試験ポイント
 
 ```
 通信制御
@@ -293,17 +363,15 @@ ACE問題
 
 ---
 
-# Private Access
+# 13. Private Access
 
-Private通信。
+## 13.1 Private Google Access
 
-例
+VMからGoogle APIへ **プライベート通信**を可能にする。
 
-```
-Private Google Access
-```
+---
 
-用途
+## 13.2 利用例
 
 ```
 VM → Google API
@@ -311,24 +379,32 @@ VM → Google API
 
 ---
 
-# VPC Service Controls
+# 14. VPC Service Controls
 
-データ境界。
+## 14.1 VPC Service Controls 概要
 
-目的
+VPC Service Controlsは **データ境界セキュリティ機能**。
+
+---
+
+## 14.2 目的
 
 ```
-Data exfiltration防止
+Data exfiltration 防止
 ```
 
-対象
+---
+
+## 14.3 対象サービス
 
 ```
 BigQuery
-Storage
+Cloud Storage
 ```
 
-ACE問題
+---
+
+## 14.4 ACE試験ポイント
 
 ```
 データ持ち出し防止
@@ -337,19 +413,25 @@ ACE問題
 
 ---
 
-# Security Command Center
+# 15. Security Command Center
 
-セキュリティ統合管理。
+## 15.1 SCC 概要
 
-機能
+Security Command Centerは **GCPのセキュリティ統合管理サービス**。
+
+---
+
+## 15.2 主な機能
 
 | 機能     | 内容               |
 | ------ | ---------------- |
-| 脆弱性    | Vulnerability    |
+| 脆弱性検知  | Vulnerability    |
 | 設定チェック | Misconfiguration |
 | 脅威検知   | Threat detection |
 
-ACE問題
+---
+
+## 15.3 ACE試験ポイント
 
 ```
 セキュリティ監視
@@ -358,31 +440,25 @@ ACE問題
 
 ---
 
-# Securityベストプラクティス
+# 16. Security Logging
 
-基本
+## 16.1 Audit Logs
+
+GCPでは監査ログが自動生成される。
+
+---
+
+## 16.2 ログ種類
 
 ```
-Least privilege
-Service accounts
-Secret Manager
-Private networking
-Audit logging
+Admin Activity
+Data Access
+System Events
 ```
 
 ---
 
-# Security Logging
-
-監査ログ
-
-```
-Admin activity
-Data access
-System events
-```
-
-ACE問題
+## 16.3 ACE試験ポイント
 
 ```
 監査ログ
@@ -391,7 +467,7 @@ ACE問題
 
 ---
 
-# Security構造
+# 17. Security アーキテクチャ
 
 ```mermaid
 graph TD
@@ -410,7 +486,7 @@ VPCSC --> Data
 
 ---
 
-# ACE重要ポイント
+# 18. ACE重要ポイント
 
 ```
 権限管理
@@ -434,7 +510,7 @@ VPCSC --> Data
 
 ---
 
-# ACE判断フロー
+# 19. ACE判断フロー
 
 ```mermaid
 flowchart TD
@@ -451,7 +527,7 @@ A -->|データ境界| VPCSC
 
 ---
 
-# ACEトラップ
+# 20. ACEトラップ
 
 ## Trap1
 
@@ -497,9 +573,9 @@ VPC Service Controls → ✅
 
 ---
 
-# 実務TIP
+# 21. 実務TIP
 
-実務セキュリティ基本
+実務の基本セキュリティフロー
 
 ```
 IAM
@@ -515,7 +591,7 @@ Monitoring
 
 ---
 
-# まとめ
+# 22. まとめ
 
 ```
 Identity → IAM
@@ -526,48 +602,44 @@ Network → Firewall
 Data boundary → VPC Service Controls
 ```
 
-```
-
 ---
 
-# 2026で重要なポイント
+# 23. 2026 ACE重要ポイント
 
-ACEでよく出るセキュリティ
+ACEで頻出のセキュリティサービス
 
 ```
-
 IAM
 Service Account
 Secret Manager
-KMS
+Cloud KMS
 VPC Service Controls
-
 ```
 
-特に
+特に重要
 
 ```
-
 Service Account
 Secret Manager
-
 ```
-
-は **超頻出**です。
 
 ---
 
-# 正直な補足
+# GCP Security 用語集（ACE 2026）
 
-ACE試験のセキュリティ問題は  
-実は **この3つで8割解けます**
-
-```
-
-IAM
-Service Account
-Secret Manager
-
-```
+| 用語                      | 定義             | 用途              |
+| ----------------------- | -------------- | --------------- |
+| IAM                     | GCPのアクセス管理サービス | ユーザー権限管理        |
+| IAM Policy              | IAM権限設定ポリシー    | RoleとMember管理   |
+| Service Account         | アプリケーション用ID    | API認証           |
+| Workload Identity       | GKE Pod用認証     | Kubernetesアクセス  |
+| Secret Manager          | 機密情報管理サービス     | パスワード / APIキー保存 |
+| Cloud KMS               | 暗号鍵管理サービス      | データ暗号化          |
+| CMEK                    | 顧客管理暗号鍵        | セキュリティ強化        |
+| VPC Firewall            | ネットワーク通信制御     | VM通信管理          |
+| VPC Service Controls    | データ境界セキュリティ    | データ持ち出し防止       |
+| Security Command Center | セキュリティ統合管理     | 脅威検知            |
+| Audit Logs              | 監査ログ           | セキュリティ監査        |
 
 ---
+

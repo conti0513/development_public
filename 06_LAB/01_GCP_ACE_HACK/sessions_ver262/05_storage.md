@@ -1,7 +1,7 @@
 # GCP Storage（ACE / 2026）
 
-ACEでは **Cloud Storage が中心**。
-ただし GCPには **3種類のストレージモデル**が存在する。
+ACE試験では **Cloud Storageが中心**。
+ただしGCPのストレージは **3つのモデル**に分類される。
 
 ```
 Object
@@ -9,13 +9,13 @@ File
 Block
 ```
 
-これを最初に理解しておく。
+この分類を理解すると、試験問題の判断が容易になる。
 
 ---
 
 # 1. GCP Storageの種類
 
-## 1.1 ストレージ分類
+## 1.1 ストレージモデル
 
 ```mermaid
 graph TD
@@ -43,17 +43,17 @@ Block --> PersistentDisk
 → Cloud Storage
 ```
 
-ACEでは **ほぼCloud Storageが答え**になる。
+ACEでは **Cloud Storageが答えになるケースが多い**。
 
 ---
 
 # 2. Cloud Storage基本構造
 
-Cloud Storageは **Object Storage**。
+## 2.1 Object Storage
 
----
+Cloud Storageは **Object Storage**である。
 
-## 2.1 構造
+### 構造
 
 ```mermaid
 graph TD
@@ -62,26 +62,26 @@ Bucket --> Object2
 Bucket --> Object3
 ```
 
-| 要素     | 説明   |
-| ------ | ---- |
-| Bucket | コンテナ |
-| Object | ファイル |
+| 要素     | 説明        |
+| ------ | --------- |
+| Bucket | データ格納コンテナ |
+| Object | 保存ファイル    |
 
 ---
 
-## 2.2 特徴
+## 2.2 Cloud Storage特徴
 
-| 特徴       | 内容       |
-| -------- | -------- |
-| HTTPアクセス | 可能       |
-| 無制限スケール  | 可能       |
-| 完全マネージド  | インフラ管理不要 |
+| 特徴       | 内容      |
+| -------- | ------- |
+| HTTPアクセス | 可能      |
+| スケーラビリティ | 実質無制限   |
+| 管理       | フルマネージド |
 
 ---
 
 # 3. Storage Class
 
-Storage Classは **アクセス頻度で選択**する。
+Storage Classは **アクセス頻度に基づいて選択**する。
 
 ---
 
@@ -90,7 +90,7 @@ Storage Classは **アクセス頻度で選択**する。
 | Class    | アクセス頻度 | 最低保持 |
 | -------- | ------ | ---- |
 | Standard | 頻繁     | なし   |
-| Nearline | 月1回以下  | 30日  |
+| Nearline | 月1回程度  | 30日  |
 | Coldline | 年1回程度  | 90日  |
 | Archive  | 長期保存   | 365日 |
 
@@ -100,7 +100,7 @@ Storage Classは **アクセス頻度で選択**する。
 
 ```
 頻繁アクセス → Standard
-月1回 → Nearline
+月1回程度 → Nearline
 年1回 → Coldline
 長期保存 → Archive
 ```
@@ -116,7 +116,7 @@ Storage Classは **アクセス頻度で選択**する。
 | Coldline | 低    | 高      |
 | Archive  | 最低   | 非常に高   |
 
-重要
+重要ポイント
 
 ```
 頻繁アクセス → Standard
@@ -125,18 +125,14 @@ Storage Classは **アクセス頻度で選択**する。
 理由
 
 ```
-取り出し料金が発生するため
+Nearline以下は取り出し料金が発生
 ```
 
 ---
 
 # 4. Bucket Location
 
-バケットは配置場所を指定する。
-
----
-
-## 4.1 Location種類
+## 4.1 ロケーション種類
 
 | Location     | 用途      |
 | ------------ | ------- |
@@ -157,11 +153,11 @@ Storage Classは **アクセス頻度で選択**する。
 
 # 5. Lifecycle Management
 
-オブジェクトを **自動で管理する機能**。
+Lifecycleは **オブジェクトを自動管理する機能**。
 
 ---
 
-## 5.1 構造
+## 5.1 Lifecycle構造
 
 ```mermaid
 graph TD
@@ -193,7 +189,7 @@ Lifecycle --> Archive
 
 # 6. Lifecycle Action
 
-Lifecycleには2種類のアクションがある。
+Lifecycleには2つのアクションがある。
 
 ---
 
@@ -217,11 +213,7 @@ Lifecycleには2種類のアクションがある。
 
 # 7. Object Versioning
 
-オブジェクト履歴を保持する機能。
-
----
-
-## 7.1 構造
+## 7.1 Versioning構造
 
 ```mermaid
 graph TD
@@ -251,10 +243,6 @@ FileV2 --> FileV3
 
 # 8. Retention Policy
 
-削除禁止期間を設定する機能。
-
----
-
 ## 8.1 機能
 
 | 機能         | 内容       |
@@ -262,19 +250,19 @@ FileV2 --> FileV3
 | 保持期間       | 指定期間削除不可 |
 | Compliance | 法規制対応    |
 
+例
+
+```
+7年間保存
+```
+
 ---
 
 ## 8.2 ACE判断
 
 ```
-法規制
+法規制対応
 → Retention Policy
-```
-
-例
-
-```
-7年保存
 ```
 
 ---
@@ -287,10 +275,10 @@ ACEでよく混同される。
 
 ## 9.1 比較
 
-| 機能        | 目的    |
-| --------- | ----- |
-| Lifecycle | コスト削減 |
-| Retention | データ保護 |
+| 機能        | 目的     |
+| --------- | ------ |
+| Lifecycle | コスト最適化 |
+| Retention | データ保護  |
 
 ---
 
@@ -305,22 +293,22 @@ ACEでよく混同される。
 
 # 10. Signed URL
 
-一時的なアクセスを許可する。
+## 10.1 機能
+
+Signed URLは **一時的アクセスを許可する機能**。
 
 ---
 
-## 10.1 用途
+## 10.2 用途
 
 | 用途       | 方法         |
 | -------- | ---------- |
 | 一時ダウンロード | Signed URL |
 
----
-
-## 10.2 例
+例
 
 ```
-10分アクセス
+10分アクセス許可
 ```
 
 ---
@@ -335,11 +323,7 @@ ACEでよく混同される。
 
 # 11. Storage Transfer Service
 
-データ移行サービス。
-
----
-
-## 11.1 構造
+## 11.1 データ移行サービス
 
 ```mermaid
 graph TD
@@ -368,11 +352,7 @@ TransferService --> CloudStorage
 
 # 12. Transfer Appliance
 
-物理デバイスを使用する移行方法。
-
----
-
-## 12.1 用途
+## 12.1 物理移行
 
 | 用途     | 内容      |
 | ------ | ------- |
@@ -383,18 +363,14 @@ TransferService --> CloudStorage
 ## 12.2 ACE判断
 
 ```
-巨大データ → Transfer Appliance
+巨大データ移行 → Transfer Appliance
 ```
 
 ---
 
 # 13. Cloud Storage CLI
 
-Cloud StorageはCLIで操作可能。
-
----
-
-## 13.1 コマンド
+## 13.1 CLI操作
 
 | コマンド              | 用途   |
 | ----------------- | ---- |
@@ -402,9 +378,7 @@ Cloud StorageはCLIで操作可能。
 | gsutil rsync      | 同期   |
 | gcloud storage cp | 新CLI |
 
----
-
-## 13.2 例
+例
 
 ```
 gsutil cp file gs://bucket
@@ -413,10 +387,6 @@ gsutil cp file gs://bucket
 ---
 
 # 14. Cloud Storageセキュリティ
-
-アクセス制御の方法。
-
----
 
 ## 14.1 セキュリティ機能
 
@@ -438,11 +408,7 @@ gsutil cp file gs://bucket
 
 # 15. Public Access
 
-バケット公開方法。
-
----
-
-## 15.1 方法
+## 15.1 公開方法
 
 | 方法            | 内容   |
 | ------------- | ---- |
@@ -556,13 +522,13 @@ Retention Policy
 
 # 22. 2026 Storageトレンド
 
-| 技術                    | 状況       |
-| --------------------- | -------- |
-| Cloud Storage         | 中核       |
-| Lifecycle             | コスト最適化   |
-| Dual-region           | DR用途     |
-| Archive               | コンプライアンス |
-| Uniform bucket access | 標準       |
+| 技術                    | 状況          |
+| --------------------- | ----------- |
+| Cloud Storage         | GCPストレージの中核 |
+| Lifecycle             | コスト最適化      |
+| Dual-region           | DR用途        |
+| Archive               | コンプライアンス    |
+| Uniform bucket access | 標準          |
 
 ---
 
@@ -579,5 +545,26 @@ CloudStorage --> Lifecycle
 CloudStorage --> Versioning
 CloudStorage --> IAM
 ```
+
+---
+
+# 24. ACE頻出用語集（2026）
+
+| 用語                          | 定義                       |
+| --------------------------- | ------------------------ |
+| Cloud Storage               | Google Cloudのオブジェクトストレージ |
+| Bucket                      | オブジェクトを格納するコンテナ          |
+| Object                      | Cloud Storageに保存されるファイル  |
+| Storage Class               | データアクセス頻度に応じた保存クラス       |
+| Lifecycle Rule              | オブジェクトの自動管理ルール           |
+| Object Versioning           | オブジェクトの履歴管理機能            |
+| Retention Policy            | 指定期間削除を禁止する機能            |
+| Signed URL                  | 一時的アクセス権を付与するURL         |
+| Storage Transfer Service    | オンプレや他クラウドからのデータ移行サービス   |
+| Transfer Appliance          | 大容量データの物理移行装置            |
+| Uniform Bucket-Level Access | ACLを無効化しIAMでアクセス制御する機能   |
+| Dual-region                 | 2リージョン冗長配置               |
+| Multi-region                | 複数リージョン配置                |
+| gsutil                      | Cloud Storage操作CLI       |
 
 ---

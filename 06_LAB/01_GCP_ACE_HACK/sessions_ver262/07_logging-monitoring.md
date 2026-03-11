@@ -1,18 +1,39 @@
-````markdown
 # GCP Logging / Monitoring（ACE 2026）
 
-GCPの運用監視は  
-**Cloud Operations Suite** を使う。
+---
 
-主なサービス
+# 1. Cloud Operations Suite 概要
 
-- Cloud Logging
-- Cloud Monitoring
-- Alerting
-- Error Reporting
-- Trace / Profiler
+## 1.1 GCP Observabilityの中心サービス
 
-ACEでは主に以下の3つ
+GCPの運用監視は **Cloud Operations Suite** を使用する。
+
+旧名称
+
+```
+Stackdriver
+```
+
+現在
+
+```
+Cloud Operations Suite
+```
+
+---
+
+## 1.2 主なObservabilityサービス
+
+Cloud Operations Suiteには以下のサービスが含まれる。
+
+* Cloud Logging
+* Cloud Monitoring
+* Alerting
+* Error Reporting
+* Cloud Trace
+* Cloud Profiler
+
+ACE試験では主に以下の3つが重要。
 
 ```
 Cloud Logging
@@ -22,7 +43,9 @@ Alert Policy
 
 ---
 
-# Cloud Operations構造
+# 2. Cloud Operations 全体構造
+
+## 2.1 Observabilityアーキテクチャ
 
 ```mermaid
 graph TD
@@ -42,21 +65,29 @@ AlertPolicy --> Notification
 
 ---
 
-# Cloud Logging
+# 3. Cloud Logging
 
-GCPの **ログ収集サービス**
+## 3.1 Cloud Logging 概要
 
-自動収集
+Cloud Loggingは **GCPのログ収集・検索サービス**。
 
-| リソース | ログ |
-|---|---|
-Compute Engine | syslog
-GKE | container logs
-Cloud Run | request logs
-Cloud Functions | execution logs
-IAM | audit logs
+GCPリソースのログを自動収集する。
 
-ACE問題
+---
+
+## 3.2 自動収集ログ
+
+| リソース            | ログ             |
+| --------------- | -------------- |
+| Compute Engine  | syslog         |
+| GKE             | container logs |
+| Cloud Run       | request logs   |
+| Cloud Functions | execution logs |
+| IAM             | audit logs     |
+
+---
+
+## 3.3 ACE試験ポイント
 
 ```
 ログ確認
@@ -65,21 +96,27 @@ ACE問題
 
 ---
 
-# Log Router（旧 Sink）
+# 4. Log Router（旧 Sink）
 
-Loggingの内部ルーター。
+## 4.1 Log Router 概要
 
-ログを他サービスへ送る。
+Log Routerは **Cloud Logging内部のログ転送機構**。
 
-転送先
+ログを他のサービスへ送信できる。
 
-| 転送先 | 用途 |
-|---|---|
-BigQuery | ログ分析 |
-Cloud Storage | 長期保存 |
-Pub/Sub | SIEM / Event |
+---
 
-ACE問題
+## 4.2 主な転送先
+
+| 転送先           | 用途             |
+| ------------- | -------------- |
+| BigQuery      | ログ分析           |
+| Cloud Storage | 長期保存           |
+| Pub/Sub       | SIEM / Event処理 |
+
+---
+
+## 4.3 ACE試験ポイント
 
 ```
 ログ分析
@@ -88,7 +125,9 @@ ACE問題
 
 ---
 
-# Logging構造
+# 5. Logging アーキテクチャ
+
+## 5.1 Logging構造
 
 ```mermaid
 graph TD
@@ -106,20 +145,28 @@ LogRouter --> PubSub
 
 ---
 
-# Cloud Monitoring
+# 6. Cloud Monitoring
 
-メトリクス監視サービス。
+## 6.1 Cloud Monitoring 概要
 
-監視対象
+Cloud Monitoringは **メトリクス監視サービス**。
 
-| 対象 | メトリクス |
-|---|---|
-VM | CPU / Memory / Disk |
-GKE | Pod / Node |
-Cloud Run | Request / Latency |
-Load Balancer | QPS / Errors |
+システムの状態を数値データで監視する。
 
-ACE問題
+---
+
+## 6.2 監視対象
+
+| 対象            | メトリクス               |
+| ------------- | ------------------- |
+| VM            | CPU / Memory / Disk |
+| GKE           | Pod / Node          |
+| Cloud Run     | Request / Latency   |
+| Load Balancer | QPS / Errors        |
+
+---
+
+## 6.3 ACE試験ポイント
 
 ```
 CPU監視
@@ -128,7 +175,9 @@ CPU監視
 
 ---
 
-# Metrics構造
+# 7. Metrics構造
+
+## 7.1 Monitoringアーキテクチャ
 
 ```mermaid
 graph TD
@@ -141,27 +190,35 @@ Monitoring --> AlertPolicy
 
 ---
 
-# Alert Policy
+# 8. Alert Policy
 
-監視アラート。
+## 8.1 Alert Policy 概要
 
-条件例
+Alert Policyは **監視条件に基づくアラート通知設定**。
 
-| 条件 | 例 |
-|---|---|
-CPU | >80% |
-Memory | >85% |
-Error Rate | >5% |
-Latency | >500ms |
+---
 
-通知先
+## 8.2 代表的なアラート条件
 
-- Email
-- Slack
-- PagerDuty
-- Webhook
+| 条件         | 例      |
+| ---------- | ------ |
+| CPU        | >80%   |
+| Memory     | >85%   |
+| Error Rate | >5%    |
+| Latency    | >500ms |
 
-ACE問題
+---
+
+## 8.3 通知先
+
+* Email
+* Slack
+* PagerDuty
+* Webhook
+
+---
+
+## 8.4 ACE試験ポイント
 
 ```
 CPU > threshold
@@ -170,32 +227,42 @@ CPU > threshold
 
 ---
 
-# Notification Channel
+# 9. Notification Channel
 
-アラート通知先。
+## 9.1 Notification Channel 概要
 
-例
-
-| Channel | 用途 |
-|---|---|
-Email | 管理者通知 |
-Slack | 運用通知 |
-PagerDuty | OnCall |
-Webhook | 自動処理 |
+Notification Channelは **アラート通知先設定**。
 
 ---
 
-# Error Reporting
+## 9.2 代表例
 
-アプリ例外の集約。
+| Channel   | 用途     |
+| --------- | ------ |
+| Email     | 管理者通知  |
+| Slack     | 運用通知   |
+| PagerDuty | OnCall |
+| Webhook   | 自動処理   |
 
-対象
+---
 
-- Cloud Run
-- Cloud Functions
-- App Engine
+# 10. Error Reporting
 
-ACE問題
+## 10.1 Error Reporting 概要
+
+Error Reportingは **アプリケーション例外の集約サービス**。
+
+---
+
+## 10.2 対象サービス
+
+* Cloud Run
+* Cloud Functions
+* App Engine
+
+---
+
+## 10.3 ACE試験ポイント
 
 ```
 アプリエラー確認
@@ -204,16 +271,22 @@ ACE問題
 
 ---
 
-# Trace
+# 11. Cloud Trace
 
-リクエスト遅延分析。
+## 11.1 Cloud Trace 概要
 
-用途
+Cloud Traceは **リクエスト遅延分析ツール**。
 
-- API latency
-- microservice tracing
+---
 
-ACE問題
+## 11.2 主な用途
+
+* API latency分析
+* microservice tracing
+
+---
+
+## 11.3 ACE試験ポイント
 
 ```
 遅延分析
@@ -222,18 +295,24 @@ ACE問題
 
 ---
 
-# Metrics Scope
+# 12. Metrics Scope
 
-複数プロジェクト監視。
+## 12.1 Metrics Scope 概要
 
-用途
+Metrics Scopeは **複数プロジェクトの監視を統合する機能**。
+
+---
+
+## 12.2 主な用途
 
 ```
-1つのMonitoringで
+1つのMonitoring環境で
 複数Projectを監視
 ```
 
-ACE問題
+---
+
+## 12.3 ACE試験ポイント
 
 ```
 複数プロジェクト監視
@@ -242,7 +321,7 @@ ACE問題
 
 ---
 
-# Logging / Monitoring 全体構造
+# 13. Logging / Monitoring 全体構造
 
 ```mermaid
 graph TD
@@ -261,7 +340,7 @@ AlertPolicy --> Notification
 
 ---
 
-# ACE重要ポイント
+# 14. ACE重要ポイント
 
 ```
 ログ確認
@@ -285,7 +364,7 @@ AlertPolicy --> Notification
 
 ---
 
-# ACE判断フロー
+# 15. ACE判断フロー
 
 ```mermaid
 flowchart TD
@@ -302,23 +381,21 @@ A -->|遅延分析| Trace
 
 ---
 
-# 実務TIP（2026）
+# 16. 実務ベストプラクティス（2026）
 
-### Loggingベストプラクティス
+## 16.1 Logging運用
 
-ログ保持
-
-| 用途 | サービス |
-|---|---|
-短期ログ | Logging |
-長期保存 | Cloud Storage |
-分析 | BigQuery |
+| 用途   | サービス          |
+| ---- | ------------- |
+| 短期ログ | Cloud Logging |
+| 長期保存 | Cloud Storage |
+| ログ分析 | BigQuery      |
 
 ---
 
-### Monitoringベストプラクティス
+## 16.2 Monitoring運用
 
-実務では
+一般的な運用フロー
 
 ```
 Monitoring
@@ -332,9 +409,7 @@ PagerDuty
 
 ---
 
-### SLO運用（実務）
-
-SRE運用
+## 16.3 SRE運用
 
 ```
 SLI
@@ -352,9 +427,9 @@ Alert
 
 ---
 
-# Observability（2026）
+# 17. Observability（2026）
 
-GCP Observabilityは
+GCP Observabilityは以下の4要素で構成される。
 
 ```
 Logs
@@ -363,11 +438,9 @@ Traces
 Errors
 ```
 
-4つで構成。
-
 ---
 
-# 試験対策まとめ
+# 18. 試験対策まとめ
 
 ```
 ログ確認
@@ -391,7 +464,7 @@ CPU監視
 
 ---
 
-# 実務まとめ
+# 19. 実務まとめ
 
 ```
 Logs → Logging
@@ -401,13 +474,10 @@ Analysis → BigQuery
 Long Term → Storage
 Incident → PagerDuty
 ```
-````
 
 ---
 
-# 重要（2026で変わったポイント）
-
-古い資料との差分
+# 20. 2026変更点
 
 | 旧                    | 2026             |
 | -------------------- | ---------------- |
@@ -416,8 +486,21 @@ Incident → PagerDuty
 | Monitoring Workspace | Metrics Scope    |
 | Logging Agent        | Ops Agent        |
 
-ACE試験でも
-**Log Router / Metrics Scope / Ops Agent** が出る可能性あり。
-
 ---
 
+# GCP Observability 用語集（ACE 2026）
+
+| 用語                     | 定義                            | 用途                          |
+| ---------------------- | ----------------------------- | --------------------------- |
+| Cloud Operations Suite | GCPのObservability統合プラットフォーム   | ログ・監視・トレース                  |
+| Cloud Logging          | GCPのログ収集・検索サービス               | VM / GKE / アプリログ            |
+| Log Router             | Logging内部のログ転送機構              | BigQuery / Storage / PubSub |
+| Cloud Monitoring       | メトリクス監視サービス                   | CPU / Memory / Network監視    |
+| Alert Policy           | 監視条件に基づくアラート設定                | Email / Slack通知             |
+| Notification Channel   | アラート通知先                       | Email / PagerDuty           |
+| Error Reporting        | アプリケーション例外の集約                 | エラー分析                       |
+| Cloud Trace            | 分散トレーシングツール                   | レイテンシ分析                     |
+| Metrics Scope          | 複数プロジェクト監視機能                  | マルチプロジェクト監視                 |
+| Ops Agent              | Logging / Monitoring用統合エージェント | VM監視データ収集                   |
+
+---
