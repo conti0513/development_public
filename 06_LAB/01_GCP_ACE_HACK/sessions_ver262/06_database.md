@@ -358,214 +358,38 @@ Logs --> Bigtable
 
 ---
 
-# GCP Observability（ACE / 2026）
+# 11. GCP ACE 用語集（Database / 2026）
+
+| 用語                             | フルスペル                                         | 定義                        | 説明                                      |
+| ------------------------------ | --------------------------------------------- | ------------------------- | --------------------------------------- |
+| **Cloud SQL**                  | Cloud SQL for MySQL / PostgreSQL / SQL Server | フルマネージドRDB                | MySQL / PostgreSQL / SQL Serverのマネージド運用 |
+| **Cloud Spanner**              | Google Cloud Spanner                          | グローバル分散リレーショナルDB          | 強整合性を持つ水平スケールRDB                        |
+| **Cloud Bigtable**             | Google Cloud Bigtable                         | Wide Column型NoSQLDB       | 大規模時系列データ / IoT / ログ                    |
+| **Firestore**                  | Cloud Firestore                               | Document型NoSQLDB          | モバイル / Webアプリ向け                         |
+| **Firestore Native Mode**      | Firestore Native                              | Firestore標準モード            | 高スケーラブルNoSQL                            |
+| **Firestore Datastore Mode**   | Firestore Datastore Mode                      | Datastore互換モード            | 旧Datastore互換                            |
+| **BigQuery**                   | Google BigQuery                               | Serverless Data Warehouse | SQL分析 / BI / データ分析                      |
+| **AlloyDB**                    | AlloyDB for PostgreSQL                        | PostgreSQL互換DB            | 高性能PostgreSQL                           |
+| **Memorystore**                | Cloud Memorystore                             | インメモリDB                   | Redis / Memcached                       |
+| **Redis**                      | Remote Dictionary Server                      | Key-ValueインメモリDB          | キャッシュ / セッション                           |
+| **Memcached**                  | Memory Cache Daemon                           | 分散キャッシュ                   | アプリ高速化                                  |
+| **Primary Instance**           | Primary Database Instance                     | 書き込み可能DB                  | Cloud SQLのメインDB                         |
+| **Read Replica**               | Read Replica Instance                         | 読み取り専用DB                  | 読み取りスケール                                |
+| **Failover Replica**           | Failover Instance                             | 自動フェイルオーバー                | 高可用性構成                                  |
+| **High Availability (HA)**     | High Availability                             | 高可用性構成                    | マルチゾーンDB                                |
+| **Automatic Backup**           | Automated Backup                              | 自動バックアップ                  | DBバックアップ                                |
+| **Point-in-Time Recovery**     | PITR (Point-in-Time Recovery)                 | 時点復旧                      | 指定時間に復元                                 |
+| **Dataflow**                   | Cloud Dataflow                                | ETLデータ処理                  | DB→BigQuery等                            |
+| **Database Migration Service** | DMS (Database Migration Service)              | DB移行サービス                  | オンプレ→Cloud SQL                          |
+| **BigQuery ML**                | BigQuery Machine Learning                     | SQLベースML                  | データ分析 + ML                              |
+| **Partitioned Table**          | Table Partitioning                            | テーブル分割                    | 時系列データ管理                                |
+| **Clustered Table**            | Table Clustering                              | テーブル最適化                   | クエリ高速化                                  |
+| **Streaming Insert**           | Streaming Data Insert                         | リアルタイムデータ投入               | BigQueryストリーム                           |
+| **Query Slot**                 | BigQuery Slot                                 | クエリ処理リソース                 | BigQuery処理単位                            |
+| **Materialized View**          | Materialized View                             | キャッシュビュー                  | クエリ高速化                                  |
+| **Data Catalog**               | Cloud Data Catalog                            | メタデータ管理                   | データ検索                                   |
+| **Dataform**                   | Dataform                                      | SQLデータパイプライン              | BigQuery ETL                            |
 
 ---
 
-# 1. Observability概要
 
-旧名称
-
-```
-Stackdriver
-```
-
-現在
-
-```
-Google Cloud Operations Suite
-```
-
----
-
-# 2. Observability構成
-
-```mermaid
-graph TD
-OperationsSuite --> Logging
-OperationsSuite --> Monitoring
-OperationsSuite --> Alerting
-OperationsSuite --> Trace
-OperationsSuite --> Profiler
-```
-
----
-
-# 3. Cloud Logging
-
-## 3.1 Logging概要
-
-ログ収集サービス。
-
----
-
-## 3.2 Logging用途
-
-| 用途    | 内容 |
-| ----- | -- |
-| VMログ  | 収集 |
-| GKEログ | 収集 |
-| アプリログ | 収集 |
-
----
-
-## 3.3 ACE試験ポイント
-
-```
-ログ確認
-→ Cloud Logging
-```
-
----
-
-## 3.4 Log Sink
-
-ログ転送機能。
-
-```mermaid
-graph TD
-Logging --> Sink
-Sink --> BigQuery
-Sink --> Storage
-Sink --> PubSub
-```
-
----
-
-## 3.5 Sink用途
-
-| 転送先      | 用途   |
-| -------- | ---- |
-| BigQuery | 分析   |
-| Storage  | 保存   |
-| Pub/Sub  | SIEM |
-
----
-
-# 4. Cloud Monitoring
-
-## 4.1 Monitoring概要
-
-メトリクス監視。
-
----
-
-## 4.2 Monitoring対象
-
-| 対象        |
-| --------- |
-| VM        |
-| GKE       |
-| Cloud Run |
-
----
-
-## 4.3 ACE試験ポイント
-
-```
-CPU監視
-→ Monitoring
-```
-
----
-
-# 5. Alert Policy
-
-## 5.1 Alert概要
-
-監視条件に基づき通知。
-
----
-
-## 5.2 Alert条件
-
-| 条件         |
-| ---------- |
-| CPU > 90%  |
-| Error rate |
-
----
-
-## 5.3 通知方法
-
-| 方法        |
-| --------- |
-| Email     |
-| Slack     |
-| PagerDuty |
-
----
-
-# 6. Uptime Check
-
-## 6.1 外形監視
-
-```
-HTTP endpoint
-```
-
----
-
-## 6.2 用途
-
-| 用途  |
-| --- |
-| API |
-| Web |
-
----
-
-# 7. Observabilityアーキテクチャ
-
-```mermaid
-graph TD
-VM --> Logging
-VM --> Monitoring
-
-Logging --> BigQuery
-Monitoring --> Alert
-
-Alert --> Email
-```
-
----
-
-# 8. ACE重要まとめ
-
-```
-ログ → Cloud Logging
-ログ分析 → BigQuery Sink
-メトリクス → Monitoring
-通知 → Alert Policy
-外形監視 → Uptime Check
-```
-
----
-
-# 9. 2026 Observabilityトレンド
-
-| 技術               | 状況  |
-| ---------------- | --- |
-| Cloud Logging    | 標準  |
-| Cloud Monitoring | SRE |
-| OpenTelemetry    | 推奨  |
-| BigQueryログ分析     | 普及  |
-
----
-
-# GCP ACE 用語集（2026）
-
-| 用語               | 定義                            | 用途                                 |
-| ---------------- | ----------------------------- | ---------------------------------- |
-| Cloud SQL        | フルマネージドのリレーショナルデータベースサービス     | MySQL / PostgreSQL / SQL Serverの運用 |
-| Cloud Spanner    | グローバル分散型リレーショナルデータベース         | 高トランザクション・グローバルシステム                |
-| Cloud Bigtable   | Wide Column型NoSQLデータベース       | IoT / 時系列データ / 大規模ログ               |
-| Firestore        | Document型NoSQLデータベース          | モバイルアプリ / Webアプリ                   |
-| BigQuery         | Serverlessデータウェアハウス           | BI / データ分析 / ログ分析                  |
-| Cloud Logging    | ログ収集・検索サービス                   | VM / GKE / アプリログ                   |
-| Log Sink         | Cloud Loggingのログを他サービスへ転送する機能 | BigQuery / Storage / PubSub        |
-| Cloud Monitoring | メトリクス監視サービス                   | CPU / Memory / Network監視           |
-| Alert Policy     | 監視条件に基づき通知を送信する仕組み            | Email / Slack / PagerDuty          |
-| Uptime Check     | HTTP / HTTPSエンドポイント監視         | API / Web外形監視                      |
-
----

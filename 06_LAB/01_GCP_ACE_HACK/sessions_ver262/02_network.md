@@ -574,24 +574,41 @@ VM --> DNS
 
 ---
 
-# ACE頻出用語（Glossary）
+# ACE頻出用語（Network Glossary / GCP Networking 2026）
 
-| 用語                        | 定義                      |
-| ------------------------- | ----------------------- |
-| VPC                       | GCPの仮想ネットワーク            |
-| Subnet                    | VPC内のIP範囲               |
-| Shared VPC                | ネットワークを複数プロジェクトで共有      |
-| Firewall Rule             | VPC通信制御ルール              |
-| Network Tag               | VMグループ識別                |
-| Application Load Balancer | HTTP/HTTPS L7ロードバランサ    |
-| Internal Load Balancer    | VPC内部負荷分散               |
-| Cloud NAT                 | Private VMの外向き通信        |
-| Private Google Access     | Private VM → Google API |
-| HA VPN                    | 高可用VPN                  |
-| Interconnect              | 専用線接続                   |
-| Cloud DNS                 | DNS管理                   |
-| IAP                       | 公開IPなしSSH               |
-| Direct VPC egress         | Serverless → VPC接続      |
-| Private Service Connect   | Private Googleサービス接続    |
+| 用語                        | フルスペル                                     | 定義                      | 簡単説明                                 |
+| ------------------------- | ----------------------------------------- | ----------------------- | ------------------------------------ |
+| VPC                       | Virtual Private Cloud                     | GCPの仮想ネットワーク            | GCPリソースが所属する論理ネットワーク。グローバルスコープで構成される |
+| Subnet                    | Subnetwork                                | VPC内のIPアドレス範囲           | VMなどに割り当てるIPレンジ。リージョン単位で作成           |
+| Shared VPC                | Shared Virtual Private Cloud              | ネットワーク共有                | 1つのホストプロジェクトのVPCを複数サービスプロジェクトで共有     |
+| Firewall Rule             | Virtual Private Cloud Firewall Rule       | 通信制御ルール                 | VPCレベルで ingress / egress の通信を許可・拒否   |
+| Network Tag               | Compute Engine Network Tag                | VMグループ識別                | Firewall rule の対象VMを識別するラベル          |
+| Service Account Firewall  | Identity-based Firewall                   | Service AccountベースFW    | Network Tagの代わりにService Accountで通信制御 |
+| Application Load Balancer | HTTP(S) Application Load Balancer         | L7ロードバランサ               | HTTP / HTTPS トラフィックをグローバルに分散         |
+| Internal Load Balancer    | Internal TCP/UDP Load Balancer            | VPC内部負荷分散               | VPC内部のVM間トラフィックを分散                   |
+| External Load Balancer    | External Load Balancing                   | 外部公開LB                  | インターネット向け負荷分散                        |
+| Cloud NAT                 | Cloud Network Address Translation         | Private VM外向き通信         | 外部IPなしVMがインターネットへアクセス可能              |
+| Private Google Access     | Private Google API Access                 | Private VM → Google API | 外部IPなしVMからGoogle APIへ接続              |
+| HA VPN                    | High Availability Virtual Private Network | 高可用VPN                  | GCPとオンプレミスを冗長IPsec VPN接続             |
+| Cloud VPN                 | Cloud Virtual Private Network             | VPN接続                   | GCPとオンプレをIPsecで接続                    |
+| Interconnect              | Dedicated / Partner Interconnect          | 専用線接続                   | GCPとデータセンターを専用回線で接続                  |
+| Cloud DNS                 | Cloud Domain Name System                  | DNS管理                   | GCPのマネージドDNS                         |
+| IAP                       | Identity-Aware Proxy                      | IAMベースアクセス制御            | 公開IPなしでSSH / HTTPアクセス                |
+| Direct VPC Egress         | Serverless VPC Direct Egress              | Serverless→VPC接続        | Cloud Run / Functions が直接VPCへ通信      |
+| Serverless VPC Access     | Serverless VPC Connector                  | Serverless→VPC接続        | ServerlessサービスからVPC接続                |
+| Private Service Connect   | Private Service Connect                   | Privateサービス公開           | VPC内からGoogleサービス / SaaSへPrivate接続    |
+| VPC Peering               | Virtual Private Cloud Peering             | VPC接続                   | 2つのVPCをPrivate接続                     |
+| Cloud Router              | Cloud Dynamic Routing Router              | BGPルーティング               | VPN / Interconnect の動的ルーティング         |
+| Static Route              | Static Routing                            | 静的ルート                   | 手動で設定するルート                           |
+| Default Route             | Default Internet Route                    | デフォルトルート                | Internet向け0.0.0.0/0                  |
+| Alias IP                  | Alias IP Range                            | セカンダリIP                 | Pod / Service 用IP                    |
+| Secondary Range           | Secondary IP Range                        | Pod用IP範囲                | GKE Pod / Service用                   |
+| Global Load Balancer      | Global HTTP(S) Load Balancer              | グローバルLB                 | Anycastで世界負荷分散                       |
+| Regional Load Balancer    | Regional Load Balancer                    | リージョンLB                 | リージョン内負荷分散                           |
+| Cloud Armor               | Cloud Armor Security                      | WAF / DDoS防御            | LB前段のセキュリティ                          |
+| Network Endpoint Group    | NEG (Network Endpoint Group)              | LBバックエンド                | Cloud Run / VMなどをLBに登録               |
+| Hybrid Connectivity       | Hybrid Network Architecture               | オンプレ接続                  | VPN / Interconnect構成                 |
+| VPC Service Controls      | VPC Service Controls                      | データ境界                   | Googleサービスのデータ持ち出し防止                 |
 
 ---
+

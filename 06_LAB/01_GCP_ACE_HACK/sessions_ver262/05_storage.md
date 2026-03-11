@@ -548,23 +548,38 @@ CloudStorage --> IAM
 
 ---
 
-# 24. ACE頻出用語集（2026）
+# 24. GCP ACE 用語集（Storage / 2026）
 
-| 用語                          | 定義                       |
-| --------------------------- | ------------------------ |
-| Cloud Storage               | Google Cloudのオブジェクトストレージ |
-| Bucket                      | オブジェクトを格納するコンテナ          |
-| Object                      | Cloud Storageに保存されるファイル  |
-| Storage Class               | データアクセス頻度に応じた保存クラス       |
-| Lifecycle Rule              | オブジェクトの自動管理ルール           |
-| Object Versioning           | オブジェクトの履歴管理機能            |
-| Retention Policy            | 指定期間削除を禁止する機能            |
-| Signed URL                  | 一時的アクセス権を付与するURL         |
-| Storage Transfer Service    | オンプレや他クラウドからのデータ移行サービス   |
-| Transfer Appliance          | 大容量データの物理移行装置            |
-| Uniform Bucket-Level Access | ACLを無効化しIAMでアクセス制御する機能   |
-| Dual-region                 | 2リージョン冗長配置               |
-| Multi-region                | 複数リージョン配置                |
-| gsutil                      | Cloud Storage操作CLI       |
+| 用語                                          | 定義                      | 説明                                       |
+| ------------------------------------------- | ----------------------- | ---------------------------------------- |
+| **Cloud Storage**                           | オブジェクトストレージサービス         | 画像・動画・バックアップ・ログなどを保存するスケーラブルなストレージ       |
+| **Bucket**                                  | Cloud Storageのコンテナ      | オブジェクト（ファイル）を格納する単位                      |
+| **Object**                                  | Cloud Storage内のファイル     | バケット内に保存されるデータ                           |
+| **Storage Class**                           | データアクセス頻度に応じた保存クラス      | Standard / Nearline / Coldline / Archive |
+| **Standard Storage**                        | 高頻度アクセスストレージ            | Webコンテンツ・アプリデータ                          |
+| **Nearline Storage**                        | 月1回程度アクセス               | バックアップ・アーカイブ                             |
+| **Coldline Storage**                        | 年数回アクセス                 | 災害対策データ                                  |
+| **Archive Storage**                         | 長期保存ストレージ               | 法規制データ・長期保管                              |
+| **Object Lifecycle Management**             | オブジェクト自動管理              | ストレージクラス変更・削除の自動化                        |
+| **Retention Policy**                        | データ保持ポリシー               | 指定期間削除禁止                                 |
+| **Object Versioning**                       | オブジェクト履歴管理              | 更新前のバージョンを保持                             |
+| **Signed URL**                              | 期限付きアクセスURL             | IAM不要でオブジェクト共有                           |
+| **Uniform Bucket-Level Access**             | IAM統一アクセス制御             | ACL無効化してIAMのみ使用                          |
+| **Access Control List (ACL)**               | オブジェクト単位アクセス制御          | 古いアクセス制御方式                               |
+| **Customer Managed Encryption Key (CMEK)**  | 顧客管理暗号鍵                 | Cloud KMSで暗号鍵管理                          |
+| **Customer Supplied Encryption Key (CSEK)** | 顧客提供暗号鍵                 | アップロード時に鍵指定                              |
+| **Dual Region Storage**                     | 2リージョン保存                | 高可用性データ保存                                |
+| **Multi Region Storage**                    | 複数リージョン保存               | グローバルデータ                                 |
+| **Regional Storage**                        | 単一リージョン保存               | 低レイテンシ                                   |
+| **Transfer Service**                        | データ転送サービス               | AWS / HTTP / GCS転送                       |
+| **Storage Transfer Service**                | データ移行サービス               | S3 / HTTP / GCS同期                        |
+| **Transfer Appliance**                      | 大容量データ移行                | 物理デバイス移行                                 |
+| **Cloud Filestore**                         | マネージドNFS                | VM共有ファイル                                 |
+| **Persistent Disk (PD)**                    | Compute Engineブロックストレージ | VMディスク                                   |
+| **Hyperdisk**                               | 次世代高性能ディスク              | 高IOPS / 高スループット                          |
+| **Local SSD**                               | ローカル高速SSD               | 高速I/O・一時データ                              |
+| **Snapshot**                                | ディスクバックアップ              | Persistent Diskバックアップ                    |
+| **Backup and DR Service**                   | バックアップ管理                | VM / DBバックアップ管理                          |
 
 ---
+

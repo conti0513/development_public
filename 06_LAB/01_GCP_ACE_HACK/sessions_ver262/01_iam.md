@@ -1,6 +1,6 @@
-# GCP IAM（ACE / 2026）
+# GCP IAM（ACE / 2026 最終版）
 
-GCPのIAMは次の基本構造で理解する。
+GCPのIAMは次の基本式で理解する。
 
 ```
 Identity + Role → Resource
@@ -8,7 +8,7 @@ Identity + Role → Resource
 
 この関係を **Binding** が結び付ける。
 
-IAMの理解はこの式から始まる。
+IAMはこの式から理解すると整理しやすい。
 
 ---
 
@@ -44,7 +44,7 @@ IAMは
 Identity + Role → Resource
 ```
 
-この構造で権限を管理する。
+の構造で権限を管理する。
 
 ---
 
@@ -60,25 +60,24 @@ Identity + Role → Resource
 
 ---
 
-## 2.2 ACE判断
-
-```
-人管理 → Group
-```
-
-理由
-
-```
-Userに直接Roleを付与すると管理不能になる
-```
-
-運用では
+## 2.2 運用ベストプラクティス
 
 ```
 User → Group → Role
 ```
 
-で管理する。
+理由
+
+* User直接付与は管理不能
+* Groupで管理する
+
+---
+
+## 2.3 ACE試験判断
+
+```
+人管理 → Group
+```
 
 ---
 
@@ -107,8 +106,7 @@ Project --> Resource
 ## 3.2 ACE判断
 
 ```
-全Project制御
-→ Organization IAM
+全Project制御 → Organization IAM
 ```
 
 ---
@@ -145,7 +143,7 @@ Binding --> Role
 | ---------- | ----------------------- |
 | Basic      | viewer / editor / owner |
 | Predefined | Google提供                |
-| Custom     | カスタム                    |
+| Custom     | 独自作成                    |
 
 ---
 
@@ -158,7 +156,7 @@ Binding --> Role
 理由
 
 ```
-Basic Roleは権限が広すぎる
+Basic Roleは広すぎる
 ```
 
 ---
@@ -177,11 +175,11 @@ Compute --> ServiceAccount
 ServiceAccount --> GCP_API
 ```
 
-| シナリオ                  | 解決              |
-| --------------------- | --------------- |
-| VM → API              | Service Account |
-| Cloud Run → API       | Service Account |
-| Cloud Functions → API | Service Account |
+| シナリオ            | 解決              |
+| --------------- | --------------- |
+| VM → API        | Service Account |
+| Cloud Run → API | Service Account |
+| Functions → API | Service Account |
 
 ---
 
@@ -209,20 +207,17 @@ Access Token
 GCP API
 ```
 
----
+メリット
 
-## 7.1 ACE判断
-
-```
-GCP内部アクセス
-→ Service Account attach
-```
+* Key不要
+* 自動トークン更新
+* 高セキュリティ
 
 ---
 
-# 8. 外部アクセス
+# 8. 外部Identityアクセス（2026）
 
-2026の推奨方式
+2026年の推奨方式
 
 ```
 Workload Identity Federation
@@ -230,35 +225,69 @@ Workload Identity Federation
 
 ---
 
-## 8.1 構造
+## 8.1 Workload Identity Federation
+
+外部IDを **Service Accountに安全にマッピング**する仕組み。
+
+```mermaid
+graph TD
+ExternalIdentity --> Federation
+Federation --> ServiceAccount
+ServiceAccount --> GCP_API
+```
+
+---
+
+### 対応Identity
+
+| 外部ID     | 例           |
+| -------- | ----------- |
+| AWS IAM  | cross-cloud |
+| Azure AD | enterprise  |
+| OIDC     | GitHub      |
+| SAML     | Okta        |
+
+---
+
+### 典型例
 
 ```
-External Identity
-       |
+GitHub Actions → GCP
+```
+
+```
+GitHub OIDC
+↓
 Workload Identity Federation
-       |
+↓
 Service Account
-       |
+↓
 GCP API
 ```
 
 ---
 
-## 8.2 JSON Key
+### メリット
 
-JSON Keyは
+| 問題         | 解決    |
+| ---------- | ----- |
+| JSON key漏洩 | Key不要 |
+| Secret管理   | 不要    |
+| ローテーション    | 不要    |
+
+---
+
+### ACE判断
 
 ```
-例外用途
+External identity → Workload Identity Federation
 ```
-
-のみ使用する。
 
 ---
 
 # 9. Service Account Impersonation
 
-鍵なしService Account利用。
+Service Accountを **一時利用する仕組み**。
 
 ```mermaid
 graph TD
@@ -269,7 +298,7 @@ ServiceAccount --> API
 
 ---
 
-## 9.1 利用ケース
+## 利用ケース
 
 | 問題         | 解決            |
 | ---------- | ------------- |
@@ -278,7 +307,7 @@ ServiceAccount --> API
 
 ---
 
-## 9.2 ACE判断
+## ACE判断
 
 ```
 key回避 → SA Impersonation
@@ -286,9 +315,9 @@ key回避 → SA Impersonation
 
 ---
 
-# 10. Workload Identity
+# 10. Workload Identity（GKE）
 
-GKE PodからGCP APIアクセス。
+GKE Pod → GCP API認証。
 
 ```mermaid
 graph TD
@@ -299,17 +328,35 @@ ServiceAccount --> API
 
 ---
 
-## 10.1 ACE判断
+## 構造
+
+```
+GKE ServiceAccount
+↓
+Workload Identity
+↓
+IAM Service Account
+↓
+GCP API
+```
+
+---
+
+## メリット
+
+| 問題       | 解決 |
+| -------- | -- |
+| JSON key | 不要 |
+| Pod認証    | 安全 |
+| Token    | 自動 |
+
+---
+
+## ACE判断
 
 ```
 Pod → API
 → Workload Identity
-```
-
-理由
-
-```
-JSON key不要
 ```
 
 ---
@@ -327,7 +374,7 @@ Condition --> Resource
 
 ---
 
-## 11.1 条件例
+## 条件例
 
 | 条件       | 例      |
 | -------- | ------ |
@@ -337,7 +384,7 @@ Condition --> Resource
 
 ---
 
-## 11.2 ACE判断
+## ACE判断
 
 ```
 条件付きアクセス → IAM Conditions
@@ -347,21 +394,21 @@ Condition --> Resource
 
 # 12. Organization Policy
 
-組織全体の制御。
+組織レベルの制御。
 
 ---
 
-## 12.1 代表例
+## 代表例
 
-| 制限         | 例                                    |
-| ---------- | ------------------------------------ |
-| 外部IP禁止     | compute.vmExternalIpAccess           |
-| SA key禁止   | iam.disableServiceAccountKeyCreation |
-| location制限 | resourceLocations                    |
+| 制限       | 例                                    |
+| -------- | ------------------------------------ |
+| 外部IP禁止   | compute.vmExternalIpAccess           |
+| SA key禁止 | iam.disableServiceAccountKeyCreation |
+| region制限 | resourceLocations                    |
 
 ---
 
-## 12.2 ACE判断
+## ACE判断
 
 ```
 組織制御 → Org Policy
@@ -371,14 +418,14 @@ Condition --> Resource
 
 # 13. Cross Project Access
 
-別Projectのリソースにアクセスする場合。
+別Projectのリソースにアクセス。
 
 ---
 
-## 13.1 構造
+## 構造
 
 ```
-Project A (SA)
+Project A (Service Account)
        |
        v
 Project B (Resource)
@@ -386,7 +433,7 @@ Project B (Resource)
 
 ---
 
-## 13.2 重要ポイント
+## 重要ポイント
 
 ```
 Resource側IAMで許可
@@ -394,18 +441,9 @@ Resource側IAMで許可
 
 ---
 
-## 13.3 ACE判断
-
-```
-別Projectアクセス
-→ Resource側IAM
-```
-
----
-
 # 14. Default Service Account
 
-GCPが自動作成するService Account。
+GCPが自動作成。
 
 例
 
@@ -415,19 +453,17 @@ PROJECT_NUMBER-compute@developer.gserviceaccount.com
 
 ---
 
-## 14.1 問題
+## 問題
 
 ```
-Editor Role付与
+Editor roleが付与される
 ```
 
 ---
 
-## 14.2 推奨
+## 推奨
 
 ```
-権限最小化
-または
 専用Service Account
 ```
 
@@ -435,16 +471,16 @@ Editor Role付与
 
 # 15. 専用Service Account
 
-VMごとにSAを分離。
+VMごとにSA分離。
 
 ```
-VM A → SA_A → Bucket
+VM A → SA_A → Storage
 VM B → SA_B → BigQuery
 ```
 
 ---
 
-## 15.1 理由
+## 理由
 
 | 問題     | 解決   |
 | ------ | ---- |
@@ -453,21 +489,13 @@ VM B → SA_B → BigQuery
 
 ---
 
-## 15.2 ACE判断
-
-```
-VM限定アクセス → 専用SA
-```
-
----
-
 # 16. Project Isolation
 
-GCPで最も強い境界。
+GCPの最強境界。
 
 ---
 
-## 16.1 用途
+## 用途
 
 | 要件        | 解決      |
 | --------- | ------- |
@@ -477,7 +505,7 @@ GCPで最も強い境界。
 
 ---
 
-## 16.2 ACE判断
+## ACE判断
 
 ```
 完全分離 → 新Project
@@ -489,9 +517,9 @@ GCPで最も強い境界。
 
 Project削除防止。
 
-| 機能   | 内容                |
-| ---- | ----------------- |
-| 削除防止 | accidental delete |
+| 機能                | 内容   |
+| ----------------- | ---- |
+| accidental delete | 削除防止 |
 
 注意
 
@@ -585,3 +613,24 @@ Identity --> User
 Identity --> Group
 Identity --> ServiceAccount
 ```
+
+---
+
+# 24. 用語集
+
+| 用語                           | 定義                             | 説明                             |
+| ---------------------------- | ------------------------------ | ------------------------------ |
+| IAM                          | Identity and Access Management | GCPの権限管理システム                   |
+| Identity                     | 主体                             | User / Group / Service Account |
+| Role                         | 権限セット                          | Resourceへの操作権限                 |
+| Binding                      | IAM紐付け                         | Identity + Role                |
+| Service Account              | アプリ用ID                         | Compute / Run / Functions      |
+| Workload Identity            | GKE認証                          | Pod→IAM                        |
+| Workload Identity Federation | 外部ID連携                         | AWS / GitHub / OIDC            |
+| Impersonation                | SA代理実行                         | Key不要認証                        |
+| IAM Conditions               | 条件付きIAM                        | 時間 / IP                        |
+| Org Policy                   | 組織制御                           | 制限ポリシー                         |
+| Project                      | リソース境界                         | IAM / Billing                  |
+
+---
+

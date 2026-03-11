@@ -625,21 +625,46 @@ Secret Manager
 
 ---
 
-# GCP Security 用語集（ACE 2026）
 
-| 用語                      | 定義             | 用途              |
-| ----------------------- | -------------- | --------------- |
-| IAM                     | GCPのアクセス管理サービス | ユーザー権限管理        |
-| IAM Policy              | IAM権限設定ポリシー    | RoleとMember管理   |
-| Service Account         | アプリケーション用ID    | API認証           |
-| Workload Identity       | GKE Pod用認証     | Kubernetesアクセス  |
-| Secret Manager          | 機密情報管理サービス     | パスワード / APIキー保存 |
-| Cloud KMS               | 暗号鍵管理サービス      | データ暗号化          |
-| CMEK                    | 顧客管理暗号鍵        | セキュリティ強化        |
-| VPC Firewall            | ネットワーク通信制御     | VM通信管理          |
-| VPC Service Controls    | データ境界セキュリティ    | データ持ち出し防止       |
-| Security Command Center | セキュリティ統合管理     | 脅威検知            |
-| Audit Logs              | 監査ログ           | セキュリティ監査        |
+
+# 24. GCP Security 用語集（ACE / 2026）
+
+| 用語                                | フルスペル                             | 定義                  | 説明                             |
+| --------------------------------- | --------------------------------- | ------------------- | ------------------------------ |
+| **IAM**                           | Identity and Access Management    | GCPのアクセス管理サービス      | ユーザー・サービスアカウントの権限管理            |
+| **IAM Policy**                    | IAM Policy                        | IAM権限設定ポリシー         | MemberとRoleの紐付けを定義             |
+| **Role**                          | IAM Role                          | 権限セット               | Resourceに対する操作権限               |
+| **Member**                        | IAM Member                        | IAM主体               | User / Group / Service Account |
+| **Service Account**               | Service Account                   | アプリケーション用Identity   | VM / Cloud Run / Functions認証   |
+| **Service Account Impersonation** | Service Account Impersonation     | Service Account代理実行 | JSON Keyを使わず認証                 |
+| **Workload Identity**             | Workload Identity for GKE         | GKE Pod認証           | Pod → GCP API                  |
+| **Workload Identity Federation**  | Workload Identity Federation      | 外部ID連携              | GitHub / AWS / Azure認証         |
+| **Secret Manager**                | Secret Manager                    | 機密情報管理サービス          | APIキー / パスワード保存                |
+| **Cloud KMS**                     | Cloud Key Management Service      | 暗号鍵管理サービス           | 暗号鍵の生成 / 管理                    |
+| **CMEK**                          | Customer Managed Encryption Keys  | 顧客管理暗号鍵             | Cloud KMS鍵を使用                  |
+| **CSEK**                          | Customer Supplied Encryption Keys | 顧客提供鍵               | アップロード時指定                      |
+| **Default Encryption**            | Google Managed Encryption         | Google管理鍵           | デフォルト暗号化                       |
+| **VPC Firewall**                  | Virtual Private Cloud Firewall    | ネットワーク通信制御          | VPCレベル通信制御                     |
+| **Firewall Rule**                 | VPC Firewall Rule                 | Firewallルール         | ingress / egress制御             |
+| **VPC Service Controls**          | VPC Service Controls              | データ境界セキュリティ         | GCPサービス間のデータ持ち出し防止             |
+| **Security Command Center**       | Security Command Center (SCC)     | セキュリティ統合管理          | 脆弱性 / 脅威検知                     |
+| **Cloud Armor**                   | Cloud Armor                       | WAF / DDoS防御        | HTTPロードバランサ前段                  |
+| **Binary Authorization**          | Binary Authorization              | コンテナ署名検証            | 不正イメージ防止                       |
+| **Identity-Aware Proxy**          | IAP (Identity-Aware Proxy)        | IAMベースアクセス制御        | 公開IPなしアクセス                     |
+| **Organization Policy**           | Organization Policy               | 組織制御ポリシー            | 全Project制限                     |
+| **IAM Conditions**                | Conditional IAM                   | 条件付きIAM             | 時間 / IP / Resource             |
+| **Audit Logs**                    | Cloud Audit Logs                  | 監査ログ                | IAM / API操作履歴                  |
+| **Admin Activity Logs**           | Admin Activity Logs               | 管理操作ログ              | IAM変更                          |
+| **Data Access Logs**              | Data Access Logs                  | データアクセスログ           | Storage / DBアクセス               |
+| **Access Transparency**           | Access Transparency               | Google操作ログ          | Google社員アクセス記録                 |
+| **Access Approval**               | Access Approval                   | Googleアクセス承認        | 承認制サポートアクセス                    |
+| **Shielded VM**                   | Shielded Virtual Machine          | セキュアVM              | Secure Boot / vTPM             |
+| **Confidential VM**               | Confidential Virtual Machine      | メモリ暗号化VM            | データ保護                          |
+| **Private Google Access**         | Private Google API Access         | Private API接続       | VM → Google API                |
+| **BeyondCorp**                    | BeyondCorp Security Model         | ゼロトラストモデル           | Googleセキュリティモデル                |
 
 ---
+
+
+
 

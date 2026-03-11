@@ -536,7 +536,7 @@ Security
 
 ---
 
-# GCP Service Selection 用語集（ACE 2026）
+# 17. GCP Service Selection 用語集（ACE 2026）
 
 | 用語                 | 定義               | 用途                  |
 | ------------------ | ---------------- | ------------------- |

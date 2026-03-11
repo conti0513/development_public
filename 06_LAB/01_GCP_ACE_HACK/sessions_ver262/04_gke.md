@@ -566,36 +566,51 @@ Cluster --> Operations
 
 ---
 
-# 14. ACE頻出用語集（2026）
+# 14. ACE頻出用語集（GKE / 2026）
 
-| 用語                                 | 定義                               |
-| ---------------------------------- | -------------------------------- |
-| **GKE (Google Kubernetes Engine)** | Google CloudのマネージドKubernetesサービス |
-| **Cluster**                        | Kubernetes環境の単位                  |
-| **Node**                           | Podを実行するCompute Engine VM        |
-| **Pod**                            | Kubernetesの最小実行単位                |
-| **Container**                      | Pod内で動くアプリ                       |
-| **Node Pool**                      | 同一構成Nodeのグループ                    |
-| **Deployment**                     | statelessアプリ管理                   |
-| **StatefulSet**                    | DB等のstatefulアプリ                  |
-| **DaemonSet**                      | 全Nodeで実行されるPod                   |
-| **Job**                            | 一回実行バッチ                          |
-| **CronJob**                        | 定期バッチ                            |
-| **HPA**                            | Pod数自動スケール                       |
-| **VPA**                            | Podリソース自動調整                      |
-| **Cluster Autoscaler**             | Node自動スケール                       |
-| **Service**                        | Pod公開                            |
-| **Ingress**                        | HTTPルーティング                       |
-| **Gateway API**                    | Ingress後継L7ルーティング                |
-| **Workload Identity**              | PodからGCP APIアクセス                 |
-| **Private Cluster**                | Nodeをprivate IP化                 |
-| **Binary Authorization**           | コンテナ署名検証                         |
-| **Artifact Registry**              | コンテナイメージ保存                       |
-| **StorageClass**                   | 動的ボリューム作成                        |
-| **Persistent Volume (PV)**         | Kubernetesストレージ                  |
-| **Persistent Volume Claim (PVC)**  | PV要求                             |
-| **Rolling Update**                 | 無停止更新                            |
-| **Rollback**                       | 更新取り消し                           |
+| 用語                                | フルスペル                       | 定義                           | 簡単説明                              |
+| --------------------------------- | --------------------------- | ---------------------------- | --------------------------------- |
+| **GKE**                           | Google Kubernetes Engine    | Google CloudのマネージドKubernetes | Kubernetesクラスタの構築・運用を自動化するサービス    |
+| **Cluster**                       | Kubernetes Cluster          | Kubernetes環境の単位              | Control PlaneとNode群で構成される         |
+| **Control Plane**                 | Kubernetes Control Plane    | クラスタ管理コンポーネント                | API Server・Scheduler・Controllerなど |
+| **Node**                          | Worker Node                 | Podを実行するVM                   | GKEではCompute Engine VM            |
+| **Node Pool**                     | Node Pool                   | 同一構成Nodeのグループ                | OS / Machine type / Diskなどが同一     |
+| **Pod**                           | Kubernetes Pod              | Kubernetesの最小実行単位            | 1つ以上のコンテナを含む                      |
+| **Container**                     | Container Runtime           | アプリ実行環境                      | Pod内で実行されるコンテナ                    |
+| **Deployment**                    | Deployment Controller       | statelessアプリ管理               | Podの更新・スケール管理                     |
+| **ReplicaSet**                    | Replica Set                 | Pod複製管理                      | 指定数のPodを維持                        |
+| **StatefulSet**                   | StatefulSet Controller      | statefulアプリ管理                | DBや分散システム向け                       |
+| **DaemonSet**                     | Daemon Set                  | NodeごとにPod配置                 | ログ / 監視エージェント                     |
+| **Job**                           | Batch Job                   | 一回実行バッチ                      | 完了後終了                             |
+| **CronJob**                       | Scheduled Job               | 定期バッチ                        | Cronスケジュール                        |
+| **Service**                       | Kubernetes Service          | Pod公開                        | Podの安定アクセス提供                      |
+| **ClusterIP**                     | Cluster Internal IP         | 内部Service                    | Pod間通信                            |
+| **NodePort**                      | Node Port Service           | Node公開                       | NodeIP + Port                     |
+| **LoadBalancer**                  | External Load Balancer      | 外部公開Service                  | Cloud Load Balancer               |
+| **Ingress**                       | Kubernetes Ingress          | HTTPルーティング                   | URLベースルーティング                      |
+| **Gateway API**                   | Kubernetes Gateway API      | L7ルーティング                     | Ingressの次世代API                    |
+| **HPA**                           | Horizontal Pod Autoscaler   | Pod数自動スケール                   | CPU / custom metrics              |
+| **VPA**                           | Vertical Pod Autoscaler     | Podリソース自動調整                  | CPU / Memory調整                    |
+| **Cluster Autoscaler**            | Node Autoscaler             | Node自動スケール                   | Pod需要に応じNode追加                    |
+| **Autopilot Mode**                | GKE Autopilot               | フルマネージドGKE                   | Node管理不要                          |
+| **Standard Mode**                 | GKE Standard                | Node管理型GKE                   | Node設定自由                          |
+| **Workload Identity**             | Workload Identity for GKE   | Pod → GCP API認証              | Service Account連携                 |
+| **Private Cluster**               | Private GKE Cluster         | Private IP Node              | NodeにPublic IPなし                  |
+| **Binary Authorization**          | Container Image Policy      | コンテナ署名検証                     | 不正イメージ防止                          |
+| **Artifact Registry**             | Container Artifact Storage  | コンテナ保存                       | Dockerイメージレジストリ                   |
+| **StorageClass**                  | Storage Provisioning Policy | 動的ボリューム作成                    | PVC要求時に自動作成                       |
+| **Persistent Volume (PV)**        | Persistent Storage Volume   | Kubernetesストレージ              | クラスタ外ストレージ                        |
+| **Persistent Volume Claim (PVC)** | Volume Request              | PV要求                         | Podがストレージ要求                       |
+| **Rolling Update**                | Rolling Deployment          | 無停止更新                        | Podを順次更新                          |
+| **Rollback**                      | Deployment Rollback         | 更新取り消し                       | 旧バージョン復元                          |
+| **ConfigMap**                     | Configuration Resource      | 設定管理                         | アプリ設定をPodへ                        |
+| **Secret**                        | Secret Resource             | 機密情報管理                       | パスワード / APIキー                     |
+| **Sidecar Container**             | Sidecar Pattern             | 補助コンテナ                       | ログ / Proxy                        |
+| **Init Container**                | Initialization Container    | 初期処理コンテナ                     | Pod起動前処理                          |
+| **Network Policy**                | Kubernetes Network Policy   | Pod通信制御                      | Pod間Firewall                      |
+| **Pod Disruption Budget**         | PDB                         | Pod停止制御                      | 高可用性維持                            |
+| **Node Auto Repair**              | Node Self Healing           | Node自動修復                     | 異常Node再作成                         |
+| **Node Auto Upgrade**             | Node Auto Upgrade           | Node自動更新                     | Kubernetes更新                      |
 
 ---
 
