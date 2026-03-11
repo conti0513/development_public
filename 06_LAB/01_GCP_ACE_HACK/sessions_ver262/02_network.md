@@ -1,6 +1,7 @@
+````markdown
 # GCP Networking（ACE / 2026）
 
-Networkingは **6領域**で整理する。
+Networkingは **6領域で整理**する。
 
 ```mermaid
 graph TD
@@ -10,11 +11,11 @@ Networking --> Firewall
 Networking --> LoadBalancer
 Networking --> Connectivity
 Networking --> DNS
-```
+````
 
 ---
 
-# 1 VPC
+# 1. VPC
 
 VPCは **GCPネットワークの基本単位**。
 
@@ -25,7 +26,7 @@ VPC --> Subnet1
 VPC --> Subnet2
 ```
 
-特徴
+## 特徴
 
 | 項目     | 内容       |
 | ------ | -------- |
@@ -33,7 +34,7 @@ VPC --> Subnet2
 | Subnet | Regional |
 | CIDR   | RFC1918  |
 
-ACE
+### ACE暗記
 
 ```
 VPC = global
@@ -42,9 +43,9 @@ Subnet = regional
 
 ---
 
-# VPC設計
+# 2. VPC設計
 
-基本構造
+## 基本構造
 
 ```
 VPC
@@ -53,7 +54,7 @@ VPC
  └ subnet-asia-northeast1
 ```
 
-特徴
+## 特徴
 
 | 項目             | 内容    |
 | -------------- | ----- |
@@ -62,7 +63,7 @@ VPC
 
 ---
 
-# Shared VPC
+# 3. Shared VPC
 
 ネットワーク集中管理。
 
@@ -74,14 +75,14 @@ Shared VPC
 Service Projects
 ```
 
-用途
+## 用途
 
 | 用途       | 内容              |
 | -------- | --------------- |
 | ネットワーク統制 | Host project    |
 | アプリ実行    | Service project |
 
-ACE
+### ACE
 
 ```
 central network control
@@ -90,7 +91,7 @@ central network control
 
 ---
 
-# 2 Subnet
+# 4. Subnet
 
 Subnetは **IP範囲**。
 
@@ -100,7 +101,7 @@ VPC --> SubnetA
 SubnetA --> VM
 ```
 
-特徴
+## 特徴
 
 | 項目   | 内容       |
 | ---- | -------- |
@@ -108,7 +109,7 @@ SubnetA --> VM
 | CIDR | IP範囲     |
 | 拡張   | 可能       |
 
-ACE
+### ACE
 
 ```
 IP不足
@@ -117,14 +118,14 @@ IP不足
 
 ---
 
-# Internal vs External IP
+# 5. Internal vs External IP
 
 | IP       | 用途       |
 | -------- | -------- |
 | Internal | VPC内     |
 | External | Internet |
 
-構造
+## 構造
 
 ```
 Internet
@@ -136,7 +137,7 @@ VM
 Internal Network
 ```
 
-ACE
+### ACE
 
 ```
 公開
@@ -145,7 +146,7 @@ ACE
 
 ---
 
-# 3 Firewall
+# 6. Firewall
 
 Firewallは **VPCレベルの通信制御**。
 
@@ -155,7 +156,7 @@ Internet --> Firewall
 Firewall --> VM
 ```
 
-特徴
+## 特徴
 
 | 項目      | 内容       |
 | ------- | -------- |
@@ -163,7 +164,7 @@ Firewall --> VM
 | state   | stateful |
 | rule    | allow    |
 
-ACE
+### ACE
 
 ```
 通信許可
@@ -172,9 +173,9 @@ ACE
 
 ---
 
-# Firewall Rule
+# 7. Firewall Rule
 
-構造
+## 構造
 
 | 項目        | 例       |
 | --------- | ------- |
@@ -182,7 +183,7 @@ ACE
 | source    | IP      |
 | target    | tag     |
 
-例
+## 例
 
 ```
 allow tcp:22
@@ -190,7 +191,7 @@ allow tcp:22
 
 ---
 
-# Network Tag
+# 8. Network Tag
 
 VMに適用。
 
@@ -210,7 +211,7 @@ VMグループ制御
 
 ---
 
-# 4 Load Balancer
+# 9. Load Balancer
 
 GCP Load Balancerは **グローバルAnycast**。
 
@@ -223,7 +224,7 @@ LoadBalancer --> Backend
 
 ---
 
-# Load Balancer種類（2026）
+# 10. Load Balancer種類（2026）
 
 | LB                        | Layer | 用途           |
 | ------------------------- | ----- | ------------ |
@@ -232,7 +233,7 @@ LoadBalancer --> Backend
 | Passthrough Network LB    | L4    | TCP / UDP    |
 | Internal LB               | L7/L4 | VPC内部        |
 
-ACE
+### ACE
 
 ```
 HTTP service
@@ -241,7 +242,7 @@ HTTP service
 
 ---
 
-# Internal Load Balancer
+# 11. Internal Load Balancer
 
 VPC内部通信。
 
@@ -253,7 +254,7 @@ Internal LB
 Backend
 ```
 
-ACE
+### ACE
 
 ```
 internal service
@@ -262,7 +263,7 @@ internal service
 
 ---
 
-# 5 Cloud NAT
+# 12. Cloud NAT
 
 Private VMが外部へ通信。
 
@@ -272,14 +273,14 @@ VM --> CloudNAT
 CloudNAT --> Internet
 ```
 
-特徴
+## 特徴
 
 | 項目       | 内容 |
 | -------- | -- |
 | outbound | OK |
 | inbound  | 不可 |
 
-ACE
+### ACE
 
 ```
 private VM internet
@@ -288,7 +289,7 @@ private VM internet
 
 ---
 
-# Private Google Access
+# 13. Private Google Access
 
 Private VM → Google API
 
@@ -300,7 +301,7 @@ Private Google Access
 Google API
 ```
 
-ACE
+### ACE
 
 ```
 private VM → Google API
@@ -309,7 +310,7 @@ private VM → Google API
 
 ---
 
-# 6 Hybrid Connectivity
+# 14. Hybrid Connectivity
 
 オンプレ接続。
 
@@ -321,7 +322,7 @@ private VM → Google API
 
 ---
 
-# HA VPN
+# 15. HA VPN
 
 高可用VPN。
 
@@ -335,14 +336,14 @@ HA VPN
 VPC
 ```
 
-特徴
+## 特徴
 
 | 項目      | 内容  |
 | ------- | --- |
 | tunnel  | 2   |
 | routing | BGP |
 
-ACE
+### ACE
 
 ```
 high availability VPN
@@ -351,7 +352,7 @@ high availability VPN
 
 ---
 
-# Interconnect
+# 16. Interconnect
 
 専用線接続。
 
@@ -360,7 +361,7 @@ high availability VPN
 | Dedicated | 専用回線  |
 | Partner   | パートナー |
 
-ACE
+### ACE
 
 ```
 高速接続
@@ -369,7 +370,7 @@ ACE
 
 ---
 
-# 7 DNS
+# 17. DNS
 
 名前解決。
 
@@ -377,7 +378,7 @@ ACE
 | --------- | ----- |
 | Cloud DNS | DNS管理 |
 
-ACE
+### ACE
 
 ```
 domain management
@@ -386,7 +387,7 @@ domain management
 
 ---
 
-# 8 IAP（Identity-Aware Proxy）
+# 18. IAP（Identity-Aware Proxy）
 
 公開IPなしSSH。
 
@@ -398,7 +399,7 @@ IAP
 VM
 ```
 
-ACE
+### ACE
 
 ```
 SSH without public IP
@@ -413,7 +414,7 @@ Firewall
 
 ---
 
-# 9 Serverless → VPC
+# 19. Serverless → VPC
 
 2026標準
 
@@ -431,7 +432,7 @@ VPC
 Serverless VPC Access Connector
 ```
 
-ACE
+### ACE
 
 ```
 serverless → VPC
@@ -440,7 +441,7 @@ serverless → VPC
 
 ---
 
-# 10 Private Service Connect
+# 20. Private Service Connect
 
 VPCからGoogleサービス接続。
 
@@ -577,4 +578,4 @@ VM --> LoadBalancer
 VM --> DNS
 ```
 
----
+```

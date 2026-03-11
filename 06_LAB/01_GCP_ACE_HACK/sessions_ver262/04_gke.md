@@ -1,3 +1,4 @@
+````markdown
 # GKE 試験対策（ACE 2026 / 実務整理版）
 
 GKEは **6領域で整理**すると試験・実務ともに理解しやすい。
@@ -10,15 +11,15 @@ A --> D[Scaling]
 A --> E[Networking]
 A --> F[Security]
 A --> G[Operations]
-```
+````
 
 ---
 
-# 1 Cluster
+# 1. Cluster
 
 GKEの基本単位。
 
-構造
+## 構造
 
 ```
 Cluster
@@ -34,7 +35,7 @@ Cluster
 | Pod       | コンテナ実行単位          |
 | Container | アプリ               |
 
-ACE暗記
+### ACE暗記
 
 ```
 Pod = 最小実行単位
@@ -42,7 +43,7 @@ Pod = 最小実行単位
 
 ---
 
-# Clusterタイプ
+## Clusterタイプ
 
 | タイプ       | 特徴               |
 | --------- | ---------------- |
@@ -58,21 +59,20 @@ Autopilot --> GoogleManage
 Standard --> UserManage
 ```
 
-判断
+### 判断
 
 ```
 運用最小 → Autopilot
 Node制御必要 → Standard
 ```
 
-2026実務
+### 2026実務
 
-Autopilot採用が増加
-（SRE運用削減）
+Autopilot採用が増加（SRE運用削減）
 
 ---
 
-# Node Pool
+## Node Pool
 
 GKEでは **Node pool分離が基本設計**
 
@@ -82,7 +82,7 @@ GKEでは **Node pool分離が基本設計**
 | Compute-optimized | CPU処理 |
 | Memory-optimized  | DB    |
 
-構造
+### 構造
 
 ```
 Cluster
@@ -91,7 +91,7 @@ Cluster
  └ NodePool-C (M2)
 ```
 
-ACE
+### ACE
 
 ```
 ワークロード分離
@@ -100,7 +100,7 @@ ACE
 
 ---
 
-# 2 Workload
+# 2. Workload
 
 Pod管理。
 
@@ -121,11 +121,9 @@ Deployment --> Pod3
 
 ---
 
-# Deployment
+## Deployment
 
 最も一般的。
-
-機能
 
 | 機能             | 内容     |
 | -------------- | ------ |
@@ -133,7 +131,7 @@ Deployment --> Pod3
 | Rolling update | 無停止更新  |
 | Self healing   | Pod復旧  |
 
-ACE
+### ACE
 
 ```
 Pod安定管理
@@ -142,7 +140,7 @@ Pod安定管理
 
 ---
 
-# StatefulSet
+## StatefulSet
 
 DB用。
 
@@ -152,15 +150,13 @@ Pod-1 ↔ Disk-1
 Pod-2 ↔ Disk-2
 ```
 
-特徴
-
 | 特徴      | 内容              |
 | ------- | --------------- |
 | 固定ID    | db-0            |
-| ディスク紐付け | Persistent disk |
+| ディスク紐付け | Persistent Disk |
 | 起動順序    | あり              |
 
-ACE
+### ACE
 
 ```
 DB
@@ -169,7 +165,7 @@ DB
 
 ---
 
-# DaemonSet
+## DaemonSet
 
 全NodeにPod配置。
 
@@ -179,14 +175,12 @@ Node2 → Pod
 Node3 → Pod
 ```
 
-用途
-
 | 用途         | 例             |
 | ---------- | ------------- |
 | Logging    | fluentd       |
 | Monitoring | node exporter |
 
-ACE
+### ACE
 
 ```
 全node
@@ -195,7 +189,7 @@ ACE
 
 ---
 
-# Job / CronJob
+## Job / CronJob
 
 バッチ処理。
 
@@ -206,7 +200,7 @@ ACE
 
 ---
 
-# 3 Scaling
+# 3. Scaling
 
 GKEのスケールは **3種類**
 
@@ -226,7 +220,7 @@ Pod数スケール
 CPU → HPA → Pod増加
 ```
 
-ACE
+### ACE
 
 ```
 Pod増やす
@@ -243,7 +237,7 @@ Podリソース調整
 Pod CPU/Mem調整
 ```
 
-ACE
+### ACE
 
 ```
 resource最適化
@@ -260,7 +254,7 @@ Node増減
 Pod増 → Node追加
 ```
 
-ACE
+### ACE
 
 ```
 Node不足
@@ -269,7 +263,7 @@ Node不足
 
 ---
 
-# 4 Networking
+# 4. Networking
 
 GKE通信構造
 
@@ -282,7 +276,7 @@ Service --> Pods
 
 ---
 
-# Service
+## Service
 
 Pod公開。
 
@@ -292,7 +286,7 @@ Pod公開。
 | NodePort     | Node公開 |
 | LoadBalancer | 外部公開   |
 
-ACE
+### ACE
 
 ```
 GKE公開
@@ -301,7 +295,7 @@ GKE公開
 
 ---
 
-# Ingress
+## Ingress
 
 HTTPルーティング
 
@@ -310,8 +304,6 @@ HTTPルーティング
 /web → ServiceB
 ```
 
-構造
-
 ```mermaid
 graph TD
 Internet --> Ingress
@@ -319,7 +311,7 @@ Ingress --> ServiceA
 Ingress --> ServiceB
 ```
 
-ACE
+### ACE
 
 ```
 URL routing
@@ -328,7 +320,7 @@ URL routing
 
 ---
 
-# Gateway API（2026）
+## Gateway API（2026）
 
 Ingress後継。
 
@@ -337,7 +329,7 @@ Ingress後継。
 | Gateway   | L7 router |
 | HTTPRoute | routing   |
 
-実務
+### 実務
 
 ```
 Ingress → Gateway API移行中
@@ -345,13 +337,9 @@ Ingress → Gateway API移行中
 
 ---
 
-# 5 Security
+# 5. Security
 
-GKEセキュリティ。
-
----
-
-# Workload Identity
+## Workload Identity
 
 PodからGCP API。
 
@@ -364,7 +352,7 @@ Pod → Workload Identity → GCP API
 * JSONキー不要
 * IAM管理
 
-ACE
+### ACE
 
 ```
 Pod→GCP
@@ -373,7 +361,7 @@ Pod→GCP
 
 ---
 
-# Private Cluster
+## Private Cluster
 
 Nodeを非公開。
 
@@ -382,7 +370,7 @@ Nodeを非公開。
 | Node          | private IP |
 | control plane | Google     |
 
-ACE
+### ACE
 
 ```
 安全なGKE
@@ -391,7 +379,7 @@ ACE
 
 ---
 
-# Binary Authorization
+## Binary Authorization
 
 コンテナ署名検証。
 
@@ -407,13 +395,9 @@ Supply chain security
 
 ---
 
-# 6 Operations
+# 6. Operations
 
-運用。
-
----
-
-# Rolling Update
+## Rolling Update
 
 Deployment更新。
 
@@ -421,7 +405,7 @@ Deployment更新。
 OldPod → NewPod
 ```
 
-ACE
+### ACE
 
 ```
 無停止更新
@@ -430,13 +414,13 @@ ACE
 
 ---
 
-# Rollback
+## Rollback
 
 ```
 kubectl rollout undo
 ```
 
-ACE
+### ACE
 
 ```
 更新失敗
@@ -445,13 +429,13 @@ ACE
 
 ---
 
-# Cluster接続
+## Cluster接続
 
 ```
 gcloud container clusters get-credentials CLUSTER
 ```
 
-ACE
+### ACE
 
 ```
 kubectl接続
@@ -460,7 +444,7 @@ kubectl接続
 
 ---
 
-# kubectl 基本
+## kubectl 基本
 
 | コマンド                 | 用途       |
 | -------------------- | -------- |
@@ -476,8 +460,6 @@ kubectl接続
 
 コンテナ保存。
 
-構造
-
 ```
 Build
  ↓
@@ -486,7 +468,7 @@ Artifact Registry
 GKE pull
 ```
 
-ACE
+### ACE
 
 ```
 Container registry
@@ -503,7 +485,7 @@ Container registry
 | Local SSD       | 高IO |
 | Filestore       | NFS |
 
-ACE
+### ACE
 
 ```
 高IO
@@ -543,35 +525,6 @@ get-credentials
 
 ---
 
-# GKE 思考マップ
-
-```mermaid
-graph TD
-GKE --> Cluster
-GKE --> Workload
-GKE --> Scaling
-GKE --> Networking
-GKE --> Security
-GKE --> Operations
-```
-
----
-
-# GKE判断フロー（ACE）
-
-```mermaid
-flowchart TD
-A[GKE問題] --> B{種類}
-
-B --> Cluster
-B --> Scaling
-B --> Networking
-B --> Security
-B --> Operations
-```
-
----
-
 # 最終チート
 
 ```
@@ -588,8 +541,6 @@ rollback → rollout undo
 ---
 
 # 2026 GKE実務トレンド
-
-重要
 
 | 技術                   | 状況                    |
 | -------------------- | --------------------- |
@@ -615,4 +566,7 @@ Cluster --> Security
 Cluster --> Operations
 ```
 
+```
+
 ---
+

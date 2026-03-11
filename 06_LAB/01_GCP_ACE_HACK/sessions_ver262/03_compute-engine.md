@@ -1,3 +1,4 @@
+````markdown
 # GCP Compute 選択（ACE 2026）
 
 GCPのComputeは **5種類で判断**すると試験が解きやすい。
@@ -9,11 +10,11 @@ A --> C[GKE]
 A --> D[Cloud Run]
 A --> E[App Engine]
 A --> F[Batch]
-```
+````
 
 ---
 
-# 全体比較
+# 1. Compute 全体比較
 
 | サービス           | 実行単位      | 管理           | 主用途        |
 | -------------- | --------- | ------------ | ---------- |
@@ -25,7 +26,7 @@ A --> F[Batch]
 
 ---
 
-# ACE判断フロー
+# 2. ACE判断フロー
 
 ```mermaid
 flowchart TD
@@ -47,7 +48,7 @@ H -->|No| J[Cloud Run]
 
 ---
 
-# Compute Engine
+# 3. Compute Engine
 
 VMベースコンピュート。
 
@@ -58,7 +59,7 @@ VM --> OS
 OS --> App
 ```
 
-特徴
+## 特徴
 
 | 項目   | 内容 |
 | ---- | -- |
@@ -67,9 +68,9 @@ OS --> App
 | SSH  | 可能 |
 | カスタム | 可能 |
 
-ACE判断
+### ACE暗記
 
-```text
+```
 SSH必要
 既存VM
 OSカスタム
@@ -79,7 +80,7 @@ OSカスタム
 
 ---
 
-# Machine Type
+# 4. Machine Type
 
 VM性能選択。
 
@@ -90,7 +91,7 @@ VM性能選択。
 | High-Memory | メモリ処理 |
 | Custom      | 自由    |
 
-ACE
+### ACE
 
 ```
 RAM偏重
@@ -99,7 +100,7 @@ RAM偏重
 
 ---
 
-# Managed Instance Group
+# 5. Managed Instance Group
 
 VMスケール。
 
@@ -111,7 +112,7 @@ MIG --> VM2
 MIG --> VM3
 ```
 
-機能
+## 機能
 
 | 機能             | 内容   |
 | -------------- | ---- |
@@ -119,7 +120,7 @@ MIG --> VM3
 | Autohealing    | 自動復旧 |
 | Rolling update | 更新   |
 
-ACE
+### ACE
 
 ```
 VM auto scale
@@ -128,7 +129,7 @@ VM auto scale
 
 ---
 
-# VM Storage
+# 6. VM Storage
 
 | 種類              | 特徴  |
 | --------------- | --- |
@@ -136,7 +137,7 @@ VM auto scale
 | Local SSD       | 高IO |
 | Filestore       | NFS |
 
-ACE
+### ACE
 
 ```
 最高IO
@@ -145,7 +146,7 @@ ACE
 
 ---
 
-# Snapshot
+# 7. Snapshot
 
 ディスクバックアップ。
 
@@ -155,7 +156,7 @@ Disk --> Snapshot
 Snapshot --> Backup
 ```
 
-ACE
+### ACE
 
 ```
 Disk backup
@@ -164,7 +165,7 @@ Disk backup
 
 ---
 
-# Custom Image
+# 8. Custom Image
 
 VMテンプレート。
 
@@ -172,7 +173,7 @@ VMテンプレート。
 | ---- | ----- |
 | VM複製 | Image |
 
-ACE
+### ACE
 
 ```
 VMテンプレート
@@ -181,7 +182,7 @@ VMテンプレート
 
 ---
 
-# Networking
+# 9. Networking
 
 VM公開。
 
@@ -191,7 +192,7 @@ Internet --> LoadBalancer
 LoadBalancer --> VM
 ```
 
-ACE
+### ACE
 
 ```
 高可用VM
@@ -200,7 +201,7 @@ ACE
 
 ---
 
-# Service Account
+# 10. Service Account
 
 VMからGCP API利用。
 
@@ -210,7 +211,7 @@ VM --> ServiceAccount
 ServiceAccount --> GCP_API
 ```
 
-ACE
+### ACE
 
 ```
 VM → GCP API
@@ -219,7 +220,7 @@ VM → GCP API
 
 ---
 
-# Startup Script
+# 11. Startup Script
 
 VM初期化。
 
@@ -229,7 +230,7 @@ apt update
 apt install nginx
 ```
 
-ACE
+### ACE
 
 ```
 VM起動時設定
@@ -238,7 +239,7 @@ VM起動時設定
 
 ---
 
-# Spot VM
+# 12. Spot VM
 
 低コストVM。
 
@@ -247,7 +248,7 @@ VM起動時設定
 | 割引 | 最大90% |
 | 停止 | いつでも  |
 
-ACE
+### ACE
 
 ```
 バッチ
@@ -256,7 +257,7 @@ ACE
 
 ---
 
-# OS Login
+# 13. OS Login
 
 SSH管理。
 
@@ -264,7 +265,7 @@ SSH管理。
 | -------- | ------- |
 | OS Login | IAMでSSH |
 
-ACE
+### ACE
 
 ```
 SSH管理
@@ -273,7 +274,7 @@ SSH管理
 
 ---
 
-# Cloud Run
+# 14. Cloud Run
 
 Serverlessコンテナ。
 
@@ -283,7 +284,7 @@ Container --> CloudRun
 CloudRun --> HTTP
 ```
 
-特徴
+## 特徴
 
 | 項目   | 内容        |
 | ---- | --------- |
@@ -292,7 +293,7 @@ CloudRun --> HTTP
 | 課金   | リクエスト     |
 | 運用   | 最小        |
 
-ACE
+### ACE
 
 ```
 HTTP API
@@ -303,15 +304,15 @@ HTTP API
 
 ---
 
-# Cloud Run Jobs
+# 15. Cloud Run Jobs
 
-バッチ処理用Cloud Run。
+バッチ処理。
 
 | 用途  | 内容   |
 | --- | ---- |
 | Job | 一回処理 |
 
-ACE
+### ACE
 
 ```
 Container batch
@@ -320,9 +321,7 @@ Container batch
 
 ---
 
-# Cloud Run イベント処理
-
-Pub/Sub。
+# 16. Cloud Run イベント処理
 
 ```
 Pub/Sub
@@ -330,7 +329,7 @@ Pub/Sub
 Cloud Run
 ```
 
-ACE
+### ACE
 
 ```
 Pub/Sub → Cloud Run
@@ -339,7 +338,7 @@ Pub/Sub → Cloud Run
 
 ---
 
-# GKE
+# 17. GKE
 
 Kubernetes管理。
 
@@ -350,7 +349,7 @@ Node --> Pod
 Pod --> Container
 ```
 
-特徴
+## 特徴
 
 | 項目   | 内容         |
 | ---- | ---------- |
@@ -358,7 +357,7 @@ Pod --> Container
 | 管理   | Kubernetes |
 | スケール | HPA        |
 
-ACE
+### ACE
 
 ```
 多数コンテナ
@@ -369,16 +368,14 @@ Kubernetes
 
 ---
 
-# GKE Autopilot
-
-ノード管理不要。
+# 18. GKE Autopilot
 
 | モード       | 特徴         |
 | --------- | ---------- |
 | Standard  | Node管理     |
 | Autopilot | Serverless |
 
-ACE
+### ACE
 
 ```
 Kubernetes
@@ -389,7 +386,7 @@ Kubernetes
 
 ---
 
-# App Engine
+# 19. App Engine
 
 PaaS型アプリ。
 
@@ -400,15 +397,13 @@ AppEngine --> Runtime
 Runtime --> App
 ```
 
-特徴
-
 | 項目   | 内容  |
 | ---- | --- |
 | スケール | 自動  |
 | 運用   | 最小  |
 | 用途   | Web |
 
-ACE
+### ACE
 
 ```
 Flask
@@ -419,7 +414,7 @@ Django
 
 ---
 
-# Batch
+# 20. Batch
 
 大規模バッチ処理。
 
@@ -428,7 +423,7 @@ Django
 | 大量処理 | 可能 |
 | VM管理 | 自動 |
 
-ACE
+### ACE
 
 ```
 大規模バッチ
@@ -437,7 +432,7 @@ ACE
 
 ---
 
-# スケール比較
+# 21. スケール比較
 
 | サービス           | スケール |
 | -------------- | ---- |
@@ -449,7 +444,7 @@ ACE
 
 ---
 
-# 運用負荷
+# 22. 運用負荷
 
 | サービス           | 運用 |
 | -------------- | -- |
@@ -461,14 +456,14 @@ ACE
 
 ---
 
-# Snapshot vs Image
+# 23. Snapshot vs Image
 
 | 機能       | 用途     |
 | -------- | ------ |
 | Snapshot | バックアップ |
 | Image    | VMテンプレ |
 
-ACE
+### ACE
 
 ```
 バックアップ → Snapshot
@@ -477,7 +472,7 @@ VM複製 → Image
 
 ---
 
-# ACE Compute 頻出
+# 24. ACE Compute 頻出
 
 ```
 Custom machine type
@@ -491,7 +486,7 @@ Startup script
 
 ---
 
-# ACE Compute 判断まとめ
+# 25. ACE Compute 判断まとめ
 
 ```
 SSH必要 → Compute Engine
@@ -503,7 +498,7 @@ Webアプリ → App Engine
 
 ---
 
-# Compute 構造
+# 26. Compute 構造
 
 ```mermaid
 graph TD
@@ -528,5 +523,4 @@ Web app → App Engine
 Batch → Batch
 ```
 
----
-
+```
