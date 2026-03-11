@@ -1,7 +1,7 @@
 ````markdown
 # GCP Networking（ACE / 2026）
 
-Networkingは **6領域で整理**する。
+GCP Networkingは **6つの領域**で整理する。
 
 ```mermaid
 graph TD
@@ -15,9 +15,11 @@ Networking --> DNS
 
 ---
 
-# 1. VPC
+# 1. VPC（Virtual Private Cloud）
 
 VPCは **GCPネットワークの基本単位**。
+
+## 1.1 VPC構造
 
 ```mermaid
 graph TD
@@ -26,7 +28,7 @@ VPC --> Subnet1
 VPC --> Subnet2
 ```
 
-## 特徴
+## 1.2 特徴
 
 | 項目     | 内容       |
 | ------ | -------- |
@@ -45,7 +47,9 @@ Subnet = regional
 
 # 2. VPC設計
 
-## 基本構造
+VPCは **グローバルネットワーク**として設計される。
+
+## 2.1 基本構造
 
 ```
 VPC
@@ -54,7 +58,7 @@ VPC
  └ subnet-asia-northeast1
 ```
 
-## 特徴
+## 2.2 特徴
 
 | 項目             | 内容    |
 | -------------- | ----- |
@@ -65,7 +69,9 @@ VPC
 
 # 3. Shared VPC
 
-ネットワーク集中管理。
+複数プロジェクトで **ネットワークを共有**する構成。
+
+## 3.1 構造
 
 ```
 Host Project
@@ -75,7 +81,7 @@ Shared VPC
 Service Projects
 ```
 
-## 用途
+## 3.2 用途
 
 | 用途       | 内容              |
 | -------- | --------------- |
@@ -93,7 +99,9 @@ central network control
 
 # 4. Subnet
 
-Subnetは **IP範囲**。
+Subnetは **IPアドレス範囲**を定義する。
+
+## 4.1 構造
 
 ```mermaid
 graph TD
@@ -101,13 +109,13 @@ VPC --> SubnetA
 SubnetA --> VM
 ```
 
-## 特徴
+## 4.2 特徴
 
-| 項目   | 内容       |
-| ---- | -------- |
-| スコープ | Regional |
-| CIDR | IP範囲     |
-| 拡張   | 可能       |
+| 項目   | 内容              |
+| ---- | --------------- |
+| スコープ | Regional        |
+| CIDR | IP範囲            |
+| 拡張   | expand-ip-range |
 
 ### ACE
 
@@ -118,14 +126,18 @@ IP不足
 
 ---
 
-# 5. Internal vs External IP
+# 5. Internal IP / External IP
 
-| IP       | 用途       |
-| -------- | -------- |
-| Internal | VPC内     |
-| External | Internet |
+VMには2種類のIPが存在する。
 
-## 構造
+## 5.1 IP種類
+
+| IP       | 用途         |
+| -------- | ---------- |
+| Internal | VPC内通信     |
+| External | Internet接続 |
+
+## 5.2 構造
 
 ```
 Internet
@@ -140,7 +152,7 @@ Internal Network
 ### ACE
 
 ```
-公開
+公開サービス
 → External IP
 ```
 
@@ -150,13 +162,15 @@ Internal Network
 
 Firewallは **VPCレベルの通信制御**。
 
+## 6.1 構造
+
 ```mermaid
 graph TD
 Internet --> Firewall
 Firewall --> VM
 ```
 
-## 特徴
+## 6.2 特徴
 
 | 項目      | 内容       |
 | ------- | -------- |
@@ -175,7 +189,9 @@ Firewall --> VM
 
 # 7. Firewall Rule
 
-## 構造
+Firewallはルールで通信を制御する。
+
+## 7.1 構造
 
 | 項目        | 例       |
 | --------- | ------- |
@@ -183,7 +199,7 @@ Firewall --> VM
 | source    | IP      |
 | target    | tag     |
 
-## 例
+## 7.2 例
 
 ```
 allow tcp:22
@@ -193,7 +209,9 @@ allow tcp:22
 
 # 8. Network Tag
 
-VMに適用。
+Firewall制御に利用。
+
+## 8.1 構造
 
 ```
 VM
@@ -203,7 +221,7 @@ tag:web
 Firewall rule
 ```
 
-用途
+## 8.2 用途
 
 ```
 VMグループ制御
@@ -214,6 +232,8 @@ VMグループ制御
 # 9. Load Balancer
 
 GCP Load Balancerは **グローバルAnycast**。
+
+## 9.1 構造
 
 ```mermaid
 graph TD
@@ -237,14 +257,16 @@ LoadBalancer --> Backend
 
 ```
 HTTP service
-→ Application LB
+→ Application Load Balancer
 ```
 
 ---
 
 # 11. Internal Load Balancer
 
-VPC内部通信。
+VPC内部サービスの負荷分散。
+
+## 11.1 構造
 
 ```
 Client
@@ -258,14 +280,16 @@ Backend
 
 ```
 internal service
-→ Internal LB
+→ Internal Load Balancer
 ```
 
 ---
 
 # 12. Cloud NAT
 
-Private VMが外部へ通信。
+Private VMが **外部へ通信**する。
+
+## 12.1 構造
 
 ```mermaid
 graph TD
@@ -273,11 +297,11 @@ VM --> CloudNAT
 CloudNAT --> Internet
 ```
 
-## 特徴
+## 12.2 特徴
 
 | 項目       | 内容 |
 | -------- | -- |
-| outbound | OK |
+| outbound | 可能 |
 | inbound  | 不可 |
 
 ### ACE
@@ -291,7 +315,9 @@ private VM internet
 
 # 13. Private Google Access
 
-Private VM → Google API
+Private VMから **Google APIへアクセス**。
+
+## 13.1 構造
 
 ```
 VM
@@ -312,7 +338,7 @@ private VM → Google API
 
 # 14. Hybrid Connectivity
 
-オンプレ接続。
+オンプレ接続方法。
 
 | 方法           | 用途  |
 | ------------ | --- |
@@ -326,6 +352,8 @@ private VM → Google API
 
 高可用VPN。
 
+## 15.1 構造
+
 ```
 OnPrem
    |
@@ -336,7 +364,7 @@ HA VPN
 VPC
 ```
 
-## 特徴
+## 15.2 特徴
 
 | 項目      | 内容  |
 | ------- | --- |
@@ -372,7 +400,7 @@ high availability VPN
 
 # 17. DNS
 
-名前解決。
+名前解決サービス。
 
 | サービス      | 用途    |
 | --------- | ----- |
@@ -387,9 +415,11 @@ domain management
 
 ---
 
-# 18. IAP（Identity-Aware Proxy）
+# 18. Identity-Aware Proxy（IAP）
 
-公開IPなしSSH。
+公開IPなしSSH接続。
+
+## 18.1 構造
 
 ```
 User
@@ -406,7 +436,7 @@ SSH without public IP
 → IAP
 ```
 
-Firewall
+Firewall許可
 
 ```
 35.235.240.0/20
@@ -416,7 +446,9 @@ Firewall
 
 # 19. Serverless → VPC
 
-2026標準
+2026標準方式。
+
+## 19.1 構造
 
 ```
 Cloud Run
@@ -443,7 +475,9 @@ serverless → VPC
 
 # 20. Private Service Connect
 
-VPCからGoogleサービス接続。
+VPCからGoogleサービスへ **Private接続**。
+
+## 20.1 構造
 
 ```
 VPC
@@ -452,14 +486,6 @@ Private Service Connect
  |
 Cloud SQL / BigQuery
 ```
-
-用途
-
-| サービス       |
-| ---------- |
-| Cloud SQL  |
-| BigQuery   |
-| Google API |
 
 ---
 
@@ -521,37 +547,6 @@ serverless → Direct VPC egress
 
 ---
 
-# Networking最重要キーワード（ACE）
-
-| 単語                    | サービス                  |
-| --------------------- | --------------------- |
-| HTTP routing          | Application LB        |
-| internal              | Internal LB           |
-| private VM internet   | Cloud NAT             |
-| VM → Google API       | Private Google Access |
-| SSH without public IP | IAP                   |
-| on-prem               | HA VPN                |
-
----
-
-# Networkingアーキテクチャ
-
-```mermaid
-graph TD
-Internet --> GlobalLB
-GlobalLB --> VPC
-
-VPC --> Subnet
-Subnet --> VM
-Subnet --> GKE
-Subnet --> InternalLB
-
-VM --> CloudNAT
-VM --> PrivateGoogleAccess
-```
-
----
-
 # 2026 Networkingトレンド
 
 | 技術                        | 状況             |
@@ -578,4 +573,28 @@ VM --> LoadBalancer
 VM --> DNS
 ```
 
+---
+
+# ACE頻出用語（Glossary）
+
+| 用語                        | 定義                      |
+| ------------------------- | ----------------------- |
+| VPC                       | GCPの仮想ネットワーク            |
+| Subnet                    | VPC内のIP範囲               |
+| Shared VPC                | ネットワークを複数プロジェクトで共有      |
+| Firewall Rule             | VPC通信制御ルール              |
+| Network Tag               | VMグループ識別                |
+| Application Load Balancer | HTTP/HTTPS L7ロードバランサ    |
+| Internal Load Balancer    | VPC内部負荷分散               |
+| Cloud NAT                 | Private VMの外向き通信        |
+| Private Google Access     | Private VM → Google API |
+| HA VPN                    | 高可用VPN                  |
+| Interconnect              | 専用線接続                   |
+| Cloud DNS                 | DNS管理                   |
+| IAP                       | 公開IPなしSSH               |
+| Direct VPC egress         | Serverless → VPC接続      |
+| Private Service Connect   | Private Googleサービス接続    |
+
 ```
+
+---
