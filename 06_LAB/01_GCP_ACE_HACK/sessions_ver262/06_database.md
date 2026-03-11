@@ -1,24 +1,6 @@
-# 06_database.md
+# GCP Databases（ACE / 2026）
 
-````markdown
-# GCP Database（ACE）
-
-ACE試験では **4つのDBサービス**だけ覚えれば十分。
-
----
-
-## Database一覧
-
-|DB|タイプ|用途|
-|---|---|---|
-Cloud SQL|RDB|MySQL / PostgreSQL|
-Spanner|分散RDB|超大規模|
-Bigtable|NoSQL|分析|
-Firestore|Document|アプリ|
-
----
-
-## 全体構造
+GCPの主要DBは **5系統**で整理する。
 
 ```mermaid
 graph TD
@@ -26,82 +8,20 @@ Database --> CloudSQL
 Database --> Spanner
 Database --> Bigtable
 Database --> Firestore
-````
-
----
-
-# Cloud SQL
-
-RDBマネージドサービス。
-
-| 特徴     | 内容                              |
-| ------ | ------------------------------- |
-| Engine | MySQL / PostgreSQL / SQL Server |
-| 管理     | Google管理                        |
-| 用途     | 既存RDB移行                         |
-
-ACE問題
-
-```
-PostgreSQL移行
-→ Cloud SQL
+Database --> BigQuery
 ```
 
 ---
 
-# Spanner
+# Database分類
 
-分散RDB。
-
-| 特徴   | 内容   |
-| ---- | ---- |
-| スケール | 水平   |
-| 整合性  | 強整合  |
-| 用途   | 巨大DB |
-
-ACE問題
-
-```
-巨大RDB
-→ Spanner
-```
-
----
-
-# Bigtable
-
-NoSQLワイドカラムDB。
-
-| 特徴     | 内容    |
-| ------ | ----- |
-| 用途     | 分析    |
-| 規模     | ペタバイト |
-| 低レイテンシ | 高     |
-
-ACE問題
-
-```
-大量データ分析
-→ Bigtable
-```
-
----
-
-# Firestore
-
-ドキュメントDB。
-
-| 特徴 | 内容         |
-| -- | ---------- |
-| 用途 | モバイル / Web |
-| 形式 | JSON       |
-
-ACE問題
-
-```
-アプリDB
-→ Firestore
-```
+| DB            | タイプ            | 用途    |
+| ------------- | -------------- | ----- |
+| Cloud SQL     | RDB            | 既存DB  |
+| Cloud Spanner | 分散RDB          | グローバル |
+| Bigtable      | NoSQL          | 時系列   |
+| Firestore     | Document       | アプリ   |
+| BigQuery      | Data Warehouse | 分析    |
 
 ---
 
@@ -109,65 +29,320 @@ ACE問題
 
 ```mermaid
 flowchart TD
+Start --> A{SQL?}
 
-Q[DB問題] --> A{SQL?}
+A -->|Yes| B{Global scale?}
+B -->|Yes| Spanner
+B -->|No| CloudSQL
 
-A -->|Yes| B{巨大?}
+A -->|No| C{Document?}
+C -->|Yes| Firestore
+C -->|No| Bigtable
 
-B -->|Yes| C[Spanner]
-B -->|No| D[Cloud SQL]
-
-A -->|No| E{アプリ?}
-
-E -->|Yes| F[Firestore]
-E -->|No| G[Bigtable]
+Start --> D{Analytics?}
+D --> BigQuery
 ```
 
 ---
 
-# ACE最重要
+# 1 Cloud SQL
+
+マネージドRDB。
+
+| Engine     |
+| ---------- |
+| MySQL      |
+| PostgreSQL |
+| SQL Server |
+
+特徴
+
+| 特徴   | 内容 |
+| ---- | -- |
+| ACID | 対応 |
+| 互換性  | 高  |
+| スケール | 垂直 |
+
+ACE
+
+```
+PostgreSQL移行
+→ Cloud SQL
+```
+
+実務用途
+
+| 用途     |
+| ------ |
+| 既存DB   |
+| Webアプリ |
+| SaaS   |
+
+---
+
+# Cloud SQL構造
+
+```mermaid
+graph TD
+App --> CloudSQL
+CloudSQL --> Storage
+```
+
+---
+
+# 2 Cloud Spanner
+
+分散RDB。
+
+特徴
+
+| 特徴     | 内容           |
+| ------ | ------------ |
+| 水平スケール | 可能           |
+| 強整合    | TrueTime     |
+| グローバル  | Multi-region |
+
+ACE
+
+```
+巨大RDB
+→ Spanner
+```
+
+用途
+
+| 用途         |
+| ---------- |
+| 金融         |
+| グローバルアプリ   |
+| 巨大トランザクション |
+
+---
+
+# Spannerスケーリング
+
+```
+CPU 65% → ノード追加
+```
+
+理由
+
+| 理由         |
+| ---------- |
+| 高可用        |
+| バックグラウンド処理 |
+
+---
+
+# 3 Cloud Bigtable
+
+ワイドカラムDB。
+
+特徴
+
+| 特徴     | 内容        |
+| ------ | --------- |
+| NoSQL  | key-value |
+| 低レイテンシ | ms        |
+| スケール   | PB        |
+
+ACE
+
+```
+大量データ
+→ Bigtable
+```
+
+用途
+
+| 用途  |
+| --- |
+| IoT |
+| ログ  |
+| 広告  |
+
+---
+
+# Bigtable構造
+
+```mermaid
+graph TD
+Client --> Bigtable
+Bigtable --> Nodes
+Nodes --> Storage
+```
+
+---
+
+# 4 Firestore
+
+Document DB。
+
+特徴
+
+| 特徴         | 内容       |
+| ---------- | -------- |
+| JSON       | document |
+| realtime   | 対応       |
+| serverless | Yes      |
+
+ACE
+
+```
+モバイルアプリ
+→ Firestore
+```
+
+用途
+
+| 用途       |
+| -------- |
+| モバイル     |
+| Webアプリ   |
+| Firebase |
+
+---
+
+# Firestore構造
+
+```mermaid
+graph TD
+App --> Firestore
+Firestore --> Documents
+Documents --> Collections
+```
+
+---
+
+# 5 BigQuery
+
+データウェアハウス。
+
+特徴
+
+| 特徴         | 内容  |
+| ---------- | --- |
+| SQL        | 分析  |
+| serverless | Yes |
+| スケール       | PB  |
+
+ACE
+
+```
+分析
+→ BigQuery
+```
+
+用途
+
+| 用途   |
+| ---- |
+| BI   |
+| ログ分析 |
+| ETL  |
+
+---
+
+# BigQuery構造
+
+```mermaid
+graph TD
+Data --> BigQuery
+BigQuery --> Query
+Query --> Result
+```
+
+---
+
+# DB選択まとめ
+
+| 要件                 | DB        |
+| ------------------ | --------- |
+| MySQL / PostgreSQL | Cloud SQL |
+| グローバルRDB           | Spanner   |
+| 時系列                | Bigtable  |
+| モバイル               | Firestore |
+| 分析                 | BigQuery  |
+
+---
+
+# Databaseアーキテクチャ
+
+```mermaid
+graph TD
+App --> CloudSQL
+App --> Firestore
+App --> Spanner
+
+Analytics --> BigQuery
+Logs --> Bigtable
+```
+
+---
+
+# ACE頻出DB
 
 ```
 PostgreSQL → Cloud SQL
 巨大RDB → Spanner
-分析 → Bigtable
+IoT / 時系列 → Bigtable
 アプリ → Firestore
+分析 → BigQuery
 ```
 
-````
+---
+
+# 2026 Databaseトレンド
+
+| 技術        | 状況           |
+| --------- | ------------ |
+| Spanner   | 金融           |
+| Firestore | モバイル         |
+| BigQuery  | 分析           |
+| AlloyDB   | PostgreSQL高速 |
+
+※補足
+**AlloyDBはProfessional / Architect向け。**
 
 ---
 
-# 07_logging-monitoring.md
+# GCP Observability（ACE / 2026）
 
-```markdown
-# Logging / Monitoring（ACE）
+旧名称
+Stackdriver
 
-GCPの運用は **3サービス**。
+現在
+
+```
+Google Cloud Operations Suite
+```
 
 ---
 
-## Operations Suite
+# Observability構成
 
 ```mermaid
 graph TD
-OperationsSuite --> Logging
-OperationsSuite --> Monitoring
-OperationsSuite --> Alerting
-````
+Operations --> Logging
+Operations --> Monitoring
+Operations --> Alerting
+Operations --> Trace
+Operations --> Profiler
+```
 
 ---
 
-# Cloud Logging
+# 1 Cloud Logging
 
 ログ収集。
 
-| 用途   | 内容       |
-| ---- | -------- |
-| ログ収集 | VM / GKE |
-| 分析   | ログ検索     |
+| 用途    | 内容 |
+| ----- | -- |
+| VMログ  | 収集 |
+| GKEログ | 収集 |
+| アプリログ | 収集 |
 
-ACE問題
+ACE
 
 ```
 ログ確認
@@ -188,31 +363,34 @@ Sink --> Storage
 Sink --> PubSub
 ```
 
-| 用途   | 例             |
-| ---- | ------------- |
-| 分析   | BigQuery      |
-| 保存   | Cloud Storage |
-| SIEM | Pub/Sub       |
+用途
 
-ACE問題
+| 転送先      | 用途   |
+| -------- | ---- |
+| BigQuery | 分析   |
+| Storage  | 保存   |
+| Pub/Sub  | SIEM |
+
+ACE
 
 ```
 ログ分析
-→ BigQuery Sink
+→ BigQuery sink
 ```
 
 ---
 
-# Cloud Monitoring
+# 2 Cloud Monitoring
 
 メトリクス監視。
 
-| 用途    | 内容  |
-| ----- | --- |
-| CPU監視 | VM  |
-| GKE監視 | Pod |
+| 対象        |
+| --------- |
+| VM        |
+| GKE       |
+| Cloud Run |
 
-ACE問題
+ACE
 
 ```
 CPU監視
@@ -221,16 +399,36 @@ CPU監視
 
 ---
 
-# Alert Policy
+# Dashboard
+
+可視化。
+
+| 内容      |
+| ------- |
+| CPU     |
+| Memory  |
+| Network |
+
+---
+
+# 3 Alert Policy
 
 アラート。
 
-| 用途 | 内容    |
-| -- | ----- |
-| 通知 | Email |
-| 通知 | Slack |
+| 条件         | 例 |
+| ---------- | - |
+| CPU > 90%  |   |
+| Error rate |   |
 
-ACE問題
+通知
+
+| 方法        |
+| --------- |
+| Email     |
+| Slack     |
+| PagerDuty |
+
+ACE
 
 ```
 CPU > 90%
@@ -239,13 +437,29 @@ CPU > 90%
 
 ---
 
+# Uptime Check
+
+外形監視。
+
+```
+HTTP endpoint
+```
+
+用途
+
+| 用途  |
+| --- |
+| API |
+| Web |
+
+---
+
 # Logging / Monitoring構造
 
 ```mermaid
 graph TD
 VM --> Logging
-Logging --> Sink
-Sink --> BigQuery
+Logging --> BigQuery
 
 VM --> Monitoring
 Monitoring --> Alert
@@ -254,21 +468,66 @@ Alert --> Email
 
 ---
 
-# ACE最重要
+# Observability判断
+
+| 要件    | サービス          |
+| ----- | ------------- |
+| ログ確認  | Logging       |
+| ログ分析  | BigQuery sink |
+| メトリクス | Monitoring    |
+| 通知    | Alert policy  |
+| 外形監視  | Uptime check  |
+
+---
+
+# Observabilityアーキテクチャ
+
+```mermaid
+graph TD
+VM --> Logging
+VM --> Monitoring
+
+Logging --> BigQuery
+Monitoring --> Alert
+
+Alert --> Email
+```
+
+---
+
+# ACE重要まとめ
 
 ```
-ログ確認 → Cloud Logging
+ログ → Cloud Logging
 ログ分析 → BigQuery Sink
-CPU監視 → Cloud Monitoring
-アラート → Alert Policy
-```
-
+メトリクス → Monitoring
+通知 → Alert Policy
+外形監視 → Uptime Check
 ```
 
 ---
 
+# 2026 Observabilityトレンド
+
+| 技術               | 状況  |
+| ---------------- | --- |
+| Cloud Logging    | 標準  |
+| Cloud Monitoring | SRE |
+| OpenTelemetry    | 推奨  |
+| BigQueryログ分析     | 普及  |
 
 ---
 
-# Notes
+# GCP Observability最終構造
+
+```mermaid
+graph TD
+OperationsSuite --> Logging
+OperationsSuite --> Monitoring
+OperationsSuite --> Alerting
+OperationsSuite --> Trace
+OperationsSuite --> Profiler
+```
+
+---
 

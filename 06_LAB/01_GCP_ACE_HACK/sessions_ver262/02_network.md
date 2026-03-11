@@ -1,21 +1,22 @@
-# GCP Networking（ACE）
+# GCP Networking（ACE / 2026）
 
-Networking問題は **5テーマ**に分かれます。
+Networkingは **6領域**で整理する。
 
 ```mermaid
 graph TD
-A[Networking] --> B[VPC]
-A --> C[Subnet]
-A --> D[Firewall]
-A --> E[Load Balancer]
-A --> F[Connectivity]
+Networking --> VPC
+Networking --> Subnet
+Networking --> Firewall
+Networking --> LoadBalancer
+Networking --> Connectivity
+Networking --> DNS
 ```
 
 ---
 
 # 1 VPC
 
-VPCは **ネットワークの器**
+VPCは **GCPネットワークの基本単位**。
 
 ```mermaid
 graph TD
@@ -26,47 +27,127 @@ VPC --> Subnet2
 
 特徴
 
-| 項目     | 説明       |
+| 項目     | 内容       |
 | ------ | -------- |
 | スコープ   | Global   |
 | Subnet | Regional |
+| CIDR   | RFC1918  |
 
-ACE暗記
+ACE
 
-```text
+```
 VPC = global
 Subnet = regional
 ```
 
 ---
 
+# VPC設計
+
+基本構造
+
+```
+VPC
+ ├ subnet-us-east1
+ ├ subnet-europe-west1
+ └ subnet-asia-northeast1
+```
+
+特徴
+
+| 項目             | 内容    |
+| -------------- | ----- |
+| global routing | デフォルト |
+| region subnet  | 必須    |
+
+---
+
+# Shared VPC
+
+ネットワーク集中管理。
+
+```
+Host Project
+      |
+Shared VPC
+      |
+Service Projects
+```
+
+用途
+
+| 用途       | 内容              |
+| -------- | --------------- |
+| ネットワーク統制 | Host project    |
+| アプリ実行    | Service project |
+
+ACE
+
+```
+central network control
+→ Shared VPC
+```
+
+---
+
 # 2 Subnet
 
-Subnetは **IP範囲**
+Subnetは **IP範囲**。
 
 ```mermaid
 graph TD
-VPC --> SubnetTokyo
-VPC --> SubnetOsaka
+VPC --> SubnetA
+SubnetA --> VM
 ```
 
-| 特徴 | 内容   |
-| -- | ---- |
-| 範囲 | CIDR |
-| 拡張 | 可能   |
+特徴
 
-ACE問題
+| 項目   | 内容       |
+| ---- | -------- |
+| スコープ | Regional |
+| CIDR | IP範囲     |
+| 拡張   | 可能       |
 
-```text
+ACE
+
+```
 IP不足
 → subnet expand-ip-range
 ```
 
 ---
 
+# Internal vs External IP
+
+| IP       | 用途       |
+| -------- | -------- |
+| Internal | VPC内     |
+| External | Internet |
+
+構造
+
+```
+Internet
+   |
+External IP
+   |
+VM
+   |
+Internal Network
+```
+
+ACE
+
+```
+公開
+→ External IP
+```
+
+---
+
 # 3 Firewall
 
-Firewallは **トラフィック制御**
+Firewallは **VPCレベルの通信制御**。
 
 ```mermaid
 graph TD
@@ -74,94 +155,116 @@ Internet --> Firewall
 Firewall --> VM
 ```
 
-| 項目    | 説明      |
-| ----- | ------- |
-| デフォルト | deny    |
-| ルール   | allow作成 |
+特徴
 
-ACE判断
+| 項目      | 内容       |
+| ------- | -------- |
+| default | deny     |
+| state   | stateful |
+| rule    | allow    |
 
-```text
+ACE
+
+```
 通信許可
 → firewall rule
 ```
 
 ---
 
-# 4 Internal vs External IP
-
-| IP          | 用途      |
-| ----------- | ------- |
-| Internal IP | VPC内    |
-| External IP | インターネット |
+# Firewall Rule
 
 構造
 
-```mermaid
-graph TD
-Internet --> ExternalIP
-ExternalIP --> VM
-VM --> InternalNetwork
+| 項目        | 例       |
+| --------- | ------- |
+| direction | ingress |
+| source    | IP      |
+| target    | tag     |
+
+例
+
 ```
-
-ACE
-
-```text
-公開
-→ external IP
-```
-
----
-
-# 5 Load Balancer
-
-GCP LBは **Global**
-
-```mermaid
-graph TD
-User --> GlobalLB
-GlobalLB --> Backend1
-GlobalLB --> Backend2
-```
-
-| タイプ         | 用途      |
-| ----------- | ------- |
-| HTTP(S)     | Web     |
-| SSL Proxy   | TCP+SSL |
-| TCP Proxy   | TCP     |
-| Internal LB | 内部      |
-
-ACE頻出
-
-```text
-Web公開
-→ HTTP(S) Load Balancer
+allow tcp:22
 ```
 
 ---
 
-# 6 Internal Load Balancer
+# Network Tag
 
-内部サービス
+VMに適用。
+
+```
+VM
+ |
+tag:web
+ |
+Firewall rule
+```
+
+用途
+
+```
+VMグループ制御
+```
+
+---
+
+# 4 Load Balancer
+
+GCP Load Balancerは **グローバルAnycast**。
 
 ```mermaid
 graph TD
-Service --> InternalLB
-InternalLB --> VM
+User --> GlobalIP
+GlobalIP --> LoadBalancer
+LoadBalancer --> Backend
+```
+
+---
+
+# Load Balancer種類（2026）
+
+| LB                        | Layer | 用途           |
+| ------------------------- | ----- | ------------ |
+| Application Load Balancer | L7    | HTTP / HTTPS |
+| Proxy Network LB          | L4    | TCP          |
+| Passthrough Network LB    | L4    | TCP / UDP    |
+| Internal LB               | L7/L4 | VPC内部        |
+
+ACE
+
+```
+HTTP service
+→ Application LB
+```
+
+---
+
+# Internal Load Balancer
+
+VPC内部通信。
+
+```
+Client
+   |
+Internal LB
+   |
+Backend
 ```
 
 ACE
 
-```text
-VPC内サービス
+```
+internal service
 → Internal LB
 ```
 
 ---
 
-# 7 Cloud NAT
+# 5 Cloud NAT
 
-Private VMがインターネットへ
+Private VMが外部へ通信。
 
 ```mermaid
 graph TD
@@ -169,77 +272,193 @@ VM --> CloudNAT
 CloudNAT --> Internet
 ```
 
-| 用途       | 内容  |
-| -------- | --- |
-| Outbound | NAT |
-| Inbound  | 不可  |
+特徴
+
+| 項目       | 内容 |
+| -------- | -- |
+| outbound | OK |
+| inbound  | 不可 |
 
 ACE
 
-```text
+```
 private VM internet
 → Cloud NAT
 ```
 
 ---
 
-# 8 Private Google Access
+# Private Google Access
 
 Private VM → Google API
 
-```mermaid
-graph TD
-VM --> PrivateGoogleAccess
-PrivateGoogleAccess --> GoogleAPI
+```
+VM
+ |
+Private Google Access
+ |
+Google API
 ```
 
 ACE
 
-```text
-private VM → GCP API
+```
+private VM → Google API
 → Private Google Access
 ```
 
 ---
 
-# 9 Hybrid接続
+# 6 Hybrid Connectivity
 
-| 方法           | 用途 |
-| ------------ | -- |
-| VPN          | 簡単 |
-| Interconnect | 高速 |
+オンプレ接続。
 
-構造
+| 方法           | 用途  |
+| ------------ | --- |
+| VPN          | 小規模 |
+| HA VPN       | 冗長  |
+| Interconnect | 専用線 |
 
-```mermaid
-graph TD
-OnPrem --> VPN
-VPN --> VPC
+---
+
+# HA VPN
+
+高可用VPN。
+
 ```
+OnPrem
+   |
+Internet
+   |
+HA VPN
+   |
+VPC
+```
+
+特徴
+
+| 項目      | 内容  |
+| ------- | --- |
+| tunnel  | 2   |
+| routing | BGP |
 
 ACE
 
-```text
-オンプレ接続
-→ VPN
+```
+high availability VPN
+→ HA VPN
 ```
 
 ---
 
-# 10 DNS
+# Interconnect
 
-名前解決
+専用線接続。
 
-| サービス      | 用途    |
+| 種類        | 用途    |
 | --------- | ----- |
-| Cloud DNS | 管理DNS |
+| Dedicated | 専用回線  |
+| Partner   | パートナー |
 
 ACE
 
-```text
-ドメイン管理
+```
+高速接続
+→ Interconnect
+```
+
+---
+
+# 7 DNS
+
+名前解決。
+
+| サービス      | 用途    |
+| --------- | ----- |
+| Cloud DNS | DNS管理 |
+
+ACE
+
+```
+domain management
 → Cloud DNS
 ```
+
+---
+
+# 8 IAP（Identity-Aware Proxy）
+
+公開IPなしSSH。
+
+```
+User
+ |
+IAP
+ |
+VM
+```
+
+ACE
+
+```
+SSH without public IP
+→ IAP
+```
+
+Firewall
+
+```
+35.235.240.0/20
+```
+
+---
+
+# 9 Serverless → VPC
+
+2026標準
+
+```
+Cloud Run
+   |
+Direct VPC egress
+   |
+VPC
+```
+
+旧方式
+
+```
+Serverless VPC Access Connector
+```
+
+ACE
+
+```
+serverless → VPC
+→ Direct VPC egress
+```
+
+---
+
+# 10 Private Service Connect
+
+VPCからGoogleサービス接続。
+
+```
+VPC
+ |
+Private Service Connect
+ |
+Cloud SQL / BigQuery
+```
+
+用途
+
+| サービス       |
+| ---------- |
+| Cloud SQL  |
+| BigQuery   |
+| Google API |
 
 ---
 
@@ -256,53 +475,106 @@ VM --> Firewall
 
 ---
 
-# ACE頻出Networking判断
+# Networking判断フロー（ACE）
 
-| 問題                  | 答え                    |
-| ------------------- | --------------------- |
-| IP不足                | subnet expand         |
-| private VM internet | Cloud NAT             |
-| VM→GCP API          | Private Google Access |
-| Web公開               | HTTP(S) LB            |
-| 内部サービス              | Internal LB           |
+```mermaid
+flowchart TD
+Start --> A{HTTP?}
+A -->|yes| ApplicationLB
+
+Start --> B{internal service?}
+B -->|yes| InternalLB
+
+Start --> C{private VM internet?}
+C -->|yes| CloudNAT
+
+Start --> D{VM → Google API?}
+D -->|yes| PrivateGoogleAccess
+
+Start --> E{on-prem?}
+E -->|yes| HAVPN
+
+Start --> F{SSH no public IP?}
+F -->|yes| IAP
+```
 
 ---
 
-# Networking思考マップ
+# ACE頻出 Networking
+
+```
+VPC = global
+Subnet = regional
+
+HTTP → Application LB
+internal service → Internal LB
+
+private VM internet → Cloud NAT
+VM → Google API → Private Google Access
+
+SSH private VM → IAP
+
+on-prem → HA VPN
+serverless → Direct VPC egress
+```
+
+---
+
+# Networking最重要キーワード（ACE）
+
+| 単語                    | サービス                  |
+| --------------------- | --------------------- |
+| HTTP routing          | Application LB        |
+| internal              | Internal LB           |
+| private VM internet   | Cloud NAT             |
+| VM → Google API       | Private Google Access |
+| SSH without public IP | IAP                   |
+| on-prem               | HA VPN                |
+
+---
+
+# Networkingアーキテクチャ
+
+```mermaid
+graph TD
+Internet --> GlobalLB
+GlobalLB --> VPC
+
+VPC --> Subnet
+Subnet --> VM
+Subnet --> GKE
+Subnet --> InternalLB
+
+VM --> CloudNAT
+VM --> PrivateGoogleAccess
+```
+
+---
+
+# 2026 Networkingトレンド
+
+| 技術                        | 状況             |
+| ------------------------- | -------------- |
+| Application Load Balancer | 標準             |
+| Direct VPC egress         | serverless     |
+| HA VPN                    | hybrid         |
+| Shared VPC                | enterprise     |
+| Private Service Connect   | service access |
+
+---
+
+# Networking最終構造
 
 ```mermaid
 graph TD
 Networking --> VPC
-Networking --> Firewall
-Networking --> LoadBalancer
-Networking --> NAT
-Networking --> VPN
-
 VPC --> Subnet
 Subnet --> VM
-Firewall --> Rules
-LoadBalancer --> Backend
-NAT --> Internet
-VPN --> OnPrem
+
+VM --> Firewall
+VM --> NAT
+VM --> LoadBalancer
+VM --> DNS
 ```
 
 ---
-
-# ACE Networking重要暗記
-
-```text
-VPC = global
-Subnet = regional
-private VM internet = Cloud NAT
-VM → Google API = Private Google Access
-web公開 = HTTP(S) LB
-IP不足 = subnet expand
-```
-
----
-
-
----
-
-# Notes
-

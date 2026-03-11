@@ -1,20 +1,19 @@
-# GCP IAM（ACE）
+# GCP IAM（ACE / 2026）
 
-IAMは **Binding** を理解すればほぼ解けます。
+IAMは次の構造で理解する。
 
-```text
-IAM = Identity + Role → Resource
+```
+Identity + Role → Resource
 ```
 
-これを **Binding** が結びます。
+これを **Binding** が結ぶ。
 
 ---
 
-# IAM思考マップ
+# IAM構造
 
 ```mermaid
 graph TD
-
 Identity --> Binding
 Role --> Binding
 Binding --> Resource
@@ -23,162 +22,69 @@ Identity --> User
 Identity --> Group
 Identity --> ServiceAccount
 
-Role --> Viewer
-Role --> Editor
-Role --> Owner
-Role --> PredefinedRole
-Role --> CustomRole
+Role --> Basic
+Role --> Predefined
+Role --> Custom
 ```
 
-意味
-
-| 要素       | 内容     |
-| -------- | ------ |
-| Identity | 誰      |
-| Role     | 何ができる  |
-| Resource | どこに対して |
-| Binding  | 紐付け    |
-
----
-
-# IAM基本構造
-
-```mermaid
-graph TD
-
-Identity --> Binding
-Binding --> Role
-Binding --> Resource
-```
-
-例
-
-```
-user:alice@example.com
-roles/storage.objectViewer
-project
-```
+| 要素       | 内容    |
+| -------- | ----- |
+| Identity | 誰     |
+| Role     | 何ができる |
+| Resource | どこ    |
+| Binding  | 紐付け   |
 
 ---
 
 # Identity（主体）
 
-| 種類              | 説明     |
-| --------------- | ------ |
-| User            | 人      |
-| Group           | ユーザー集合 |
-| Service Account | サービス   |
+| Identity        | 用途  |
+| --------------- | --- |
+| User            | 人   |
+| Group           | チーム |
+| Service Account | アプリ |
 
-図
+ACE判断
 
-```mermaid
-graph TD
-
-User --> Group
-Group --> IAM
-ServiceAccount --> IAM
 ```
-
-ACE重要
-
-```text
-人に直接権限付与しない
-→ Groupに付与
+人管理 → Group
 ```
 
 理由
-管理しやすい。
-
----
-
-# Service Account
-
-VMやアプリのIdentity。
-
-```mermaid
-graph TD
-VM --> ServiceAccount
-ServiceAccount --> GCP_API
-```
-
-用途
-
-| 状況              | 答え              |
-| --------------- | --------------- |
-| VM → GCP API    | Service Account |
-| Cloud Run → API | Service Account |
-
-ACE暗記
-
-```
-Compute → Service Account
-```
-
----
-
-# Role（権限）
-
-| 種類         | 説明                      |
-| ---------- | ----------------------- |
-| Basic      | viewer / editor / owner |
-| Predefined | Google管理                |
-| Custom     | 自作                      |
-
-例
-
-```
-roles/storage.objectViewer
-```
-
-ACE
-
-```
-最小権限
-→ predefined role
-```
+ユーザーに直接Role付与すると管理困難。
 
 ---
 
 # IAM階層
 
-GCPは **階層構造**
+IAMは **上位から継承**される。
 
 ```mermaid
 graph TD
-
 Organization --> Folder
 Folder --> Project
 Project --> Resource
 ```
 
-権限は **上から継承**
-
-| 階層           | 例  |
+| レベル          | 用途 |
 | ------------ | -- |
-| Organization | 会社 |
+| Organization | 全社 |
 | Folder       | 部門 |
 | Project      | 環境 |
+| Resource     | 個別 |
 
-ACE
+ACE判断
 
 ```
-組織全体
-→ Organization Policy
+全Project
+→ Organization IAM
 ```
 
 ---
 
 # IAM Policy
 
-IAMは **Policyで管理**される。
-
-```mermaid
-graph TD
-
-Policy --> Binding
-Binding --> Identity
-Binding --> Role
-```
+IAMは **Policy → Binding**。
 
 例
 
@@ -187,36 +93,149 @@ member: user:alice@example.com
 role: roles/viewer
 ```
 
----
-
-# Service Account Impersonation
-
-鍵を作らずにSA使用。
+構造
 
 ```mermaid
 graph TD
+Policy --> Binding
+Binding --> Member
+Binding --> Role
+```
 
-User --> Impersonation
-Impersonation --> ServiceAccount
-ServiceAccount --> API
+---
+
+# Role
+
+Roleは3種類。
+
+| 種類         | 説明                      |
+| ---------- | ----------------------- |
+| Basic      | viewer / editor / owner |
+| Predefined | Google管理                |
+| Custom     | カスタム                    |
+
+ACE
+
+```
+最小権限
+→ Predefined role
+```
+
+理由
+Basic Roleは権限が広すぎる。
+
+---
+
+# Service Account
+
+アプリ用Identity。
+
+```mermaid
+graph TD
+Compute --> ServiceAccount
+ServiceAccount --> GCP_API
+```
+
+用途
+
+| シナリオ                  | 解決              |
+| --------------------- | --------------- |
+| VM → API              | Service Account |
+| Cloud Run → API       | Service Account |
+| Cloud Functions → API | Service Account |
+
+ACE
+
+```
+Compute → Service Account
+```
+
+---
+
+# Service Account Authentication
+
+GCP内部アクセスは **Metadata Server**。
+
+```
+Compute
+   |
+Service Account
+   |
+Metadata Server
+   |
+Access Token
+   |
+GCP API
 ```
 
 ACE
 
 ```
-JSON key回避
-→ Service Account Impersonation
+GCP内部アクセス
+→ Service Account attach
+```
+
+---
+
+# JSON Key
+
+Service Account Key。
+
+用途
+
+| 用途     | 例       |
+| ------ | ------- |
+| 外部システム | CI/CD   |
+| オンプレ   | APIアクセス |
+
+ACE判断
+
+```
+外部アクセス
+→ JSON key
+```
+
+注意
+
+```
+内部では非推奨
+```
+
+---
+
+# Service Account Impersonation
+
+鍵なしSA利用。
+
+```mermaid
+graph TD
+User --> Impersonation
+Impersonation --> ServiceAccount
+ServiceAccount --> API
+```
+
+用途
+
+| 問題         | 解決            |
+| ---------- | ------------- |
+| JSON key回避 | Impersonation |
+| 一時権限       | Impersonation |
+
+ACE
+
+```
+key回避
+→ SA Impersonation
 ```
 
 ---
 
 # Workload Identity
 
-Pod → GCP API。
+GKE Pod → GCP API。
 
 ```mermaid
 graph TD
-
 Pod --> WorkloadIdentity
 WorkloadIdentity --> ServiceAccount
 ServiceAccount --> API
@@ -225,294 +244,290 @@ ServiceAccount --> API
 ACE
 
 ```
-GKE Pod → API
+Pod → API
 → Workload Identity
+```
+
+理由
+
+```
+JSON key不要
+```
+
+---
+
+# IAM Conditions
+
+条件付きIAM。
+
+```mermaid
+graph TD
+Identity --> Binding
+Binding --> Condition
+Condition --> Resource
+```
+
+例
+
+| 条件       | 例      |
+| -------- | ------ |
+| 時間       | 勤務時間   |
+| IP       | 社内IP   |
+| Resource | bucket |
+
+ACE
+
+```
+条件付きアクセス
+→ IAM Conditions
 ```
 
 ---
 
 # Organization Policy
 
-組織レベル制御。
+組織制御。
 
-| 用途 | 例        |
-| -- | -------- |
-| 制限 | 外部IP禁止   |
-| 制限 | SA key禁止 |
+| 制限         | 例                                    |
+| ---------- | ------------------------------------ |
+| 外部IP禁止     | compute.vmExternalIpAccess           |
+| SA key禁止   | iam.disableServiceAccountKeyCreation |
+| location制限 | resourceLocations                    |
 
-ACE
+ACE判断
 
 ```
-組織制限
+組織制御
 → Org Policy
 ```
 
 ---
 
-# IAM判断フロー（ACE）
+# Cross Project Access
 
-```mermaid
-flowchart TD
+別Projectアクセス。
 
-Q[アクセス問題] --> A{誰?}
+構造
 
-A -->|人| B[User / Group]
-A -->|サービス| C[Service Account]
+```
+Project A (SA)
+       |
+       v
+Project B (Resource)
+```
 
-B --> D[Role付与]
-C --> D
+重要
 
-D --> E[Resource]
+```
+Resource側IAMで許可
+```
+
+ACE
+
+```
+別Projectアクセス
+→ Resource側IAM
 ```
 
 ---
 
-# IAM試験ひっかけ
+# Default Service Account
+
+GCPが自動作成。
+
+問題
+
+```
+共有される
+```
+
+例
+
+```
+Default SA
+   |
+ VM1
+ VM2
+ VM3
+```
+
+ACE
+
+```
+Default SA
+→ 非推奨
+```
+
+推奨
+
+```
+Custom Service Account
+```
+
+---
+
+# 専用Service Account
+
+VMごとにSAを分離。
+
+```
+VM A → SA_A → Bucket
+VM B → SA_B → BigQuery
+```
+
+理由
+
+| 問題     | 解決   |
+| ------ | ---- |
+| 権限拡散   | 専用SA |
+| セキュリティ | 最小権限 |
+
+ACE
+
+```
+VM限定アクセス
+→ 専用SA
+```
+
+---
+
+# Project Isolation
+
+GCPで最強の境界。
+
+```
+Project
+```
+
+用途
+
+| 要件        | 解決      |
+| --------- | ------- |
+| チーム分離     | Project |
+| IAM分離     | Project |
+| Billing分離 | Project |
+
+ACE判断
+
+```
+完全分離
+→ 新Project
+```
+
+---
+
+# Project Lien
+
+削除防止。
+
+| 機能   | 内容                |
+| ---- | ----------------- |
+| 削除防止 | accidental delete |
+
+注意
+
+```
+IAM制御ではない
+```
+
+---
+
+# IAM設計ルール
+
+| 原則        | 内容              |
+| --------- | --------------- |
+| 最小権限      | least privilege |
+| Group管理   | 人直接付与しない        |
+| SA分離      | アプリ単位           |
+| Project分離 | 強い境界            |
+
+---
+
+# IAM判断ツリー
+
+```mermaid
+flowchart TD
+Q[IAM問題] --> A{主体}
+
+A -->|人| Group
+A -->|VM/App| ServiceAccount
+A -->|GKE Pod| WorkloadIdentity
+A -->|External| JSONKey
+```
+
+---
+
+# ACE頻出パターン
 
 | 問題        | 答え                |
 | --------- | ----------------- |
-| VM → API  | Service Account   |
-| Pod → API | Workload Identity |
-| 鍵回避       | Impersonation     |
 | 人管理       | Group             |
-| 組織制限      | Org Policy        |
-
----
-
-# ACE最重要IAM暗記
-
-```
-人 → Group
-VM → Service Account
-Pod → Workload Identity
-鍵回避 → Impersonation
-組織制御 → Org Policy
-```
-
----
-
-
-# IAM判断ツリー（ACE）
-
-まず **問題文の主体を見る。**
-
-```mermaid
-flowchart TD
-
-Q[IAM問題] --> A{主体は?}
-
-A -->|人| B[User / Group]
-A -->|VM / App| C[Service Account]
-A -->|GKE Pod| D[Workload Identity]
-
-B --> E[Role付与]
-C --> E
-D --> E
-
-E --> F[Resource]
-```
-
----
-
-# ① 人の権限
-
-問題
-
-```
-社員
-ユーザー
-開発者
-```
-
-判断
-
-```text
-User
-```
-
-ただし
-
-ACEベストプラクティス
-
-```text
-Groupに付与
-```
-
-例
-
-```
-group:dev@example.com
-roles/viewer
-```
-
----
-
-# ② VM / Cloud Run / Function
-
-問題
-
-```
-VMがGCSにアクセス
-Cloud RunがPub/Sub
-```
-
-答え
-
-```text
-Service Account
-```
-
-図
-
-```mermaid
-graph TD
-VM --> ServiceAccount
-ServiceAccount --> GCP_API
-```
-
----
-
-# ③ GKE Pod
-
-問題
-
-```
-PodがGCP API
-```
-
-答え
-
-```text
-Workload Identity
-```
-
-図
-
-```mermaid
-graph TD
-Pod --> WorkloadIdentity
-WorkloadIdentity --> ServiceAccount
-ServiceAccount --> API
-```
-
----
-
-# ④ JSON Key回避
-
-問題
-
-```
-Service account key
-avoid keys
-secure access
-```
-
-答え
-
-```text
-Service Account Impersonation
-```
-
-図
-
-```mermaid
-graph TD
-User --> Impersonation
-Impersonation --> ServiceAccount
-ServiceAccount --> API
-```
-
----
-
-# ⑤ 組織ルール
-
-問題
-
-```
-会社全体
-制限
-禁止
-```
-
-答え
-
-```text
-Organization Policy
-```
-
-例
-
-```
-外部IP禁止
-SA key禁止
-```
-
----
-
-# IAM問題の90%パターン
-
-| 問題        | 答え                |
-| --------- | ----------------- |
-| 人の権限      | Group             |
 | VM → API  | Service Account   |
 | Pod → API | Workload Identity |
 | Key回避     | SA Impersonation  |
 | 組織制御      | Org Policy        |
+| 条件付き      | IAM Conditions    |
+| VM限定アクセス  | 専用SA              |
+| Project分離 | 新Project          |
 
 ---
 
-# 超短縮IAM
+# IAM超短縮
 
-```text
+```
 人 → Group
 VM → Service Account
 Pod → Workload Identity
+
 鍵回避 → Impersonation
 組織制御 → Org Policy
+条件付き → IAM Conditions
+
+完全分離 → Project
 ```
 
 ---
 
-# IAM判断スピード図
+# IAMアーキテクチャ
 
 ```mermaid
-flowchart TD
-
-Start[IAM問題] --> Who{主体}
-
-Who --> Human[User / Group]
-Who --> VM[Service Account]
-Who --> Pod[Workload Identity]
-
-Human --> Role
-VM --> Role
-Pod --> Role
-
+graph TD
+Identity --> Role
 Role --> Resource
+
+Identity --> User
+Identity --> Group
+Identity --> ServiceAccount
+
+Resource --> Project
+Project --> Service
 ```
 
 ---
 
-# 試験の最初の1秒
+# 2026 IAMトレンド
 
-まずこれを見る。
-
-```text
-Who is accessing?
-```
-
-次に
-
-```text
-What resource?
-```
-
-最後
-
-```text
-Which role?
-```
+| 技術                | 状況   |
+| ----------------- | ---- |
+| Workload Identity | 標準   |
+| SA Impersonation  | 推奨   |
+| JSON Key          | 最小化  |
+| Org Policy        | 企業必須 |
+| IAM Conditions    | 普及   |
 
 ---
 
-# Notes
+# IAM 最終構造
+
+```mermaid
+graph TD
+Identity --> Binding
+Binding --> Role
+Role --> Resource
+
+Identity --> User
+Identity --> Group
+Identity --> ServiceAccount
+```
+
+---

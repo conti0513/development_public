@@ -1,56 +1,55 @@
-# GCP コンピュート選択（ACE）
+# GCP Compute 選択（ACE 2026）
 
-まず試験では **この3つの比較**がよく出ます。
+GCPのComputeは **5種類で判断**すると試験が解きやすい。
 
 ```mermaid
 graph TD
 A[Compute options] --> B[Compute Engine]
 A --> C[GKE]
 A --> D[Cloud Run]
+A --> E[App Engine]
+A --> F[Batch]
 ```
 
 ---
 
 # 全体比較
 
-| サービス           | 特徴         | 運用 |
-| -------------- | ---------- | -- |
-| Compute Engine | VM         | 自分 |
-| GKE            | Kubernetes | 中  |
-| Cloud Run      | コンテナ実行     | 最小 |
-
-短覚え
-
-```text
-VM → Compute Engine
-Container → Cloud Run
-Kubernetes → GKE
-```
+| サービス           | 実行単位      | 管理           | 主用途        |
+| -------------- | --------- | ------------ | ---------- |
+| Compute Engine | VM        | OS管理         | 既存アプリ      |
+| GKE            | Pod       | Kubernetes管理 | マイクロサービス   |
+| Cloud Run      | Container | Serverless   | API / イベント |
+| App Engine     | App       | Serverless   | Webアプリ     |
+| Batch          | Job       | Serverless   | 大量バッチ      |
 
 ---
 
-# 判断フロー
-
-試験では **この順で判断**すると早いです。
+# ACE判断フロー
 
 ```mermaid
 flowchart TD
-Q[アプリ] --> A{コンテナ?}
+A[Workload] --> B{コンテナ?}
 
-A -->|No| B[Compute Engine]
+B -->|No| C{既存VM?}
 
-A -->|Yes| C{Kubernetes必要?}
+C -->|Yes| D[Compute Engine]
+C -->|No| E{Web app?}
 
-C -->|Yes| D[GKE]
+E -->|Yes| F[App Engine]
+E -->|No| G[Batch]
 
-C -->|No| E[Cloud Run]
+B -->|Yes| H{Kubernetes必要?}
+
+H -->|Yes| I[GKE]
+H -->|No| J[Cloud Run]
 ```
 
 ---
 
 # Compute Engine
 
-構造
+VMベースコンピュート。
 
 ```mermaid
 graph TD
@@ -61,31 +60,288 @@ OS --> App
 
 特徴
 
-| 項目   | 説明 |
+| 項目   | 内容 |
 | ---- | -- |
 | 単位   | VM |
 | OS管理 | 必要 |
-| 柔軟性  | 高  |
+| SSH  | 可能 |
+| カスタム | 可能 |
 
-典型問題
+ACE判断
 
 ```text
-既存VMアプリ
-OS必要
 SSH必要
+既存VM
+OSカスタム
+
+→ Compute Engine
 ```
 
-答え
+---
+
+# Machine Type
+
+VM性能選択。
+
+| タイプ         | 用途    |
+| ----------- | ----- |
+| Standard    | 一般    |
+| High-CPU    | CPU処理 |
+| High-Memory | メモリ処理 |
+| Custom      | 自由    |
+
+ACE
 
 ```
-Compute Engine
+RAM偏重
+→ Custom machine type
+```
+
+---
+
+# Managed Instance Group
+
+VMスケール。
+
+```mermaid
+graph TD
+LoadBalancer --> MIG
+MIG --> VM1
+MIG --> VM2
+MIG --> VM3
+```
+
+機能
+
+| 機能             | 内容   |
+| -------------- | ---- |
+| Autoscaling    | 自動増減 |
+| Autohealing    | 自動復旧 |
+| Rolling update | 更新   |
+
+ACE
+
+```
+VM auto scale
+→ Managed Instance Group
+```
+
+---
+
+# VM Storage
+
+| 種類              | 特徴  |
+| --------------- | --- |
+| Persistent Disk | 標準  |
+| Local SSD       | 高IO |
+| Filestore       | NFS |
+
+ACE
+
+```
+最高IO
+→ Local SSD
+```
+
+---
+
+# Snapshot
+
+ディスクバックアップ。
+
+```mermaid
+graph TD
+Disk --> Snapshot
+Snapshot --> Backup
+```
+
+ACE
+
+```
+Disk backup
+→ Snapshot
+```
+
+---
+
+# Custom Image
+
+VMテンプレート。
+
+| 用途   | 内容    |
+| ---- | ----- |
+| VM複製 | Image |
+
+ACE
+
+```
+VMテンプレート
+→ Image
+```
+
+---
+
+# Networking
+
+VM公開。
+
+```mermaid
+graph TD
+Internet --> LoadBalancer
+LoadBalancer --> VM
+```
+
+ACE
+
+```
+高可用VM
+→ Load Balancer + MIG
+```
+
+---
+
+# Service Account
+
+VMからGCP API利用。
+
+```mermaid
+graph TD
+VM --> ServiceAccount
+ServiceAccount --> GCP_API
+```
+
+ACE
+
+```
+VM → GCP API
+→ Service Account
+```
+
+---
+
+# Startup Script
+
+VM初期化。
+
+```bash
+#!/bin/bash
+apt update
+apt install nginx
+```
+
+ACE
+
+```
+VM起動時設定
+→ Startup script
+```
+
+---
+
+# Spot VM
+
+低コストVM。
+
+| 特徴 | 内容    |
+| -- | ----- |
+| 割引 | 最大90% |
+| 停止 | いつでも  |
+
+ACE
+
+```
+バッチ
+→ Spot VM
+```
+
+---
+
+# OS Login
+
+SSH管理。
+
+| 機能       | 内容      |
+| -------- | ------- |
+| OS Login | IAMでSSH |
+
+ACE
+
+```
+SSH管理
+→ OS Login
+```
+
+---
+
+# Cloud Run
+
+Serverlessコンテナ。
+
+```mermaid
+graph TD
+Container --> CloudRun
+CloudRun --> HTTP
+```
+
+特徴
+
+| 項目   | 内容        |
+| ---- | --------- |
+| 単位   | Container |
+| スケール | 自動        |
+| 課金   | リクエスト     |
+| 運用   | 最小        |
+
+ACE
+
+```
+HTTP API
+コンテナ
+
+→ Cloud Run
+```
+
+---
+
+# Cloud Run Jobs
+
+バッチ処理用Cloud Run。
+
+| 用途  | 内容   |
+| --- | ---- |
+| Job | 一回処理 |
+
+ACE
+
+```
+Container batch
+→ Cloud Run Jobs
+```
+
+---
+
+# Cloud Run イベント処理
+
+Pub/Sub。
+
+```
+Pub/Sub
+ ↓ push
+Cloud Run
+```
+
+ACE
+
+```
+Pub/Sub → Cloud Run
+→ Push subscription
 ```
 
 ---
 
 # GKE
 
-構造
+Kubernetes管理。
 
 ```mermaid
 graph TD
@@ -96,444 +352,181 @@ Pod --> Container
 
 特徴
 
-| 項目         | 説明         |
-| ---------- | ---------- |
-| 単位         | Pod        |
-| オーケストレーション | Kubernetes |
-| スケール       | 高度         |
+| 項目   | 内容         |
+| ---- | ---------- |
+| 単位   | Pod        |
+| 管理   | Kubernetes |
+| スケール | HPA        |
 
-典型問題
+ACE
 
-```text
-マイクロサービス
+```
 多数コンテナ
 Kubernetes
-```
 
-答え
-
-```
-GKE
+→ GKE
 ```
 
 ---
 
-# Cloud Run
+# GKE Autopilot
 
-構造
+ノード管理不要。
+
+| モード       | 特徴         |
+| --------- | ---------- |
+| Standard  | Node管理     |
+| Autopilot | Serverless |
+
+ACE
+
+```
+Kubernetes
+運用最小
+
+→ GKE Autopilot
+```
+
+---
+
+# App Engine
+
+PaaS型アプリ。
 
 ```mermaid
 graph TD
-Container --> CloudRun
-CloudRun --> HTTP
+User --> AppEngine
+AppEngine --> Runtime
+Runtime --> App
 ```
 
 特徴
 
-| 項目   | 説明   |
-| ---- | ---- |
-| 単位   | コンテナ |
-| スケール | 自動   |
-| 運用   | 最小   |
+| 項目   | 内容  |
+| ---- | --- |
+| スケール | 自動  |
+| 運用   | 最小  |
+| 用途   | Web |
 
-典型問題
-
-```text
-HTTP
-コンテナ
-トラフィック少
-```
-
-答え
+ACE
 
 ```
-Cloud Run
+Flask
+Django
+
+→ App Engine
+```
+
+---
+
+# Batch
+
+大規模バッチ処理。
+
+| 特徴   | 内容 |
+| ---- | -- |
+| 大量処理 | 可能 |
+| VM管理 | 自動 |
+
+ACE
+
+```
+大規模バッチ
+→ Batch
 ```
 
 ---
 
 # スケール比較
 
-```mermaid
-graph TD
-Traffic --> CloudRunScale
-Traffic --> GKEScale
-Traffic --> VMScale
-```
-
-| サービス           | スケール     |
-| -------------- | -------- |
-| Cloud Run      | 完全自動     |
-| GKE            | HPA / CA |
-| Compute Engine | MIG      |
+| サービス           | スケール |
+| -------------- | ---- |
+| Cloud Run      | 自動   |
+| App Engine     | 自動   |
+| GKE            | HPA  |
+| Compute Engine | MIG  |
+| Batch          | 自動   |
 
 ---
 
-# ネットワーク比較
+# 運用負荷
 
-| サービス           | 公開方法              |
-| -------------- | ----------------- |
-| Compute Engine | Load Balancer     |
-| GKE            | Service / Ingress |
-| Cloud Run      | HTTP endpoint     |
-
----
-
-# 運用比較
-
-| 項目   | Compute Engine | GKE    | Cloud Run |
-| ---- | -------------- | ------ | --------- |
-| OS管理 | 必要             | Nodeのみ | 不要        |
-| スケール | 手動             | 自動     | 自動        |
-| 運用負荷 | 高              | 中      | 低         |
+| サービス           | 運用 |
+| -------------- | -- |
+| Compute Engine | 高  |
+| GKE            | 中  |
+| App Engine     | 低  |
+| Cloud Run      | 最低 |
+| Batch          | 最低 |
 
 ---
 
-# 試験ひっかけ
+# Snapshot vs Image
 
-| 問題           | 答え             |
-| ------------ | -------------- |
-| コンテナ + HTTP  | Cloud Run      |
-| Kubernetes必要 | GKE            |
-| VM必要         | Compute Engine |
-
----
-
-# ACE判断チート
-
-```text
-SSH必要 → Compute Engine
-Kubernetes → GKE
-HTTPコンテナ → Cloud Run
-```
-
----
-
-# 全体構造
-
-```mermaid
-graph TD
-ComputeEngine --> VM
-GKE --> Kubernetes
-CloudRun --> Container
-
-VM --> OS
-Kubernetes --> Pods
-Container --> HTTP
-```
-
----
-
-# ACE頻出まとめ
-
-```text
-Compute Engine → VM
-GKE → Kubernetes
-Cloud Run → serverless container
-```
-
----
-
-
-# Compute Engine 試験対策（ACE）
-
-Compute Engine問題は **6テーマ**に集約されます。
-
-```mermaid
-graph TD
-A[Compute Engine] --> B[Machine type]
-A --> C[Scaling]
-A --> D[Storage]
-A --> E[Networking]
-A --> F[Security]
-A --> G[Operations]
-```
-
----
-
-# 1 Machine Type
-
-VMの性能選択。
-
-| タイプ         | 用途    |
-| ----------- | ----- |
-| Standard    | 一般    |
-| High-CPU    | CPU処理 |
-| High-Memory | メモリ処理 |
-| Custom      | 自由調整  |
-
-ACE頻出
-
-```text
-メモリ偏重
-→ Custom machine type
-```
-
-理由
-RAMを増やすとコスト効率が良い。
-
----
-
-# 2 Managed Instance Group（MIG）
-
-VMスケール管理。
-
-```mermaid
-graph TD
-LoadBalancer --> MIG
-MIG --> VM1
-MIG --> VM2
-MIG --> VM3
-```
-
-| 機能          | 説明      |
-| ----------- | ------- |
-| MIG         | VMグループ  |
-| Autoscaling | 負荷でVM増減 |
-
-ACE判断
-
-```text
-VM auto scale
-→ Managed Instance Group
-```
-
----
-
-# 3 Persistent Disk
-
-VMストレージ。
-
-| 種類       | 特徴  |
-| -------- | --- |
-| Standard | HDD |
-| Balanced | SSD |
-| SSD      | 高性能 |
-
-ACEひっかけ
-
-```text
-最高IO
-→ Local SSD
-```
-
-理由
-Local SSDは **最高スループット**。
-
----
-
-# 4 Snapshot
-
-バックアップ。
-
-```mermaid
-graph TD
-Disk --> Snapshot
-Snapshot --> Backup
-```
-
-| 用途     | 機能               |
-| ------ | ---------------- |
-| バックアップ | Snapshot         |
-| 復元     | Snapshot restore |
+| 機能       | 用途     |
+| -------- | ------ |
+| Snapshot | バックアップ |
+| Image    | VMテンプレ |
 
 ACE
 
-```text
-Disk backup
-→ Snapshot
+```
+バックアップ → Snapshot
+VM複製 → Image
 ```
 
 ---
 
-# 5 Networking
+# ACE Compute 頻出
 
-VM公開。
-
-```mermaid
-graph TD
-Internet --> LoadBalancer
-LoadBalancer --> VM
 ```
-
-| 用途  | 方法            |
-| --- | ------------- |
-| 公開  | External IP   |
-| 高可用 | Load Balancer |
-
-ACE判断
-
-```text
-高可用VM
-→ Load Balancer + MIG
-```
-
----
-
-# 6 Service Account
-
-VM認証。
-
-```mermaid
-graph TD
-VM --> ServiceAccount
-ServiceAccount --> GCP_API
-```
-
-| 用途     | 機能              |
-| ------ | --------------- |
-| VM→API | Service Account |
-
-ACE
-
-```text
-VM access GCP API
-→ Service Account
-```
-
----
-
-# 7 Startup Script
-
-VM初期化。
-
-| 用途   | 方法             |
-| ---- | -------------- |
-| 初期設定 | Startup script |
-
-例
-
-```bash
-#!/bin/bash
-apt update
-apt install nginx
-```
-
-ACE問題
-
-```text
-VM起動時にソフトインストール
-→ Startup script
-```
-
----
-
-# 8 Preemptible VM
-
-低コストVM。
-
-| 特徴  | 内容    |
-| --- | ----- |
-| コスト | 約80%安 |
-| 寿命  | 最大24h |
-
-ACE用途
-
-```text
-バッチ
-→ Preemptible VM
-```
-
----
-
-# 9 OS Login
-
-SSH管理。
-
-| 機能       | 説明      |
-| -------- | ------- |
-| OS Login | IAMでSSH |
-
-ACE
-
-```text
-SSH管理
-→ OS Login
-```
-
----
-
-# 10 API Enable
-
-新規プロジェクト。
-
-| 問題     | 答え                 |
-| ------ | ------------------ |
-| VM作れない | Compute API enable |
-
-ACE
-
-```text
-まず疑う
-→ API enable
-```
-
----
-
-# Compute Engine 構造
-
-```mermaid
-graph TD
-User --> VM
-VM --> Disk
-VM --> Network
-VM --> ServiceAccount
-```
-
----
-
-# ACE頻出Compute Engine判断
-
-| 問題     | 答え              |
-| ------ | --------------- |
-| メモリ偏重  | Custom machine  |
-| VMスケール | MIG             |
-| 最高IO   | Local SSD       |
-| バックアップ | Snapshot        |
-| VM→API | Service Account |
-| 安いVM   | Preemptible     |
-
----
-
-# Compute Engine 思考マップ
-
-```mermaid
-graph TD
-ComputeEngine --> VM
-ComputeEngine --> Disk
-ComputeEngine --> Network
-ComputeEngine --> IAM
-
-VM --> MachineType
-VM --> StartupScript
-
-Disk --> PersistentDisk
-Disk --> Snapshot
-
-Network --> LoadBalancer
-
-IAM --> ServiceAccount
-```
-
----
-
-# ACEで一番出るパターン
-
-```text
 Custom machine type
 Managed Instance Group
 Snapshot
 Local SSD
 Service Account
-Preemptible VM
+Spot VM
 Startup script
 ```
 
 ---
 
+# ACE Compute 判断まとめ
 
+```
+SSH必要 → Compute Engine
+Kubernetes → GKE
+HTTPコンテナ → Cloud Run
+Webアプリ → App Engine
+大量バッチ → Batch
+```
 
 ---
 
-# Notes
+# Compute 構造
+
+```mermaid
+graph TD
+Compute --> VM
+Compute --> Container
+Compute --> Kubernetes
+
+VM --> ComputeEngine
+Container --> CloudRun
+Kubernetes --> GKE
+```
+
+---
+
+# 最終ACE暗記
+
+```
+VM → Compute Engine
+Container → Cloud Run
+Kubernetes → GKE
+Web app → App Engine
+Batch → Batch
+```
+
+---
 
