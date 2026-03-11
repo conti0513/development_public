@@ -1,4 +1,3 @@
-````markdown
 # GCP Networking（ACE / 2026）
 
 GCP Networkingは **6つの領域**で整理する。
@@ -594,7 +593,5 @@ VM --> DNS
 | IAP                       | 公開IPなしSSH               |
 | Direct VPC egress         | Serverless → VPC接続      |
 | Private Service Connect   | Private Googleサービス接続    |
-
-```
 
 ---
