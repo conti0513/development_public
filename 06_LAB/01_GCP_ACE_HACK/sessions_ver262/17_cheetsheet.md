@@ -232,41 +232,118 @@ ETL → Dataflow
 
 # 12. CLI頻出（gcloud）
 
-| コマンド                               | 用途            |
-| ---------------------------------- | ------------- |
-| `gcloud compute instances create`  | VM作成          |
-| `gcloud compute ssh`               | VM接続          |
-| `gcloud run deploy`                | Cloud Runデプロイ |
-| `gcloud container clusters create` | GKE作成         |
-| `gcloud sql instances create`      | Cloud SQL     |
-| `gcloud storage buckets create`    | Storage作成     |
-| `gcloud auth login`                | 認証            |
-| `gcloud config set project`        | Project変更     |
+| コマンド                                                            | 用途                |
+| --------------------------------------------------------------- | ----------------- |
+| `gcloud auth login`                                             | CLI認証             |
+| `gcloud config set project PROJECT_ID`                          | 使用Project変更       |
+| `gcloud projects list`                                          | Project一覧         |
+| `gcloud compute instances list`                                 | VM一覧              |
+| `gcloud compute instances create`                               | VM作成              |
+| `gcloud compute instances delete`                               | VM削除              |
+| `gcloud compute ssh INSTANCE_NAME`                              | VM SSH接続          |
+| `gcloud compute instances start`                                | VM起動              |
+| `gcloud compute instances stop`                                 | VM停止              |
+| `gcloud compute instances add-tags INSTANCE_NAME --tags TAG`    | Network Tag追加     |
+| `gcloud compute instances remove-tags INSTANCE_NAME --tags TAG` | Network Tag削除     |
+| `gcloud compute firewall-rules create`                          | Firewallルール作成     |
+| `gcloud compute networks create`                                | VPC作成             |
+| `gcloud compute networks subnets create`                        | Subnet作成          |
+| `gcloud compute routers create`                                 | Cloud Router作成    |
+| `gcloud compute vpn-tunnels create`                             | VPN作成             |
+| `gcloud run deploy SERVICE`                                     | Cloud Runデプロイ     |
+| `gcloud container clusters create`                              | GKEクラスタ作成         |
+| `gcloud sql instances create`                                   | Cloud SQL作成       |
+| `gcloud storage buckets create`                                 | Storage bucket作成  |
+| `gcloud logging read`                                           | Logging確認         |
+| `gcloud iam service-accounts create`                            | Service Account作成 |
+
+---
+
+# 実務でよく使うオプション
+
+| オプション            | 意味          |
+| ---------------- | ----------- |
+| `--zone`         | VMゾーン指定     |
+| `--region`       | リージョン指定     |
+| `--tags`         | Network Tag |
+| `--machine-type` | VMサイズ       |
+| `--image-family` | OS指定        |
+
+例
+
+```bash
+gcloud compute instances create vm-test \
+  --zone=asia-northeast1-a \
+  --machine-type=e2-medium
+```
+
+---
+
+# 並列処理（実務）
+
+複数VM処理
+
+```bash
+xargs -P 5 -I {} gcloud compute instances stop {}
+```
+
+意味
+
+```
+-P 5
+並列5プロセス
+```
+
+---
+
+# CLI覚えておくと良いパターン
+
+```
+list
+create
+delete
+start
+stop
+```
+
+つまり
+
+```
+resource + action
+```
+
+---
+
+# ACE的に覚えておくCLI
+
+```bash
+gcloud compute instances create
+gcloud run deploy
+gcloud container clusters create
+gcloud sql instances create
+```
+
+---
+
+# CLIコンセプトAA
+
+```
+      gcloud
+        │
+        ▼
+
+  resource + action
+
+compute + create
+run + deploy
+sql + create
+storage + create
+```
+
 
 ---
 
 # 13. 最後の1分まとめ
-
-```
-VM → Internet
-Cloud NAT
-
-VM → Google API
-Private Google Access
-
-Container serverless
-Cloud Run
-
-SQL
-Cloud SQL
-
-Analytics
-BigQuery
-```
-
----
-
-# 最後の1分まとめ
 
 ```text
 VM → Internet
@@ -386,3 +463,104 @@ You are ready.
 ```
 
 ---
+
+
+# ACE試験直前アドバイス（2026）
+
+
+# 1. Cloud Storage (GCS) の小さな罠
+
+チートシートのクラス整理は完璧です。
+ただし **この2点だけ追加で意識してください。**
+
+### クラス変更
+
+既存オブジェクトのストレージクラスを**直接変更するコマンドはありません。**
+
+イメージ
+
+```
+gsutil rewrite
+```
+
+または
+
+```
+Lifecycle Policy
+```
+
+つまり
+
+**クラス変更 = 移動**
+
+---
+
+### 一貫性
+
+Cloud Storage は
+
+```
+強い整合性 (Strong Consistency)
+```
+
+です。
+
+つまり
+
+```
+書いたらすぐ読める
+```
+
+昔の
+
+```
+Eventual Consistency
+```
+
+は **過去の知識**です。
+
+---
+
+# 2. GKE の最新判断
+
+GKE問題は **3択**で整理すると速いです。
+
+| 要件           | 正解        |
+| ------------ | --------- |
+| ノード管理したくない   | Autopilot |
+| GPUなど特殊構成    | Standard  |
+| Kubernetes不要 | Cloud Run |
+
+覚え方
+
+```
+Run < Autopilot < Standard
+```
+
+---
+
+# 3. Database 二択の決め手
+
+ACEは **DB選択問題が多いです。**
+
+| 条件                      | 正解            |
+| ----------------------- | ------------- |
+| グローバル + 強整合性 + SQL      | Cloud Spanner |
+| 10TB以上 + NoSQL + スループット | Bigtable      |
+| モバイル同期                  | Firestore     |
+
+---
+
+# 4. Networking の落とし穴
+
+ここは試験で狙われます。
+
+| 問題                      | 正解                     |
+| ----------------------- | ---------------------- |
+| オンプレ専用線                 | Dedicated Interconnect |
+| 専用線不可 + 暗号化             | Cloud VPN              |
+| Private VM Internet     | Cloud NAT              |
+| Private VM → Google API | Private Google Access  |
+
+---
+
