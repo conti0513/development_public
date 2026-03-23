@@ -185,7 +185,7 @@
 
 ---
 
-# Enterprise Network Terms (JTC / Carrier)
+# Enterprise Network Terms
 
 | No | 用語           | 英語の言い換え           | 解説                         |
 | -- | ------------ | ----------------- | -------------------------- |
@@ -202,7 +202,7 @@
 
 ---
 
-# JTC System Integration Terms
+# Enterprise Network Architecture Terms
 
 | No | 用語     | 英語の言い換え                     | 解説            |
 | -- | ------ | --------------------------- | ------------- |
@@ -236,7 +236,7 @@
 
 ---
 
-# カーブアウト案件でよく出る用語
+# Enterprise Network Migration Terms
 
 （あなたの案件にドンピシャ）
 
