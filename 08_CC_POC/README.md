@@ -1,17 +1,40 @@
 # 08_CC_POC: AI Agent Driven Development Kit
 
-## 概要 (Overview)
-本ディレクトリは、Claude Codeを用いた自律型開発プロセスの研究用POCパッケージです。
-GitHub Codespaces Secretsを活用したセキュアな開発環境を前提としています。
+## Overview
+This directory is a research POC for AI-assisted development workflows using Claude Code (CC).
+It serves as a structured workspace for building and experimenting with multiple projects efficiently.
 
-## セキュリティ & 運用 (Security)
-- **Secrets Management:** APIキーは `.env` に直書きせず、GitHubの `Repository secrets` で管理します。
-- **Portability:** Codespaces Secretsに `ANTHROPIC_API_KEY` を登録することで、どの環境からでも即座にCCを起動可能です。
+## Folder Structure Policy
 
-## 使い方 (How to use)
-1. GitHubの Settings > Codespaces > Secrets に `ANTHROPIC_API_KEY` を登録。
-2. `sh setup.sh` を実行。
-3. `claude` を起動。
+```
+08_CC_POC/
+  CLAUDE.md              # Global CC rules (applied to all projects)
+  README.md              # This file — overview and policy
+  setup.sh               # Environment setup
+  │
+  ├── _templates/        # Reusable starter templates for new projects
+  │     └── nextjs-starter/
+  │
+  └── {project-name}/    # One folder per project
+        ├── CLAUDE.md    # Project-specific CC instructions
+        ├── README.md    # How to run this project
+        └── src/
+```
+
+### Rules
+- **One folder per project.** Each project is self-contained with its own `CLAUDE.md` and `README.md`.
+- **Two-layer CLAUDE.md.** Global rules live at the root; project-specific rules live inside each project folder.
+- **Use `_templates/` as the starting point** when creating a new project.
+- **No loose files at root.** All work lives inside a named project folder.
+
+## Security
+- API keys are managed via GitHub Codespaces Secrets, not `.env` files.
+- Set `ANTHROPIC_API_KEY` in GitHub Settings > Codespaces > Secrets.
+
+## How to Start
+1. Register `ANTHROPIC_API_KEY` in GitHub Settings > Codespaces > Secrets.
+2. Run `sh setup.sh`.
+3. Launch `claude`.
 
 ---
-*Note: This project prioritizes secure AI integration.*
+*This workspace prioritizes clean structure, reusability, and secure AI integration.*
